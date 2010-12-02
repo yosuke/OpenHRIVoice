@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lexicon version="1.0"
+         xmlns="http://www.w3.org/2005/01/pronunciation-lexicon"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://www.w3.org/2005/01/pronunciation-lexicon
+                             http://www.w3.org/TR/2007/CR-pronunciation-lexicon-20071212/pls.xsd"
+         alphabet="ARPAbet" xml:lang="en">
+  <lexeme>
+    <grapheme>evening</grapheme>
+    <phoneme>{{ARPABET|iy v n ix ng}}</phoneme>
+  </lexeme>
+  <lexeme>
+    <grapheme>good</grapheme>
+    <phoneme>{{ARPABET|g uh d}}</phoneme>
+  </lexeme>
+  <lexeme>
+    <grapheme>afternoon</grapheme>
+    <phoneme>{{ARPABET|ae f t er n uw n}}</phoneme>
+  </lexeme>
+  <lexeme>
+    <grapheme>bye</grapheme>
+    <phoneme>{{ARPABET|b ay}}</phoneme>
+  </lexeme>
+  <lexeme>
+    <grapheme>hello</grapheme>
+    <phoneme>{{ARPABET|hh ax l ow}}</phoneme>
+  </lexeme>
+</lexicon>

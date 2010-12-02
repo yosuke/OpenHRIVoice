@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<RtcProfile id="RTC:AIST:communication:Emphasis:1.0.0" xmlns="http://www.openrtp.org/namespaces/rtc" xmlns:sem="http://openhri.net/RTCSemantics">
+  <BasicInfo name="Emphasis" version="1.0.0"
+	     executionRate="100.0" componentKind="DataFlowComponent" activityType="PERIODIC"/>
+  <ConfigurationSet>
+    <Configuration name="type" defaultValue="emphasis" type="string"/>
+  </ConfigurationSet>
+  <DataPorts name="indata" type="TimedOctet" portType="DataInPort"/>
+  <DataPorts name="outdata" type="TimedOctet" portType="DataOutPort"/>
+
+  <sem:semantics>
+    <sem:item sem:name="preemphasis">
+      <sem:restriction>
+	<sem:rule sem:scope="indata.allupstream" sem:property="id">RTC:AIST:communication:Emphasis:1.0.0</sem:rule>
+      </sem:restriction>
+      <sem:requirement>
+	<sem:rule sem:scope="this" sem:property="configuration.type">emphasis</sem:rule>
+      </sem:requirement>
+    </sem:item>
+    <sem:item sem:name="postemphasis">
+      <sem:requirement>
+	<sem:rule sem:scope="indata.allupstream" sem:property="id">RTC:AIST:communication:Emphasis:1.0.0</sem:rule>
+	<sem:rule sem:scope="this" sem:property="configuration.type">deemphasis</sem:rule>
+      </sem:requirement>
+    </sem:item>
+  </sem:semantics>
+</RtcProfile>
