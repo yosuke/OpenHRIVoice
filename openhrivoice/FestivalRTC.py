@@ -97,12 +97,18 @@ FestivalRTC_spec = ["implementation_id", "FestivalRTC",
                     "max_instance",      "1",
                     "language",          "Python",
                     "lang_type",         "script",
+                    "conf.default.format", "int16",
                     "conf.__widget__.format", "radio",
                     "conf.__constraints__.format", "int16",
+                    "conf.__description__.format", "Format of output audio (fixed to 16bit).",
+                    "conf.default.rate", "16000",
                     "conf.__widget__.rate", "spin",
                     "conf.__constraints__.rate", "16000",
+                    "conf.__description__.rate", "Sampling frequency of output audio (fixed to 16kHz).",
+                    "conf.default.character", "male",
                     "conf.__widget__.character", "radio",
                     "conf.__constraints__.character", "male",
+                    "conf.__description__.character", "Character of voice (fixed to male).",
                     ""]
 
 class DataListener(OpenRTM_aist.ConnectorDataListenerT):
@@ -116,69 +122,60 @@ class DataListener(OpenRTM_aist.ConnectorDataListenerT):
 
 class FestivalRTC(OpenRTM_aist.DataFlowComponentBase):
     def __init__(self, manager):
-        try:
-            OpenRTM_aist.DataFlowComponentBase.__init__(self, manager)
-            #self._rate = 16000
-        except:
-            print traceback.format_exc()
+        OpenRTM_aist.DataFlowComponentBase.__init__(self, manager)
 
     def onInitialize(self):
-        try:
-            self._j = FestivalWrap()
-            self._prevtime = time.time()
-            # create inport
-            self._indata = RTC.TimedString(RTC.Time(0,0), "")
-            self._inport = OpenRTM_aist.InPort("text", self._indata)
-            self._inport.addConnectorDataListener(OpenRTM_aist.ConnectorDataListenerType.ON_BUFFER_WRITE,
-                                                  DataListener("ON_BUFFER_WRITE", self))
-            self.registerInPort("text", self._inport)
-            # create outport for wave data
-            self._outdata = RTC.TimedOctetSeq(RTC.Time(0,0), None)
-            self._outport = OpenRTM_aist.OutPort("result", self._outdata)
-            self.registerOutPort("result", self._outport)
-            # create outport for status
-            self._statusdata = RTC.TimedString(RTC.Time(0,0), "")
-            self._statusport = OpenRTM_aist.OutPort("status", self._statusdata)
-            self.registerOutPort("status", self._statusport)
-            # create outport for duration data
-            self._durdata = RTC.TimedString(RTC.Time(0,0), "")
-            self._durport = OpenRTM_aist.OutPort("duration", self._durdata)
-            self.registerOutPort("duration", self._durport)
-        except:
-            print traceback.format_exc()
+        self._j = FestivalWrap()
+        self._prevtime = time.time()
+        # create inport
+        self._indata = RTC.TimedString(RTC.Time(0,0), "")
+        self._inport = OpenRTM_aist.InPort("text", self._indata)
+        self._inport.appendProperty('description', 'Text to be synthesized.')
+        self._inport.addConnectorDataListener(OpenRTM_aist.ConnectorDataListenerType.ON_BUFFER_WRITE,
+                                              DataListener("ON_BUFFER_WRITE", self))
+        self.registerInPort(self._inport._name, self._inport)
+        # create outport for wave data
+        self._outdata = RTC.TimedOctetSeq(RTC.Time(0,0), None)
+        self._outport = OpenRTM_aist.OutPort("result", self._outdata)
+        self._outport.appendProperty('description', 'Synthesized audio data.')
+        self.registerOutPort(self._outport._name, self._outport)
+        # create outport for status
+        self._statusdata = RTC.TimedString(RTC.Time(0,0), "")
+        self._statusport = OpenRTM_aist.OutPort("status", self._statusdata)
+        self._statusport.appendProperty('description', 'Status of audio output (one of "started", "finished").')
+        self.registerOutPort(self._statusport._name, self._statusport)
+        # create outport for duration data
+        self._durdata = RTC.TimedString(RTC.Time(0,0), "")
+        self._durport = OpenRTM_aist.OutPort("duration", self._durdata)
+        self._durport.appendProperty('description', 'Time aliment information of each phonemes (to be used to lip-sync).')
+        self.registerOutPort(self._durport._name, self._durport)
         return RTC.RTC_OK
 
     def onData(self, name, data):
-        try:
-            udata = data.data.decode("utf-8")
-            self._j.write(udata)
-        except:
-            print traceback.format_exc()
+        udata = data.data.decode("utf-8")
+        self._j.write(udata)
 
     def onExecute(self, ec_id):
-        try:
-            # send stream
-            now = time.time()
-            chunk = int(self._j._samplerate * (now - self._prevtime))
-            self._prevtime = now
-            if chunk > 0:
-                data = self._j.readdata(chunk)
-                if data is not None:
-                    self._outdata.data = data
-                    self._outport.write(self._outdata)
-                    if self._statusdata.data != "started":
-                        print "start"
-                        self._statusdata.data = "started"
-                        self._statusport.write(self._statusdata)
-                        self._durdata.data = self._j._durationdata
-                        self._durport.write(self._durdata)
-                else:
-                    if self._statusdata.data != "finished":
-                        print "finished"
-                        self._statusdata.data = "finished"
-                        self._statusport.write(self._statusdata)
-        except:
-            print traceback.format_exc()
+        # send stream
+        now = time.time()
+        chunk = int(self._j._samplerate * (now - self._prevtime))
+        self._prevtime = now
+        if chunk > 0:
+            data = self._j.readdata(chunk)
+            if data is not None:
+                self._outdata.data = data
+                self._outport.write(self._outdata)
+                if self._statusdata.data != "started":
+                    print "start"
+                    self._statusdata.data = "started"
+                    self._statusport.write(self._statusdata)
+                    self._durdata.data = self._j._durationdata
+                    self._durport.write(self._durdata)
+            else:
+                if self._statusdata.data != "finished":
+                    print "finished"
+                    self._statusdata.data = "finished"
+                    self._statusport.write(self._statusdata)
         return RTC.RTC_OK
 
     def onFinalize(self):

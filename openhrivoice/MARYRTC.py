@@ -84,8 +84,7 @@ class MARYTalkWrap:
         #d = '#\n0.001 125 sil\n' + '\n'.join(d.split('\n')[1:]) + ('%f 125 sil\n' % (lasttime + 0.001,))
         return d
 
-    def write(self, data, pobj, chunk):
-        print data
+    def write(self, data):
         print data
         if self._wf is not None:
             self._wf.close()
@@ -126,10 +125,13 @@ MARYRTC_spec = ["implementation_id", "MARYRTC",
                 "conf.default.character", ""
                 "conf.__widget__.format", "radio",
                 "conf.__constraints__.format", "int16",
+                "conf.__description__.format", "Format of output audio (fixed to 16bit).",
                 "conf.__widget__.rate", "spin",
                 "conf.__constraints__.rate", "16000",
+                "conf.__description__.rate", "Sampling frequency of output audio (fixed to 16kHz).",
                 "conf.__widget__.character", "radio",
                 "conf.__constraints__.character", "",
+                "conf.__description__.character", "Character of voice.",
                 ""]
 
 class DataListener(OpenRTM_aist.ConnectorDataListenerT):
@@ -146,60 +148,59 @@ class MARYRTC(OpenRTM_aist.DataFlowComponentBase):
         OpenRTM_aist.DataFlowComponentBase.__init__(self, manager)
 
     def onInitialize(self):
-        try:
-            self._j = MARYTalkWrap()
-            # bind configuration parameters
-            self.bindParameter("character", self._character, self._j._defaultcharacter)
-            # create inport
-            self._indata = RTC.TimedString(RTC.Time(0,0), u"")
-            self._inport = OpenRTM_aist.InPort("text", self._indata)
-            self.registerInPort("text", self._inport)
-            # create outport
-            self._outdata = RTC.TimedOctetSeq(RTC.Time(0,0), None)
-            self._outport = OpenRTM_aist.OutPort("result", self._outdata)
-            self.registerOutPort("result", self._outport)
-            # create outport for duration
-            self._durationdata = RTC.TimedString(RTC.Time(0,0), "")
-            self._durationport = OpenRTM_aist.OutPort("duration", self._durationdata)
-            self.registerOutPort("duration", self._durationport)
-        except:
-            print traceback.format_exc()
+        self._j = MARYTalkWrap()
+        # bind configuration parameters
+        self.bindParameter("character", self._character, self._j._defaultcharacter)
+        # create inport
+        self._indata = RTC.TimedString(RTC.Time(0,0), u"")
+        self._inport = OpenRTM_aist.InPort("text", self._indata)
+        self._inport.appendProperty('description', 'Text to be synthesized.')
+        self.registerInPort(self._inport._name, self._inport)
+        # create outport
+        self._outdata = RTC.TimedOctetSeq(RTC.Time(0,0), None)
+        self._outport = OpenRTM_aist.OutPort("result", self._outdata)
+        self._outport.appendProperty('description', 'Synthesized audio data.')
+        self.registerOutPort(self._outport._name, self._outport)
+        # create outport for status
+        self._statusdata = RTC.TimedString(RTC.Time(0,0), "")
+        self._statusport = OpenRTM_aist.OutPort("status", self._statusdata)
+        self._statusport.appendProperty('description', 'Status of audio output (one of "started", "finished").')
+        self.registerOutPort(self._statusport._name, self._statusport)
+        # create outport for duration
+        self._durationdata = RTC.TimedString(RTC.Time(0,0), "")
+        self._durationport = OpenRTM_aist.OutPort("duration", self._durationdata)
+        self._durationport.appendProperty('description', 'Time aliment information of each phonemes (to be used to lip-sync).')
+        self.registerOutPort(self._durationport._name, self._durationport)
         return RTC.RTC_OK
 
     def onData(self, name, data):
-        try:
-            self._j.setcharacter(self._character)
-            udata = data.data.decode("utf-8")
-            self._j.write(udata, self, 160)
-        except:
-            print traceback.format_exc()
+        self._j.setcharacter(self._character)
+        udata = data.data.decode("utf-8")
+        self._j.write(udata)
 
     def onExecute(self, ec_id):
-        try:
-            # send stream
-            now = time.time()
-            chunk = int(self._j._samplerate * (now - self._prevtime))
-            self._prevtime = now
-            if chunk > 0:
-                data = self._j.readdata(chunk)
-                if data is not None:
-                    self._outdata.tm = self._durationdata.tm
-                    self._outdata.data = data
-                    self._outport.write(self._outdata)
-                    if self._statusdata.data != "started":
-                        print "start"
-                        self._statusdata.data = "started"
-                        self._statusport.write(self._statusdata)
-                        self._durationdata.data = self._j._durations
-                        OpenRTM_aist.setTimestamp(self._durationdata)
-                        self._durationport.write(self._durationdata)
-                else:
-                    if self._statusdata.data != "finished":
-                        print "finished"
-                        self._statusdata.data = "finished"
-                        self._statusport.write(self._statusdata)
-        except:
-            print traceback.format_exc()
+        # send stream
+        now = time.time()
+        chunk = int(self._j._samplerate * (now - self._prevtime))
+        self._prevtime = now
+        if chunk > 0:
+            data = self._j.readdata(chunk)
+            if data is not None:
+                self._outdata.tm = self._durationdata.tm
+                self._outdata.data = data
+                self._outport.write(self._outdata)
+                if self._statusdata.data != "started":
+                    print "start"
+                    self._statusdata.data = "started"
+                    self._statusport.write(self._statusdata)
+                    self._durationdata.data = self._j._durations
+                    OpenRTM_aist.setTimestamp(self._durationdata)
+                    self._durationport.write(self._durationdata)
+            else:
+                if self._statusdata.data != "finished":
+                    print "finished"
+                    self._statusdata.data = "finished"
+                    self._statusport.write(self._statusdata)
         return RTC.RTC_OK
 
 class MARYRTCManager:

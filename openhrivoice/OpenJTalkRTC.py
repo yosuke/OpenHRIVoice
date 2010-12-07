@@ -232,12 +232,18 @@ OpenJTalkRTC_spec = ["implementation_id", "OpenJTalkRTC",
                      "max_instance",      "1",
                      "language",          "Python",
                      "lang_type",         "script",
+                     "conf.default.format", "int16",
                      "conf.__widget__.format", "radio",
                      "conf.__constraints__.format", "int16",
+                     "conf.__description__.format", "Format of output audio (fixed to 16bit).",
+                     "conf.default.rate", "16000",
                      "conf.__widget__.rate", "spin",
                      "conf.__constraints__.rate", "16000",
+                     "conf.__description__.rate", "Sampling frequency of output audio (fixed to 16kHz).",
+                     "conf.default.character", "male",
                      "conf.__widget__.character", "radio",
                      "conf.__constraints__.character", "male",
+                     "conf.__description__.character", "Character of voice (fixed to male).",
                      ""]
 
 class DataListener(OpenRTM_aist.ConnectorDataListenerT):
@@ -251,71 +257,62 @@ class DataListener(OpenRTM_aist.ConnectorDataListenerT):
 
 class OpenJTalkRTC(OpenRTM_aist.DataFlowComponentBase):
     def __init__(self, manager):
-        try:
-            OpenRTM_aist.DataFlowComponentBase.__init__(self, manager)
-            #self._rate = 16000
-        except:
-            print traceback.format_exc()
+        OpenRTM_aist.DataFlowComponentBase.__init__(self, manager)
 
     def onInitialize(self):
-        try:
-            self._j = OpenJTalkWrap()
-            self._prevtime = time.time()
-            # bind configuration parameters
-            #self.bindParameter("rate", self._rate, self._rate)
-            # create inport
-            self._indata = RTC.TimedString(RTC.Time(0,0), "")
-            self._inport = OpenRTM_aist.InPort("text", self._indata)
-            self._inport.addConnectorDataListener(OpenRTM_aist.ConnectorDataListenerType.ON_BUFFER_WRITE,
-                                                  DataListener("ON_BUFFER_WRITE", self))
-            self.registerInPort("text", self._inport)
-            # create outport for audio stream
-            self._outdata = RTC.TimedOctetSeq(RTC.Time(0,0), None)
-            self._outport = OpenRTM_aist.OutPort("result", self._outdata)
-            self.registerOutPort("result", self._outport)
-            # create outport for status
-            self._statusdata = RTC.TimedString(RTC.Time(0,0), "")
-            self._statusport = OpenRTM_aist.OutPort("status", self._statusdata)
-            self.registerOutPort("status", self._statusport)
-            # create outport for duration
-            self._durationdata = RTC.TimedString(RTC.Time(0,0), "")
-            self._durationport = OpenRTM_aist.OutPort("duration", self._durationdata)
-            self.registerOutPort("duration", self._durationport)
-        except:
-            print traceback.format_exc()
+        self._j = OpenJTalkWrap()
+        self._prevtime = time.time()
+        # bind configuration parameters
+        #self.bindParameter("rate", self._rate, self._rate)
+        # create inport
+        self._indata = RTC.TimedString(RTC.Time(0,0), "")
+        self._inport = OpenRTM_aist.InPort("text", self._indata)
+        self._inport.appendProperty('description', 'Text to be synthesized.')
+        self._inport.addConnectorDataListener(OpenRTM_aist.ConnectorDataListenerType.ON_BUFFER_WRITE,
+                                              DataListener("ON_BUFFER_WRITE", self))
+        self.registerInPort(self._inport._name, self._inport)
+        # create outport for audio stream
+        self._outdata = RTC.TimedOctetSeq(RTC.Time(0,0), None)
+        self._outport = OpenRTM_aist.OutPort("result", self._outdata)
+        self._outport.appendProperty('description', 'Synthesized audio data.')
+        self.registerOutPort(self._outport._name, self._outport)
+        # create outport for status
+        self._statusdata = RTC.TimedString(RTC.Time(0,0), "")
+        self._statusport = OpenRTM_aist.OutPort("status", self._statusdata)
+        self._statusport.appendProperty('description', 'Status of audio output (one of "started", "finished").')
+        self.registerOutPort(self._statusport._name, self._statusport)
+        # create outport for duration
+        self._durationdata = RTC.TimedString(RTC.Time(0,0), "")
+        self._durationport = OpenRTM_aist.OutPort("duration", self._durationdata)
+        self._durationport.appendProperty('description', 'Time aliment information of each phonemes (to be used to lip-sync).')
+        self.registerOutPort(self._durationport._name, self._durationport)
         return RTC.RTC_OK
     
     def onData(self, name, data):
-        try:
-            udata = data.data.decode("utf-8")
-            self._j.write(udata)
-        except:
-            print traceback.format_exc()
+        udata = data.data.decode("utf-8")
+        self._j.write(udata)
 
     def onExecute(self, ec_id):
-        try:
-            # send stream
-            now = time.time()
-            chunk = int(self._j._samplerate * (now - self._prevtime))
-            self._prevtime = now
-            if chunk > 0:
-                data = self._j.readdata(chunk)
-                if data is not None:
-                    self._outdata.data = data
-                    self._outport.write(self._outdata)
-                    if self._statusdata.data != "started":
-                        print "start"
-                        self._statusdata.data = "started"
-                        self._statusport.write(self._statusdata)
-                        self._durationdata.data = self._j._durationdata
-                        self._durationport.write(self._durationdata)
-                else:
-                    if self._statusdata.data != "finished":
-                        print "finished"
-                        self._statusdata.data = "finished"
-                        self._statusport.write(self._statusdata)
-        except:
-            print traceback.format_exc()
+        # send stream
+        now = time.time()
+        chunk = int(self._j._samplerate * (now - self._prevtime))
+        self._prevtime = now
+        if chunk > 0:
+            data = self._j.readdata(chunk)
+            if data is not None:
+                self._outdata.data = data
+                self._outport.write(self._outdata)
+                if self._statusdata.data != "started":
+                    print "start"
+                    self._statusdata.data = "started"
+                    self._statusport.write(self._statusdata)
+                    self._durationdata.data = self._j._durationdata
+                    self._durationport.write(self._durationdata)
+            else:
+                if self._statusdata.data != "finished":
+                    print "finished"
+                    self._statusdata.data = "finished"
+                    self._statusport.write(self._statusdata)
         return RTC.RTC_OK
 
     def onFinalize(self):

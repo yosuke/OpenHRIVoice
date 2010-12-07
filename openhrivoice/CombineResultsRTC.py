@@ -56,12 +56,21 @@ class CombineResultsRTC(OpenRTM_aist.DataFlowComponentBase):
         self._results = {}
         self._maxprob = {}
         self._listening = 0
+
+    def onInitialize(self):
         self.createInPort('status1', RTC.TimedString)
+        self._port['status1'].appendProperty('description', 'Status of recognizer 1.')
         self.createInPort('result1', RTC.TimedString)
+        self._port['result1'].appendProperty('description', 'Recognition result of recognizer 1.')
         self.createInPort('status2', RTC.TimedString)
+        self._port['status2'].appendProperty('description', 'Status of recognizer 2.')
         self.createInPort('result2', RTC.TimedString)
+        self._port['result2'].appendProperty('description', 'Recognition result of recognizer 2.')
         self.createOutPort('statusout', RTC.TimedString)
+        self._port['statusout'].appendProperty('description', 'Status of both combined.')
         self.createOutPort('resultout', RTC.TimedString)
+        self._port['resultout'].appendProperty('description', 'Recognition result of both combined.')
+        return RTC.RTC_OK
     
     def createInPort(self, name, type=RTC.TimedString):
         print "create inport: " + name
@@ -80,10 +89,7 @@ class CombineResultsRTC(OpenRTM_aist.DataFlowComponentBase):
         self.registerOutPort(name, self._port[name])
 
     def onData(self, name, data):
-        try:
-            self.processResult(name, data.data)
-        except:
-            print traceback.format_exc()
+        self.processResult(name, data.data)
 
     def onExecute(self, ec_id):
         time.sleep(1)

@@ -225,12 +225,15 @@ JuliusRTC_spec = ["implementation_id", "JuliusRTC",
                   "language",          "Python",
                   "lang_type",         "script",
                   "conf.default.language", "japanese",
+                  "conf.__descirption__.language", "Specify target language.",
                   "conf.__widget__.language", "radio",
                   "conf.__constraints__.language", "(japanese, english, german)",
                   "conf.default.phonemodel", "male",
+                  "conf.__descirption__.phonemodel", "Specify acoustic model (fixed to male)",
                   "conf.__widget__.phonemodel", "radio",
                   "conf.__constraints__.phonemodel", "(male)",
                   "conf.default.voiceactivitydetection", "internal",
+                  "conf.__descirption__.voiceactivitydetection", "Specify voice activity detection trigger (fixed to internal).",
                   "conf.__widget__.voiceactivitydetection", "radio",
                   "conf.__constraints__.voiceactivitydetection", "(internal)",
                   ""]
@@ -251,65 +254,64 @@ class JuliusRTC(OpenRTM_aist.DataFlowComponentBase):
         OpenRTM_aist.DataFlowComponentBase.__init__(self, manager)
 
     def onInitialize(self):
-        try:
-            self._lang = 'en'
-            self._srgs = None
-            self._j = None
-            # create inport for audio stream
-            self._indata = RTC.TimedOctetSeq(RTC.Time(0,0), None)
-            self._inport = OpenRTM_aist.InPort("data", self._indata)
-            self._inport.addConnectorDataListener(OpenRTM_aist.ConnectorDataListenerType.ON_BUFFER_WRITE,
-                                                  DataListener("data", self, RTC.TimedOctetSeq))
-            self.registerInPort("data", self._inport)
-            # create inport for active grammar
-            self._grammardata = RTC.TimedString(RTC.Time(0,0), "")
-            self._grammarport = OpenRTM_aist.InPort("activegrammar", self._grammardata)
-            self._grammarport.addConnectorDataListener(OpenRTM_aist.ConnectorDataListenerType.ON_BUFFER_WRITE,
-                                                       DataListener("activegrammar", self, RTC.TimedString))
-            self.registerInPort("activegrammar", self._grammarport)
-            # create outport for status
-            self._statusdata = RTC.TimedString(RTC.Time(0,0), "")
-            self._statusport = OpenRTM_aist.OutPort("status", self._statusdata)
-            self.registerOutPort("status", self._statusport)
-            # create outport for result
-            self._outdata = RTC.TimedString(RTC.Time(0,0), "")
-            self._outport = OpenRTM_aist.OutPort("result", self._outdata)
-            self.registerOutPort("result", self._outport)
-            # create outport for log
-            self._logdata = RTC.TimedOctetSeq(RTC.Time(0,0), None)
-            self._logport = OpenRTM_aist.OutPort("log", self._logdata)
-            self.registerOutPort("log", self._logport)
-        except:
-            traceback.print_exc()
+        self._lang = 'en'
+        self._srgs = None
+        self._j = None
+        # create inport for audio stream
+        self._indata = RTC.TimedOctetSeq(RTC.Time(0,0), None)
+        self._inport = OpenRTM_aist.InPort("data", self._indata)
+        self._inport.appendProperty('description', 'Audio data (in packets) to be recognized.')
+        self._inport.addConnectorDataListener(OpenRTM_aist.ConnectorDataListenerType.ON_BUFFER_WRITE,
+                                              DataListener("data", self, RTC.TimedOctetSeq))
+        self.registerInPort(self._inport._name, self._inport)
+        # create inport for active grammar
+        self._grammardata = RTC.TimedString(RTC.Time(0,0), "")
+        self._grammarport = OpenRTM_aist.InPort("activegrammar", self._grammardata)
+        self._grammarport.appendProperty('description', 'Grammar ID to be activated.')
+        self._grammarport.addConnectorDataListener(OpenRTM_aist.ConnectorDataListenerType.ON_BUFFER_WRITE,
+                                                   DataListener("activegrammar", self, RTC.TimedString))
+        self.registerInPort(self._grammarport._name, self._grammarport)
+        # create outport for status
+        self._statusdata = RTC.TimedString(RTC.Time(0,0), "")
+        self._statusport = OpenRTM_aist.OutPort("status", self._statusdata)
+        self._statusport.appendProperty('description',
+                                        'Status of the recognizer (one of "LISTEN [accepting speech]", ' +
+                                        '"STARTREC [start recognition process]", "ENDREC [end recognition process]", ' +
+                                        '"REJECTED [rejected speech input]")')
+        self.registerOutPort(self._statusport._name, self._statusport)
+        # create outport for result
+        self._outdata = RTC.TimedString(RTC.Time(0,0), "")
+        self._outport = OpenRTM_aist.OutPort("result", self._outdata)
+        self._outport.appendProperty('description', 'Recognition result in XML format.')
+        self.registerOutPort(self._outport._name, self._outport)
+        # create outport for log
+        self._logdata = RTC.TimedOctetSeq(RTC.Time(0,0), None)
+        self._logport = OpenRTM_aist.OutPort("log", self._logdata)
+        self._logport.appendProperty('description', 'Log of audio data.')
+        self.registerOutPort(self._logport._name, self._logport)
         return RTC.RTC_OK
 
     def onActivated(self, ec_id):
-        try:
-            self._lang = self._srgs._lang
-            self._j = JuliusWrap(self._lang)
-            self._j.start()
-            self._j.setcallback(self.onResult)
-            while self._j._gotinput == False:
-                time.sleep(0.1)
-            for r in self._srgs._rules.keys():
-                gram = self._srgs.toJulius(r)
-                print "register grammar: %s" % (r,)
-                print gram
-                self._j.addgrammar(gram, r)
-            self._j.switchgrammar(self._srgs._rootrule)
-        except:
-            traceback.print_exc()
+        self._lang = self._srgs._lang
+        self._j = JuliusWrap(self._lang)
+        self._j.start()
+        self._j.setcallback(self.onResult)
+        while self._j._gotinput == False:
+            time.sleep(0.1)
+        for r in self._srgs._rules.keys():
+            gram = self._srgs.toJulius(r)
+            print "register grammar: %s" % (r,)
+            print gram
+            self._j.addgrammar(gram, r)
+        self._j.switchgrammar(self._srgs._rootrule)
         return RTC.RTC_OK
 
     def onData(self, name, data):
-        try:
-            if self._j:
-                if name == "data":
-                    self._j.write(data.data)
-                elif name == "activegrammar":
-                    self._j.switchgrammar(data.data)
-        except:
-            print traceback.format_exc()
+        if self._j:
+            if name == "data":
+                self._j.write(data.data)
+            elif name == "activegrammar":
+                self._j.switchgrammar(data.data)
 
     def onExecute(self, ec_id):
         time.sleep(1)

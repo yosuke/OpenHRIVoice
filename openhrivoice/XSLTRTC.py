@@ -42,37 +42,30 @@ class DataListener(OpenRTM_aist.ConnectorDataListenerT):
 
 class XSLTRTC(OpenRTM_aist.DataFlowComponentBase):
     def __init__(self, manager):
-        try:
-            OpenRTM_aist.DataFlowComponentBase.__init__(self, manager)
-        except:
-            print traceback.format_exc()
+        OpenRTM_aist.DataFlowComponentBase.__init__(self, manager)
 
     def onInitialize(self):
-        try:
-            self._transform = None
-            # create inport
-            self._indata = RTC.TimedString(RTC.Time(0,0), "")
-            self._inport = OpenRTM_aist.InPort("text", self._indata)
-            self._inport.addConnectorDataListener(OpenRTM_aist.ConnectorDataListenerType.ON_BUFFER_WRITE,
-                                                  DataListener("ON_BUFFER_WRITE", self))
-            self.registerInPort("text", self._inport)
-            # create outport for audio stream
-            self._outdata = RTC.TimedString(RTC.Time(0,0), "")
-            self._outport = OpenRTM_aist.OutPort("result", self._outdata)
-            self.registerOutPort("result", self._outport)
-        except:
-            print traceback.format_exc()
+        self._transform = None
+        # create inport
+        self._indata = RTC.TimedString(RTC.Time(0,0), "")
+        self._inport = OpenRTM_aist.InPort("text", self._indata)
+        self._inport.appendProperty('description', 'Text data in XML format.')
+        self._inport.addConnectorDataListener(OpenRTM_aist.ConnectorDataListenerType.ON_BUFFER_WRITE,
+                                              DataListener("ON_BUFFER_WRITE", self))
+        self.registerInPort(self._inport._name, self._inport)
+        # create outport for audio stream
+        self._outdata = RTC.TimedString(RTC.Time(0,0), "")
+        self._outport = OpenRTM_aist.OutPort("result", self._outdata)
+        self._outport.appendProperty('description', 'Text data in XML format (transformed).')
+        self.registerOutPort(self._outport._name, self._outport)
         return RTC.RTC_OK
     
     def onData(self, name, data):
-        try:
-            #udata = data.data.decode("utf-8")
-            udoc = etree.parse(StringIO(data.data))
-            self._outdata.data = unicode(self._transform(udoc)).encode("utf-8")
-            self._outport.write(self._outdata)
-            print self._outdata.data.decode("utf-8")
-        except:
-            print traceback.format_exc()
+        #udata = data.data.decode("utf-8")
+        udoc = etree.parse(StringIO(data.data))
+        self._outdata.data = unicode(self._transform(udoc)).encode("utf-8")
+        self._outport.write(self._outdata)
+        print self._outdata.data.decode("utf-8")
 
     def onExecute(self, ec_id):
         time.sleep(1)
