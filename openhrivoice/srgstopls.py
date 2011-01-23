@@ -56,10 +56,16 @@ def main():
     else:
         basedir = os.path.dirname(__file__)
     if srgs._lang == "jp":
-        alphabet = "X-KANA"        
+        alphabet = "X-KANA"
+        meca = None
         if platform.system() == "Windows":
             dic = JuliusDict(os.path.join(basedir, 'dictation-kit-v4.0-win\model\lang_m\web.60k.htkdic'))
         else:
+            try:
+                import MeCab
+                meca = MeCab.Tagger('-Oyomi')
+            except:
+                pass
             dic = JuliusDict('/usr/share/julius-runkit/model/lang_m/web.60k.htkdic')
     else:
         alphabet = "X-ARPAbet"
@@ -77,7 +83,12 @@ def main():
     for w in set(srgs.wordlist()):
         print >> outfile, '  <lexeme>'
         print >> outfile, '    <grapheme>'+w+'</grapheme>'
-        for r in dic.lookup(w):
+        prons = dic.lookup(w)
+        if len(prons) == 0 and srgs._lang == "jp":
+            if meca is not None:
+                yomi = dic.katakana2hiragana(unicode(meca.parse(w.encode('euc-jp')), 'euc-jp').strip())
+                prons.append(yomi.replace(u'う',u'ー').replace(u'ーー',u'ーう'))
+        for r in prons:
             print >> outfile, '    <phoneme>{{' + alphabet + '|' + r + '}}</phoneme>'
         print >> outfile, '  </lexeme>'
     print >> outfile, '</lexicon>'
