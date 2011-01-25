@@ -49,6 +49,13 @@ setup(name='openhrivoice',
     license='EPL',
     packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
     include_package_data=True,
+    data_files=[('openhrivoice', ['openhrivoice/dummy-en.dfa',
+                                  'openhrivoice/dummy-en.dict',
+                                  'openhrivoice/dummy.dfa',
+                                  'openhrivoice/dummy.dict',
+                                  'openhrivoice/grammar.xsd',
+                                  'openhrivoice/grammar-core.xsd',
+                                  'openhrivoice/pls.xsd']),],
     zip_safe=False,
     install_requires=[
         # -*- Extra requirements: -*-
