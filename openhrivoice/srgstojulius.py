@@ -13,25 +13,35 @@ Licensed under the Eclipse Public License -v 1.0 (EPL)
 http://www.opensource.org/licenses/eclipse-1.0.txt
 '''
 
-import sys, os, re, codecs, getopt
+import sys
+import codecs
+import optparse
 from parsesrgs import *
-
-def usage():
-    print "usage: %s [grammarfile]" % (os.path.basename(sys.argv[0]),)
+from __init__ import __version__
 
 def main():
     sys.stdin = codecs.getreader('utf-8')(sys.stdin)
     sys.stdout = codecs.getwriter('utf-8')(sys.stdout)
-    opts, args = getopt.getopt(sys.argv[1:], 'r:')
-    if len(args) != 1:
-        usage()
-        sys.exit()
-    targetrule = None
-    for o, a in opts:
-        if o == "-r":
-            targetrule = a
+    
+    parser = optparse.OptionParser(version=__version__, usage="%prog [grammarfile]")
+    parser.add_option('-v', '--verbose', dest='verbose', action='store_true',
+                      default=False,
+                      help='output verbose information')
+    parser.add_option('-r', '--target-rule', dest='targetrule', action="store",
+                      type="string",
+                      help='specify target rule id')
+    try:
+        opts, args = parser.parse_args()
+    except optparse.OptionError, e:
+        print >>sys.stderr, 'OptionError:', e
+        sys.exit(1)
+
+    if len(args) == 0:
+        parser.print_help(sys.stderr)
+        sys.exit(1)
+
     srgs = SRGS(args[0])
-    print srgs.toJulius(targetrule)
+    print srgs.toJulius(opts.targetrule)
 
 if __name__ == '__main__':
     main()
