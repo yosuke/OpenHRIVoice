@@ -37,7 +37,7 @@ def main():
         sys.exit(1)
 
     if len(args) == 0:
-        parser.print_help(sys.stderr)
+        parser.error("wrong number of arguments")
         sys.exit(1)
 
     srgs = SRGS(args[0])

@@ -13,15 +13,16 @@ Licensed under the Eclipse Public License -v 1.0 (EPL)
 http://www.opensource.org/licenses/eclipse-1.0.txt
 '''
 
-import sys, os, getopt, codecs, locale
+import sys
+import os
+import codecs
+import locale
+import optparse
 from lxml import etree
 from parsesrgs import *
 
-def usage():
-    print "usage: %s [--help] [--gui] [grammarfile]" % (os.path.basename(sys.argv[0]),)
-        
 def main():
-    global guimode
+    global opts
     
     locale.setlocale(locale.LC_CTYPE, "")
     encoding = locale.getlocale()[1]
@@ -29,31 +30,34 @@ def main():
         encoding = "us-ascii"
     sys.stdout = codecs.getwriter(encoding)(sys.stdout, errors = "replace")
     sys.stderr = codecs.getwriter(encoding)(sys.stderr, errors = "replace")
-
-    try:
-        opts, args = getopt.getopt(sys.argv[1:], "hg", ["help", "gui"])
-    except getopt.GetoptError:
-        usage()
-        sys.exit()
-    guimode = False
-    for o, a in opts:
-        if o in ("-h", "--help"):
-            usage()
-            sys.exit()
-        if o in ("-g", "--gui"):
-            import Tkinter, tkFileDialog
-            root = Tkinter.Tk()
-            root.withdraw()
-            args.append(tkFileDialog.askopenfilename(title="select W3C-SRGS grammar file"))
-            guimode = True
-    if len(args) != 1:
-        usage()
-        sys.exit()
     if hasattr(sys, "frozen"):
         basedir = os.path.dirname(unicode(sys.executable, sys.getfilesystemencoding()))
     else:
         basedir = os.path.dirname(__file__)
-        
+
+    parser = optparse.OptionParser(version=__version__, usage="%prog [grammarfile]")
+    parser.add_option('-v', '--verbose', dest='verbose', action='store_true',
+                      default=False,
+                      help='output verbose information')
+    parser.add_option('-g', '--gui', dest='guimode', action="store_true",
+                      default=False,
+                      help='show file open dialog in GUI')
+    try:
+        opts, args = parser.parse_args()
+    except optparse.OptionError, e:
+        print >>sys.stderr, 'OptionError:', e
+        sys.exit(1)
+
+    if opts.guimode == True:
+        import Tkinter, tkFileDialog
+        root = Tkinter.Tk()
+        root.withdraw()
+        args.append(tkFileDialog.askopenfilename(title="select W3C-SRGS grammar file"))
+
+    if len(args) == 0:
+        parser.error("wrong number of arguments")
+        sys.exit(1)
+
     parser = etree.XMLParser(dtd_validation = True)
     xmlschema_doc = etree.parse(os.path.join(basedir, 'grammar.xsd'))
     xmlschema = etree.XMLSchema(xmlschema_doc)
@@ -97,8 +101,8 @@ def main():
     myexit()
 
 def myexit():
-    global guimode
-    if guimode == True:
+    global opts
+    if opts.guimode == True:
         raw_input("Press Enter to Exit")
     sys.exit()
 

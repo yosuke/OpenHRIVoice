@@ -13,12 +13,25 @@ Licensed under the Eclipse Public License -v 1.0 (EPL)
 http://www.opensource.org/licenses/eclipse-1.0.txt
 '''
 
-import sys, codecs
+import sys
+import codecs
+import optparse
+from __init__ import __version__
 
 def main():
     sys.stdin = codecs.getreader('utf-8')(sys.stdin)
     sys.stdout = codecs.getwriter('utf-8')(sys.stdout)
     
+    parser = optparse.OptionParser(version=__version__, usage="%prog < [julius grammar]")
+    parser.add_option('-v', '--verbose', dest='verbose', action='store_true',
+                      default=False,
+                      help='output verbose information')
+    try:
+        opts, args = parser.parse_args()
+    except optparse.OptionError, e:
+        print >>sys.stderr, 'OptionError:', e
+        sys.exit(1)
+
     fdfa = True
     fsa = list()
     dic = {}
