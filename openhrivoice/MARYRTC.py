@@ -13,10 +13,20 @@ Licensed under the Eclipse Public License -v 1.0 (EPL)
 http://www.opensource.org/licenses/eclipse-1.0.txt
 '''
 
-import os, sys, time, urllib, tempfile, traceback, codecs, locale
+import os
+import sys
+import time
+import urllib
+import tempfile
+import traceback
+import codecs
+import locale
 import wave
+import optparse
 import OpenRTM_aist
 import RTC
+from __init__ import __version__
+import utils
 
 class MARYTalkWrap:
     def __init__(self):
@@ -113,7 +123,7 @@ class MARYTalkWrap:
 MARYRTC_spec = ["implementation_id", "MARYRTC",
                 "type_name",         "MARYRTC",
                 "description",       "MARY speech synthesis component (python implementation)",
-                "version",           "1.0.0",
+                "version",           __version__,
                 "vendor",            "AIST",
                 "category",          "communication",
                 "activity_type",     "DataFlowComponent",
@@ -146,9 +156,14 @@ class DataListener(OpenRTM_aist.ConnectorDataListenerT):
 class MARYRTC(OpenRTM_aist.DataFlowComponentBase):
     def __init__(self, manager):
         OpenRTM_aist.DataFlowComponentBase.__init__(self, manager)
+        self._logger = OpenRTM_aist.Manager.instance().getLogbuf("MARYRTC")
+        self._logger.RTC_INFO("MARYRTC version " + __version__)
+        self._logger.RTC_INFO("Copyright (C) 2010-2011 Yosuke Matsusaka")
 
     def onInitialize(self):
+        OpenRTM_aist.DataFlowComponentBase.onInitialize(self)
         self._j = MARYTalkWrap()
+        self._prevtime = time.time()
         # bind configuration parameters
         self.bindParameter("character", self._character, self._j._defaultcharacter)
         # create inport
@@ -179,6 +194,7 @@ class MARYRTC(OpenRTM_aist.DataFlowComponentBase):
         self._j.write(udata)
 
     def onExecute(self, ec_id):
+        OpenRTM_aist.DataFlowComponentBase.onExecute(self, ec_id)
         # send stream
         now = time.time()
         chunk = int(self._j._samplerate * (now - self._prevtime))
@@ -190,7 +206,7 @@ class MARYRTC(OpenRTM_aist.DataFlowComponentBase):
                 self._outdata.data = data
                 self._outport.write(self._outdata)
                 if self._statusdata.data != "started":
-                    print "start"
+                    self._logger.RTC_INFO("streaming start")
                     self._statusdata.data = "started"
                     self._statusport.write(self._statusdata)
                     self._durationdata.data = self._j._durations
@@ -198,15 +214,22 @@ class MARYRTC(OpenRTM_aist.DataFlowComponentBase):
                     self._durationport.write(self._durationdata)
             else:
                 if self._statusdata.data != "finished":
-                    print "finished"
+                    self._logger.RTC_INFO("streaming finished")
                     self._statusdata.data = "finished"
                     self._statusport.write(self._statusdata)
         return RTC.RTC_OK
 
 class MARYRTCManager:
     def __init__(self):
+        parser = optparse.OptionParser(version=__version__)
+        utils.addmanageropts(parser)
+        try:
+            opts, args = parser.parse_args()
+        except optparse.OptionError, e:
+            print >>sys.stderr, 'OptionError:', e
+            sys.exit(1)
         self._comp = None
-        self._manager = OpenRTM_aist.Manager.init(sys.argv)
+        self._manager = OpenRTM_aist.Manager.init(utils.genmanagerargs(opts))
         self._manager.setModuleInitProc(self.moduleInit)
         self._manager.activateManager()
 

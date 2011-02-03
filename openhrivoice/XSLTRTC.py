@@ -13,16 +13,24 @@ Licensed under the Eclipse Public License -v 1.0 (EPL)
 http://www.opensource.org/licenses/eclipse-1.0.txt
 '''
 
-import os, sys, time, traceback, getopt, codecs, locale
+import os
+import sys
+import time
+import traceback
+import codecs
+import locale
+import optparse
 from lxml import etree
 from StringIO import StringIO
 import OpenRTM_aist
 import RTC
+from __init__ import __version__
+import utils
 
 XSLTRTC_spec = ["implementation_id", "XSLTRTC",
                 "type_name",         "XSLTRTC",
                 "description",       "XSLT component (python implementation)",
-                "version",           "1.0.0",
+                "version",           __version__,
                 "vendor",            "AIST",
                 "category",          "communication",
                 "activity_type",     "DataFlowComponent",
@@ -43,8 +51,12 @@ class DataListener(OpenRTM_aist.ConnectorDataListenerT):
 class XSLTRTC(OpenRTM_aist.DataFlowComponentBase):
     def __init__(self, manager):
         OpenRTM_aist.DataFlowComponentBase.__init__(self, manager)
+        self._logger = OpenRTM_aist.Manager.instance().getLogbuf("XSLTRTC")
+        self._logger.RTC_INFO("XSLTRTC version " + __version__)
+        self._logger.RTC_INFO("Copyright (C) 2010-2011 Yosuke Matsusaka")
 
     def onInitialize(self):
+        OpenRTM_aist.DataFlowComponentBase.onInitialize(self)
         self._transform = None
         # create inport
         self._indata = RTC.TimedString(RTC.Time(0,0), "")
@@ -61,46 +73,44 @@ class XSLTRTC(OpenRTM_aist.DataFlowComponentBase):
         return RTC.RTC_OK
     
     def onData(self, name, data):
-        #udata = data.data.decode("utf-8")
-        udoc = etree.parse(StringIO(data.data))
-        self._outdata.data = unicode(self._transform(udoc)).encode("utf-8")
-        self._outport.write(self._outdata)
-        print self._outdata.data.decode("utf-8")
+        try:
+            #udata = data.data.decode("utf-8")
+            udoc = etree.parse(StringIO(data.data))
+            self._outdata.data = unicode(self._transform(udoc)).encode("utf-8")
+            self._outport.write(self._outdata)
+            self._logger.RTC_INFO(self._outdata.data.decode("utf-8"))
+        except:
+            self._logger.RTC_ERROR(traceback.format_exc())
 
     def onExecute(self, ec_id):
-        time.sleep(1)
+        OpenRTM_aist.DataFlowComponentBase.onExecute(ec_id)
         return RTC.RTC_OK
 
 class XSLTRTCManager:
     def __init__(self):
+        parser = optparse.OptionParser(version=__version__, usage="%prog [xsltfile]")
+        utils.addmanageropts(parser)
+        parser.add_option('-g', '--gui', dest='guimode', action="store_true",
+                          default=False,
+                          help='show file open dialog in GUI')
         try:
-            opts, args = getopt.getopt(sys.argv[1:], "adlf:o:p:hg", ["help", "gui"])
-        except getopt.GetoptError:
-            usage()
-            sys.exit()
-        managerargs = [sys.argv[0]]
-        for o, a in opts:
-            if o in ("-a", "-d", "-l"):
-                managerargs.append(o)
-            if o in ("-f", "-o", "-p"):
-                managerargs.append(o, a)
-            if o in ("-h", "--help"):
-                usage()
-                sys.exit()
-            if o in ("-g", "--gui"):
-                import Tkinter, tkFileDialog
-                root = Tkinter.Tk()
-                root.withdraw()
-                sel = tkFileDialog.askopenfilenames(title="select XSLT files")
-                if isinstance(sel, unicode):
-                    sel = root.tk.splitlist(sel)
+            opts, args = parser.parse_args()
+        except optparse.OptionError, e:
+            print >>sys.stderr, 'OptionError:', e
+            sys.exit(1)
+
+        if opts.guimode == True:
+            sel = utils.askopenfilenames(title="select XSLT files")
+            if sel is not None:
                 args.extend(sel)
-        if len(args) < 1:
-            usage()
-            sys.exit()
+    
+        if len(args) == 0:
+            parser.error("wrong number of arguments")
+            sys.exit(1)
+
         self._files = args
         self._comp = {}
-        self._manager = OpenRTM_aist.Manager.init(managerargs)
+        self._manager = OpenRTM_aist.Manager.init(utils.genmanagerargs(opts))
         self._manager.setModuleInitProc(self.moduleInit)
         self._manager.activateManager()
 
@@ -114,9 +124,6 @@ class XSLTRTCManager:
             self._comp[a] = manager.createComponent("XSLTRTC?exec_cxt.periodic.rate=1")
             xslt_doc = etree.parse(a)
             self._comp[a]._transform = etree.XSLT(xslt_doc)
-
-def usage():
-    print "usage: %s [-f rtc.conf] [--help] [--gui] [xsltfile]" % (os.path.basename(sys.argv[0]),)
 
 def main():
     locale.setlocale(locale.LC_CTYPE, "")

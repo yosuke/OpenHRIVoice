@@ -21,6 +21,8 @@ from xml.dom.minidom import Document
 from parsesrgs import *
 import OpenRTM_aist
 import RTC
+from __init__ import __version__
+import utils
 
 class JuliusWrap(threading.Thread):
     CB_DOCUMENT = 1
@@ -217,7 +219,7 @@ class JuliusWrap(threading.Thread):
 JuliusRTC_spec = ["implementation_id", "JuliusRTC",
                   "type_name",         "JuliusRTC",
                   "description",       "Julius speech recognition component (python implementation)",
-                  "version",           "1.0.0",
+                  "version",           __version__,
                   "vendor",            "AIST",
                   "category",          "communication",
                   "activity_type",     "DataFlowComponent",
@@ -252,6 +254,9 @@ class DataListener(OpenRTM_aist.ConnectorDataListenerT):
 class JuliusRTC(OpenRTM_aist.DataFlowComponentBase):
     def __init__(self, manager):
         OpenRTM_aist.DataFlowComponentBase.__init__(self, manager)
+        self._logger = OpenRTM_aist.Manager.instance().getLogbuf("JuliusRTC")
+        self._logger.RTC_INFO("JuliusRTC version " + __version__)
+        self._logger.RTC_INFO("Copyright (C) 2010-2011 Yosuke Matsusaka")
 
     def onInitialize(self):
         self._lang = 'en'
@@ -300,8 +305,7 @@ class JuliusRTC(OpenRTM_aist.DataFlowComponentBase):
             time.sleep(0.1)
         for r in self._srgs._rules.keys():
             gram = self._srgs.toJulius(r)
-            print "register grammar: %s" % (r,)
-            print gram
+            self._logger.RTC_INFO("register grammar: %s" % (r,))
             self._j.addgrammar(gram, r)
         self._j.switchgrammar(self._srgs._rootrule)
         return RTC.RTC_OK
@@ -314,7 +318,6 @@ class JuliusRTC(OpenRTM_aist.DataFlowComponentBase):
                 self._j.switchgrammar(data.data)
 
     def onExecute(self, ec_id):
-        time.sleep(1)
         return RTC.RTC_OK
 
     def onDeactivate(self, ec_id):
@@ -335,11 +338,11 @@ class JuliusRTC(OpenRTM_aist.DataFlowComponentBase):
         if type == JuliusWrap.CB_DOCUMENT:
             d = data.first()
             if d.name == 'input':
-                print d['status']
+                self._logger.RTC_INFO(d['status'])
                 self._statusdata.data = str(d['status'])
                 self._statusport.write()
             elif d.name == 'rejected':
-                print 'rejected'
+                self._logger.RTC_INFO('rejected')
                 self._statusdata.data = 'rejected'
                 self._statusport.write()
             elif d.name == 'recogout':
@@ -371,7 +374,7 @@ class JuliusRTC(OpenRTM_aist.DataFlowComponentBase):
                     hypo.setAttribute("text", " ".join(text))
                     listentext.appendChild(hypo)
                 data = doc.toxml(encoding="utf-8")
-                print data.decode('utf-8', 'backslashreplace')
+                self._logger.RTC_INFO(data.decode('utf-8', 'backslashreplace'))
                 self._outdata.data = data
                 self._outport.write()
         elif type == JuliusWrap.CB_LOGWAVE:
@@ -392,34 +395,29 @@ class JuliusRTC(OpenRTM_aist.DataFlowComponentBase):
 
 class JuliusRTCManager:
     def __init__(self):
+        parser = optparse.OptionParser(version=__version__, usage="%prog [srgsfile]")
+        utils.addmanageropts(parser)
+        parser.add_option('-g', '--gui', dest='guimode', action="store_true",
+                          default=False,
+                          help='show file open dialog in GUI')
         try:
-            opts, args = getopt.getopt(sys.argv[1:], "adlf:o:p:hg", ["help", "gui"])
-        except getopt.GetoptError:
-            usage()
-            sys.exit()
-        managerargs = [sys.argv[0]]
-        for o, a in opts:
-            if o in ("-a", "-d", "-l"):
-                managerargs.append(o)
-            if o in ("-f", "-o", "-p"):
-                managerargs.append(o, a)
-            if o in ("-h", "--help"):
-                usage()
-                sys.exit()
-            if o in ("-g", "--gui"):
-                import Tkinter, tkFileDialog
-                root = Tkinter.Tk()
-                root.withdraw()
-                sel = tkFileDialog.askopenfilenames(title="select W3C-SRGS grammar files")
-                if isinstance(sel, unicode):
-                    sel = root.tk.splitlist(sel)
+            opts, args = parser.parse_args()
+        except optparse.OptionError, e:
+            print >>sys.stderr, 'OptionError:', e
+            sys.exit(1)
+
+        if opts.guimode == True:
+            sel = utils.askopenfilenames(title="select W3C-SRGS grammar files")
+            if sel is not None:
                 args.extend(sel)
-        if len(args) <= 0:
-            usage()
-            sys.exit()
+    
+        if len(args) == 0:
+            parser.error("wrong number of arguments")
+            sys.exit(1)
+
         self._grammars = args
         self._comp = {}
-        self._manager = OpenRTM_aist.Manager.init(managerargs)
+        self._manager = OpenRTM_aist.Manager.init(utils.genmanagerargs(opts))
         self._manager.setModuleInitProc(self.moduleInit)
         self._manager.activateManager()
 
@@ -435,9 +433,6 @@ class JuliusRTCManager:
             print "done"
             self._comp[a] = manager.createComponent("JuliusRTC?exec_cxt.periodic.rate=1")
             self._comp[a].setgrammar(srgs)
-
-def usage():
-    print "usage: %s [-f rtc.conf] [--help] [--gui] [grammarfile]" % (os.path.basename(sys.argv[0]),)
 
 def main():
     locale.setlocale(locale.LC_CTYPE, "")

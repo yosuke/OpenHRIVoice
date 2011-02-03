@@ -13,11 +13,23 @@ Licensed under the Eclipse Public License -v 1.0 (EPL)
 http://www.opensource.org/licenses/eclipse-1.0.txt
 '''
 
-import os, sys, time, subprocess, signal, tempfile, traceback, platform, codecs, locale
+import os
+import sys
+import time
+import subprocess
+import signal
+import tempfile
+import traceback
+import platform
+import codecs
+import locale
+import optparse
 import wave
 import socket
 import OpenRTM_aist
 import RTC
+from __init__ import __version__
+import utils
 from parseopenjtalk import parseopenjtalk
 
 class mysocket(socket.socket):
@@ -225,7 +237,7 @@ class OpenJTalkWrap2:
 OpenJTalkRTC_spec = ["implementation_id", "OpenJTalkRTC",
                      "type_name",         "OpenJTalkRTC",
                      "description",       "OpenJTalk speech synthesis component (python implementation)",
-                     "version",           "1.0.0",
+                     "version",           __version__,
                      "vendor",            "AIST",
                      "category",          "communication",
                      "activity_type",     "DataFlowComponent",
@@ -258,8 +270,12 @@ class DataListener(OpenRTM_aist.ConnectorDataListenerT):
 class OpenJTalkRTC(OpenRTM_aist.DataFlowComponentBase):
     def __init__(self, manager):
         OpenRTM_aist.DataFlowComponentBase.__init__(self, manager)
+        self._logger = OpenRTM_aist.Manager.instance().getLogbuf("OpenJTalkRTC")
+        self._logger.RTC_INFO("OpenJTalkRTC version " + __version__)
+        self._logger.RTC_INFO("Copyright (C) 2010-2011 Yosuke Matsusaka")
 
     def onInitialize(self):
+        OpenRTM_aist.DataFlowComponentBase.onInitialize(self)
         self._j = OpenJTalkWrap()
         self._prevtime = time.time()
         # bind configuration parameters
@@ -293,6 +309,7 @@ class OpenJTalkRTC(OpenRTM_aist.DataFlowComponentBase):
         self._j.write(udata)
 
     def onExecute(self, ec_id):
+        OpenRTM_aist.DataFlowComponentBase.onExecute(self, ec_id)
         # send stream
         now = time.time()
         chunk = int(self._j._samplerate * (now - self._prevtime))
@@ -303,14 +320,14 @@ class OpenJTalkRTC(OpenRTM_aist.DataFlowComponentBase):
                 self._outdata.data = data
                 self._outport.write(self._outdata)
                 if self._statusdata.data != "started":
-                    print "start"
+                    self._logger.RTC_INFO("streaming start")
                     self._statusdata.data = "started"
                     self._statusport.write(self._statusdata)
                     self._durationdata.data = self._j._durationdata
                     self._durationport.write(self._durationdata)
             else:
                 if self._statusdata.data != "finished":
-                    print "finished"
+                    self._logger.RTC_INFO("streaming finished")
                     self._statusdata.data = "finished"
                     self._statusport.write(self._statusdata)
         return RTC.RTC_OK
@@ -321,8 +338,15 @@ class OpenJTalkRTC(OpenRTM_aist.DataFlowComponentBase):
 
 class OpenJTalkRTCManager:
     def __init__(self):
+        parser = optparse.OptionParser(version=__version__)
+        utils.addmanageropts(parser)
+        try:
+            opts, args = parser.parse_args()
+        except optparse.OptionError, e:
+            print >>sys.stderr, 'OptionError:', e
+            sys.exit(1)
         self._comp = None
-        self._manager = OpenRTM_aist.Manager.init(sys.argv)
+        self._manager = OpenRTM_aist.Manager.init(utils.genmanagerargs(opts))
         self._manager.setModuleInitProc(self.moduleInit)
         self._manager.activateManager()
 

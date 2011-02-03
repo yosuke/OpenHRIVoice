@@ -21,14 +21,16 @@ import re
 import traceback
 import socket
 import threading
+import optparse
 import OpenRTM_aist
 import RTC
 from xml.dom import minidom
+from __init__ import __version__
 
 CombineResultsRTC_spec = ["implementation_id", "CombineResultsRTC",
                           "type_name",         "CombineResultsRTC",
                           "description",       "Combine Results from Speech Recognizers",
-                          "version",           "1.0.0",
+                          "version",           __version__,
                           "vendor",            "Yosuke Matsusaka, AIST",
                           "category",          "Speech",
                           "activity_type",     "DataFlowComponent",
@@ -49,6 +51,9 @@ class DataListener(OpenRTM_aist.ConnectorDataListenerT):
 class CombineResultsRTC(OpenRTM_aist.DataFlowComponentBase):
     def __init__(self, manager):
         OpenRTM_aist.DataFlowComponentBase.__init__(self, manager)
+        self._logger = OpenRTM_aist.Manager.instance().getLogbuf("CombineResultsRTC")
+        self._logger.RTC_INFO("CombineResultsRTC version " + __version__)
+        self._logger.RTC_INFO("Copyright (C) 2010-2011 Yosuke Matsusaka")
         self._data = {}
         self._port = {}
         self._statusports = ('status1', 'status2')
@@ -58,6 +63,7 @@ class CombineResultsRTC(OpenRTM_aist.DataFlowComponentBase):
         self._listening = 0
 
     def onInitialize(self):
+        OpenRTM_aist.DataFlowComponentBase.onInitialize(self)
         self.createInPort('status1', RTC.TimedString)
         self._port['status1'].appendProperty('description', 'Status of recognizer 1.')
         self.createInPort('result1', RTC.TimedString)
@@ -73,7 +79,7 @@ class CombineResultsRTC(OpenRTM_aist.DataFlowComponentBase):
         return RTC.RTC_OK
     
     def createInPort(self, name, type=RTC.TimedString):
-        print "create inport: " + name
+        self._logger.RTC_INFO("create inport: " + name)
         self._data[name] = type(RTC.Time(0,0), None)
         self._port[name] = OpenRTM_aist.InPort(name, self._data[name])
         self.registerInPort(name, self._port[name])
@@ -83,20 +89,23 @@ class CombineResultsRTC(OpenRTM_aist.DataFlowComponentBase):
         self._maxprob[name] = -float("inf")
 
     def createOutPort(self, name, type=RTC.TimedString):
-        print "create outport: " + name
+        self._logger.RTC_INFO("create outport: " + name)
         self._data[name] = type(RTC.Time(0,0), None)
         self._port[name] = OpenRTM_aist.OutPort(name, self._data[name], OpenRTM_aist.RingBuffer(8))
         self.registerOutPort(name, self._port[name])
 
     def onData(self, name, data):
-        self.processResult(name, data.data)
+        try:
+            self.processResult(name, data.data)
+        except:
+            self._logger.RTC_ERROR(traceback.format_exc())
 
     def onExecute(self, ec_id):
-        time.sleep(1)
+        OpenRTM_aist.DataFlowComponentBase.onExecute(self, ec_id)
         return RTC.RTC_OK
 
     def processResult(self, host, s):
-        #print "got input %s (%s)" % (s, host)
+        self._logger.RTC_INFO("got input %s (%s)" % (s, host))
         self._results[host] = s
         if host[:-1] == 'result':
             hearing = False
@@ -123,27 +132,33 @@ class CombineResultsRTC(OpenRTM_aist.DataFlowComponentBase):
                     r[1].setAttribute("rank", str(rank))
                     rank += 1
                 retstr = doc.toxml(encoding="utf-8")
-                print retstr
+                self._logger.RTC_INFO(retstr)
                 self._data['resultout'].data = retstr
                 self._port['resultout'].write(self._data['resultout'])
 
 class CombineResultsRTCManager:
     def __init__(self):
-        self.comp = None
-        self.manager = OpenRTM_aist.Manager.init([])
-        self.manager.setModuleInitProc(self.moduleInit)
-        self.manager.activateManager()
+        parser = optparse.OptionParser(version=__version__)
+        utils.addmanageropts(parser)
+        try:
+            opts, args = parser.parse_args()
+        except optparse.OptionError, e:
+            print >>sys.stderr, 'OptionError:', e
+            sys.exit(1)
+        self._comp = None
+        self._manager = OpenRTM_aist.Manager.init(utils.genmanagerargs(opts))
+        self._manager.setModuleInitProc(self.moduleInit)
+        self._manager.activateManager()
 
     def start(self):
-        self.manager.runManager(False)
+        self._manager.runManager(False)
 
     def moduleInit(self, manager):
         profile=OpenRTM_aist.Properties(defaults_str=CombineResultsRTC_spec)
         manager.registerFactory(profile, CombineResults, OpenRTM_aist.Delete)
-        self.comp = manager.createComponent("CombineResultsRTC?exec_cxt.periodic.rate=1")
+        self._comp = manager.createComponent("CombineResultsRTC?exec_cxt.periodic.rate=1")
 
 def main():
-    mainloop = True
     manager = CombineResultsRTCManager()
     manager.start()
 
