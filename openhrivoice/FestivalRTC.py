@@ -218,7 +218,7 @@ class FestivalRTCManager:
 
     def moduleInit(self, manager):
         profile=OpenRTM_aist.Properties(defaults_str=FestivalRTC_spec)
-        manager.registerFactory(profile, pyFestival, OpenRTM_aist.Delete)
+        manager.registerFactory(profile, FestivalRTC, OpenRTM_aist.Delete)
         self._comp = manager.createComponent("FestivalRTC")
 
 def main():

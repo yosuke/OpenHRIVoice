@@ -365,7 +365,7 @@ def main():
         encoding = "us-ascii"
     sys.stdout = codecs.getwriter(encoding)(sys.stdout, errors = "replace")
     sys.stderr = codecs.getwriter(encoding)(sys.stderr, errors = "replace")
-    manager = pyOpenJTalkRTCManager()
+    manager = OpenJTalkRTCManager()
     manager.start()
 
 if __name__=='__main__':

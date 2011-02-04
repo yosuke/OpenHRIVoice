@@ -15,6 +15,7 @@ http://www.opensource.org/licenses/eclipse-1.0.txt
 
 import sys, os, socket, subprocess, signal, threading, platform
 import time, struct, traceback, locale, codecs, getopt, wave, tempfile
+import optparse
 from glob import glob
 from BeautifulSoup import BeautifulSoup
 from xml.dom.minidom import Document
