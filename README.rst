@@ -29,7 +29,9 @@ lxml
 
 If you are using ubuntu, required libraries will be installed by entering
 following commands:
-::
+
+ ::
+
  $ sudo apt-add-repository ppa:openhri/ppa
  $ sudo apt-get update
  $ sudo apt-get install julius julius-voxforge julius-runkit festival open-jtalk python-lxml
@@ -42,24 +44,32 @@ There are several methods of installation available:
 1. Install ubuntu package (recommended):
 
  a. Register OpenHRI private package archive:
-::
-    $ sudo apt-add-repository ppa:openhri/ppa
+
+   ::
+   
+   $ sudo apt-add-repository ppa:openhri/ppa
 
  b. Install OpenHRIWeb package:
-::
-    $ sudo apt-get update
-    $ sudo apt-get install openhrivoice
+
+   ::
+   
+   $ sudo apt-get update
+   $ sudo apt-get install openhrivoice
 
 2. Clone the source from the repository and install:
 
  a. Clone from the repository:
-::
-    $ git clone git://github.com/yosuke/openhrivoice.git openhrivoice
+
+   ::
+   
+   $ git clone git://github.com/yosuke/openhrivoice.git openhrivoice
 
  b. Run setup.py:
-::
-    $ cd openhrivoice
-    $ sudo python setup.py install
+
+   ::
+   
+   $ cd openhrivoice
+   $ sudo python setup.py install
 
 Components
 ----------
@@ -79,7 +89,8 @@ MARYRTC
 XSLTRTC
   XML transformation component.
 
-CombineResultsRTC: Combine results from speech recognizers component.
+CombineResultsRTC
+  Combine results from speech recognizers component.
 
 see https://github.com/yosuke/OpenHRIVoice/tree/master/doc for description of each components.
 
@@ -107,24 +118,33 @@ juliustographviz
 Examples:
 
 - Validate format of the SRGS grammar.
-::
- $ validatesrgs sample.grxml
+
+  ::
+  
+  $ validatesrgs sample.grxml
 
 - Generate PLS lexicon from the SRGS grammar.
-::
- $ srgstopls sample.grxml > sample-lex.xml
+
+  ::
+  
+  $ srgstopls sample.grxml > sample-lex.xml
  
 - Generate single words SRGS grammar from the PLS lexicon.
-::
- $ plstosinglewordgrammar sample-lex.xml > sample.grxml
+
+  ::
+  
+  $ plstosinglewordgrammar sample-lex.xml > sample.grxml
 
 - Draw graph of the SRGS grammar.
-::
- $ srgstojulius sample.grxml | juliustographviz | dot -Txlib
+
+  ::
+  
+  $ srgstojulius sample.grxml | juliustographviz | dot -Txlib
 
 
 Changelog
 ---------
 
 openhrivoice-1.0
+
 - First version.
