@@ -7,7 +7,7 @@ Voice components for OpenRTM (part of OpenHRI softwares)
 Requirements
 ------------
 
-OpenHRIWeb requires following libraries:
+OpenHRIVoice requires following libraries:
 
 Julius and Julius-runkit
   http://julius.sourceforge.jp/
@@ -45,31 +45,31 @@ There are several methods of installation available:
 
  a. Register OpenHRI private package archive:
 
-   ::
+  ::
    
-   $ sudo apt-add-repository ppa:openhri/ppa
+  $ sudo apt-add-repository ppa:openhri/ppa
 
  b. Install OpenHRIWeb package:
 
-   ::
-   
-   $ sudo apt-get update
-   $ sudo apt-get install openhrivoice
+  ::
+  
+  $ sudo apt-get update
+  $ sudo apt-get install openhrivoice
 
 2. Clone the source from the repository and install:
 
  a. Clone from the repository:
 
-   ::
-   
-   $ git clone git://github.com/yosuke/openhrivoice.git openhrivoice
+  ::
+  
+  $ git clone git://github.com/yosuke/openhrivoice.git openhrivoice
 
  b. Run setup.py:
 
-   ::
-   
-   $ cd openhrivoice
-   $ sudo python setup.py install
+  ::
+  
+  $ cd openhrivoice
+  $ sudo python setup.py install
 
 Components
 ----------
