@@ -29,6 +29,8 @@ import RTC
 from __init__ import __version__
 import utils
 
+__doc__ = 'English speech synthesis component.'
+
 class FestivalWrap:
     def __init__(self):
         self._wf = None
@@ -201,7 +203,7 @@ class FestivalRTC(OpenRTM_aist.DataFlowComponentBase):
 
 class FestivalRTCManager:
     def __init__(self):
-        parser = optparse.OptionParser(version=__version__)
+        parser = optparse.OptionParser(version=__version__, description=__doc__)
         utils.addmanageropts(parser)
         try:
             opts, args = parser.parse_args()

@@ -18,11 +18,28 @@ import codecs
 import optparse
 from __init__ import __version__
 
+__doc__ = 'Draw graph from Julius grammar.'
+
+__examples__ = '''
+Examples:
+
+- Draw graph of the SRGS grammar.
+
+  ::
+  
+  $ srgstojulius sample.grxml | juliustographviz | dot -Txlib
+'''
+
 def main():
     sys.stdin = codecs.getreader('utf-8')(sys.stdin)
     sys.stdout = codecs.getwriter('utf-8')(sys.stdout)
     
-    parser = optparse.OptionParser(version=__version__, usage="%prog < [julius grammar]")
+    class MyParser(optparse.OptionParser):
+        def format_epilog(self, formatter):
+            return self.epilog
+
+    parser = MyParser(version=__version__, usage="%prog < [julius grammar]",
+                      description=__doc__, epilog=__examples__)
     parser.add_option('-v', '--verbose', dest='verbose', action='store_true',
                       default=False,
                       help='output verbose information')

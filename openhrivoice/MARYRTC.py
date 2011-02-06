@@ -28,6 +28,8 @@ import RTC
 from __init__ import __version__
 import utils
 
+__doc__ = 'English and German speech sysnthesis component.'
+
 class MARYTalkWrap:
     def __init__(self):
         self._durations = ""
@@ -221,7 +223,7 @@ class MARYRTC(OpenRTM_aist.DataFlowComponentBase):
 
 class MARYRTCManager:
     def __init__(self):
-        parser = optparse.OptionParser(version=__version__)
+        parser = optparse.OptionParser(version=__version__, description=__doc__)
         utils.addmanageropts(parser)
         try:
             opts, args = parser.parse_args()

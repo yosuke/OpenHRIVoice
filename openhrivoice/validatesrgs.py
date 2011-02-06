@@ -23,6 +23,18 @@ from lxml import etree
 from parsesrgs import *
 import utils
 
+__doc__ = 'Validate format of the SRGS grammar file.'
+
+__examples__ = '''
+Examples:
+
+- Validate format of the SRGS grammar.
+
+  ::
+  
+  $ validatesrgs sample.grxml
+'''
+
 def main():
     global opts
     
@@ -37,7 +49,12 @@ def main():
     else:
         basedir = os.path.dirname(__file__)
 
-    parser = optparse.OptionParser(version=__version__, usage="%prog [grammarfile]")
+    class MyParser(optparse.OptionParser):
+        def format_epilog(self, formatter):
+            return self.epilog
+
+    parser = MyParser(version=__version__, usage="%prog [grammarfile]",
+                      description=__doc__, epilog=__examples__)
     parser.add_option('-v', '--verbose', dest='verbose', action='store_true',
                       default=False,
                       help='output verbose information')

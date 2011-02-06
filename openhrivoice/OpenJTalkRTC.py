@@ -32,6 +32,8 @@ from __init__ import __version__
 import utils
 from parseopenjtalk import parseopenjtalk
 
+__doc__ = 'Japanese speech synthesis component.'
+
 class mysocket(socket.socket):
     def getline(self):
         s = ""
@@ -338,7 +340,7 @@ class OpenJTalkRTC(OpenRTM_aist.DataFlowComponentBase):
 
 class OpenJTalkRTCManager:
     def __init__(self):
-        parser = optparse.OptionParser(version=__version__)
+        parser = optparse.OptionParser(version=__version__, description=__doc__)
         utils.addmanageropts(parser)
         try:
             opts, args = parser.parse_args()

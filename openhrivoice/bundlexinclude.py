@@ -19,11 +19,14 @@ import optparse
 from __init__ import __version__
 from lxml import etree
 
+__doc__ = 'Bundle multiple xincuded XML files to one file.'
+
 def main():
     sys.stdin = codecs.getreader('utf-8')(sys.stdin)
     sys.stdout = codecs.getwriter('utf-8')(sys.stdout)
 
-    parser = optparse.OptionParser(version=__version__, usage="%prog [grammarfile]")
+    parser = optparse.OptionParser(version=__version__, usage="%prog [grammarfile]",
+                                   description=__doc__)
     parser.add_option('-v', '--verbose', dest='verbose', action='store_true',
                       default=False,
                       help='output verbose information')
@@ -31,11 +34,11 @@ def main():
         opts, args = parser.parse_args()
     except optparse.OptionError, e:
         print >>sys.stderr, 'OptionError:', e
-        sys.exit(1)
+        return 1
         
     if len(args) == 0:
         parser.error("wrong number of arguments")
-        sys.exit(1)
+        return 1
 
     doc = etree.parse(args[0])
     doc.xinclude()

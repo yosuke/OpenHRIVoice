@@ -25,7 +25,10 @@ import optparse
 import OpenRTM_aist
 import RTC
 from xml.dom import minidom
+import utils
 from __init__ import __version__
+
+__doc__ = 'Combine results from speech recognizers component.'
 
 CombineResultsRTC_spec = ["implementation_id", "CombineResultsRTC",
                           "type_name",         "CombineResultsRTC",
@@ -138,7 +141,7 @@ class CombineResultsRTC(OpenRTM_aist.DataFlowComponentBase):
 
 class CombineResultsRTCManager:
     def __init__(self):
-        parser = optparse.OptionParser(version=__version__)
+        parser = optparse.OptionParser(version=__version__, description=__doc__)
         utils.addmanageropts(parser)
         try:
             opts, args = parser.parse_args()

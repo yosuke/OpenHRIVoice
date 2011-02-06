@@ -25,6 +25,8 @@ import RTC
 from __init__ import __version__
 import utils
 
+__doc__ = 'Julius (English and Japanese) speech recognition component.'
+
 class JuliusWrap(threading.Thread):
     CB_DOCUMENT = 1
     CB_LOGWAVE = 2
@@ -396,7 +398,8 @@ class JuliusRTC(OpenRTM_aist.DataFlowComponentBase):
 
 class JuliusRTCManager:
     def __init__(self):
-        parser = optparse.OptionParser(version=__version__, usage="%prog [srgsfile]")
+        parser = optparse.OptionParser(version=__version__, usage="%prog [srgsfile]",
+                                       description=__doc__)
         utils.addmanageropts(parser)
         parser.add_option('-g', '--gui', dest='guimode', action="store_true",
                           default=False,

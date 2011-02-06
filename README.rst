@@ -27,6 +27,9 @@ MARY
 lxml
   http://codespeak.net/lxml/
 
+BeautifulSoup
+  http://www.crummy.com/software/BeautifulSoup/
+
 If you are using ubuntu, required libraries will be installed by entering
 following commands:
 
@@ -34,7 +37,7 @@ following commands:
 
  $ sudo apt-add-repository ppa:openhri/ppa
  $ sudo apt-get update
- $ sudo apt-get install julius julius-voxforge julius-runkit festival open-jtalk python-lxml
+ $ sudo apt-get install julius julius-voxforge julius-runkit festival open-jtalk python-lxml python-beautifulsoup
 
 Installation
 ------------
@@ -49,7 +52,7 @@ There are several methods of installation available:
    
   $ sudo apt-add-repository ppa:openhri/ppa
 
- b. Install OpenHRIWeb package:
+ b. Install OpenHRIVoice package:
 
   ::
   

@@ -27,6 +27,8 @@ import RTC
 from __init__ import __version__
 import utils
 
+__doc__ = 'XML transformation component.'
+
 XSLTRTC_spec = ["implementation_id", "XSLTRTC",
                 "type_name",         "XSLTRTC",
                 "description",       "XSLT component (python implementation)",
@@ -88,7 +90,8 @@ class XSLTRTC(OpenRTM_aist.DataFlowComponentBase):
 
 class XSLTRTCManager:
     def __init__(self):
-        parser = optparse.OptionParser(version=__version__, usage="%prog [xsltfile]")
+        parser = optparse.OptionParser(version=__version__, usage="%prog [xsltfile]",
+                                       description=__doc__)
         utils.addmanageropts(parser)
         parser.add_option('-g', '--gui', dest='guimode', action="store_true",
                           default=False,

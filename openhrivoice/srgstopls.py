@@ -17,7 +17,7 @@ import sys
 import os
 import re
 import platform
-import getopt
+import optparse
 import ctypes
 import codecs
 
@@ -26,30 +26,57 @@ from parsesrgs import *
 from parsevoxforgedict import *
 from parsejuliusdict import *
 
-def usage():
-    print "usage: %s [--help] [--gui] [grammarfile]" % (os.path.basename(sys.argv[0]),)
-        
+from __init__ import __version__
+import utils
+
+__doc__ = 'Generate W3C-PLS lexcon from the W3C-SRGS grammar.'
+
+__examples__ = '''
+Examples:
+
+- Generate W3C-PLS lexcon from the W3C-SRGS grammar.
+
+  ::
+  
+  $ srgstopls sample.grxml > sample-lex.xml
+'''
+
 def main():
     outfile = sys.stdout
+
+    class MyParser(optparse.OptionParser):
+        def format_epilog(self, formatter):
+            return self.epilog
+
+    parser = MyParser(version=__version__, usage="%prog [grammarfile]",
+                      description=__doc__, epilog=__examples__)
+    parser.add_option('-v', '--verbose', dest='verbose', action='store_true',
+                      default=False,
+                      help='output verbose information')
+    parser.add_option('-r', '--target-rule', dest='targetrule', action="store",
+                      type="string",
+                      help='specify target rule id')
+    parser.add_option('-g', '--gui', dest='guimode', action="store_true",
+                      default=False,
+                      help='show file open dialog in GUI')
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "hg", ["help", "gui"])
-    except getopt.GetoptError:
-        usage()
-        sys.exit()
-    for o, a in opts:
-        if o in ("-h", "--help"):
-            usage()
-            sys.exit()
-        if o in ("-g", "--gui"):
-            import Tkinter, tkFileDialog
-            root = Tkinter.Tk()
-            root.withdraw()
-            args.append(tkFileDialog.askopenfilename(title="select W3C-SRGS grammar file"))
-            outfile = tkFileDialog.asksaveasfile()
+        opts, args = parser.parse_args()
+    except optparse.OptionError, e:
+        print >>sys.stderr, 'OptionError:', e
+        sys.exit(1)
+
+    if opts.guimode == True:
+        sel = utils.askopenfilename(title="select W3C-SRGS grammar file")
+        if sel is not None:
+            args.append(sel)
+        outfile = utils.asksaveasfile()
+    
+    if len(args) == 0:
+        parser.error("wrong number of arguments")
+        sys.exit(1)
+
     outfile = codecs.getwriter('utf-8')(outfile)
-    if len(args) != 1:
-        usage()
-        sys.exit()
+
     srgs = SRGS(args[0])
     if hasattr(sys, "frozen"):
         basedir = os.path.dirname(unicode(sys.executable, sys.getfilesystemencoding()))

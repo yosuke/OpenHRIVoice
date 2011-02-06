@@ -29,3 +29,15 @@ xsltrtc ../examples/xsltrtc/sample.xsl &
 sleep 2
 rtdoc --format=rst /localhost/`hostname`.host_cxt/XSLTRTC0.rtc > xsltrtc.rst
 rtexit /localhost/`hostname`.host_cxt/XSLTRTC0.rtc
+
+bundlexinclude --help > bundlexinclude.rst
+
+juliustographviz --help > juliustographviz.rst
+
+plstosinglewordgrammar --help > plstosinglewordgrammar.rst
+
+srgstojulius --help > srgstojulius.rst
+
+srgstopls --help > srgstopls.rst
+
+validatesrgs --help > validatesrgs

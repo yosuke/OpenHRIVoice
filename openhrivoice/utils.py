@@ -54,6 +54,23 @@ def askopenfilenames(title=''):
         return sel
     return None
 
+def asksaveasfile():
+    if platform.system() == 'Windows':
+        import win32ui
+        import win32con 
+        openFlags = win32con.OFN_OVERWRITEPROMPT|win32con.OFN_EXPLORER
+        fspec = "*.*||"
+        dlg = win32ui.CreateFileDialog(0, None, None, openFlags, fspec) 
+        if dlg.DoModal() == win32con.IDOK: 
+            return dlg.GetPathName()
+    else:
+        import Tkinter
+        import tkFileDialog
+        rt = Tkinter.Tk()
+        rt.withdraw()
+        return tkFileDialog.asksaveasfile()
+    return None
+
 def addmanageropts(parser):
     parser.add_option('-a', '--manager-service', dest='managerservice', action='store_true',
                       default=False,
