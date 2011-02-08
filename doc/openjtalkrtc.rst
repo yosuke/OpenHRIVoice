@@ -24,6 +24,6 @@ Configuration parameters
    :widths: 12, 38
    
    "rate", "Sampling frequency of output audio (fixed to 16kHz)."
-   "character", "Character of voice (fixed to male)."
+   "character", "Character of the voice (fixed to male)."
    "format", "Format of output audio (fixed to 16bit)."
 

@@ -1,9 +1,14 @@
 #!/bin/sh
 
 rtexit /localhost/`hostname`.host_cxt/JuliusRTC0.rtc
-juliusrtc ../examples/juliusrtc/sample.grxml &
+LANG=C juliusrtc ../examples/juliusrtc/sample.grxml &
 sleep 2
 rtdoc --format=rst /localhost/`hostname`.host_cxt/JuliusRTC0.rtc > juliusrtc.rst
+rtexit /localhost/`hostname`.host_cxt/JuliusRTC0.rtc
+sleep 1
+LANG=ja_JP.UTF-8 juliusrtc ../examples/juliusrtc/sample.grxml &
+sleep 2
+rtdoc --format=rst /localhost/`hostname`.host_cxt/JuliusRTC0.rtc > juliusrtc-ja.rst
 rtexit /localhost/`hostname`.host_cxt/JuliusRTC0.rtc
 
 #rtexit /localhost/`hostname`.host_cxt/MARYRTC0.rtc
@@ -13,21 +18,36 @@ rtexit /localhost/`hostname`.host_cxt/JuliusRTC0.rtc
 #rtexit /localhost/`hostname`.host_cxt/MARYRTC0.rtc
 
 rtexit /localhost/`hostname`.host_cxt/FestivalRTC0.rtc
-festivalrtc &
+LANG=C festivalrtc &
 sleep 2
 rtdoc --format=rst /localhost/`hostname`.host_cxt/FestivalRTC0.rtc > festivalrtc.rst
 rtexit /localhost/`hostname`.host_cxt/FestivalRTC0.rtc
+sleep 1
+LANG=ja_JP.UTF-8 festivalrtc &
+sleep 2
+rtdoc --format=rst /localhost/`hostname`.host_cxt/FestivalRTC0.rtc > festivalrtc-ja.rst
+rtexit /localhost/`hostname`.host_cxt/FestivalRTC0.rtc
 
 rtexit /localhost/`hostname`.host_cxt/OpenJTalkRTC0.rtc
-openjtalkrtc &
+LANG=C openjtalkrtc &
 sleep 2
 rtdoc --format=rst /localhost/`hostname`.host_cxt/OpenJTalkRTC0.rtc > openjtalkrtc.rst
 rtexit /localhost/`hostname`.host_cxt/OpenJTalkRTC0.rtc
+sleep 1
+LANG=ja_JP.UTF-8 openjtalkrtc &
+sleep 2
+rtdoc --format=rst /localhost/`hostname`.host_cxt/OpenJTalkRTC0.rtc > openjtalkrtc-ja.rst
+rtexit /localhost/`hostname`.host_cxt/OpenJTalkRTC0.rtc
 
 rtexit /localhost/`hostname`.host_cxt/XSLTRTC0.rtc
-xsltrtc ../examples/xsltrtc/sample.xsl &
+LANG=C xsltrtc ../examples/xsltrtc/sample.xsl &
 sleep 2
 rtdoc --format=rst /localhost/`hostname`.host_cxt/XSLTRTC0.rtc > xsltrtc.rst
+rtexit /localhost/`hostname`.host_cxt/XSLTRTC0.rtc
+sleep 1
+LANG=ja_JP.UTF-8 xsltrtc ../examples/xsltrtc/sample.xsl &
+sleep 2
+rtdoc --format=rst /localhost/`hostname`.host_cxt/XSLTRTC0.rtc > xsltrtc-ja.rst
 rtexit /localhost/`hostname`.host_cxt/XSLTRTC0.rtc
 
 LANG=C bundlexinclude --help > bundlexinclude.rst

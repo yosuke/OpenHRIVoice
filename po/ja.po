@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-08 13:27+0900\n"
-"PO-Revision-Date: 2011-02-08 13:34+0900\n"
+"POT-Creation-Date: 2011-02-08 23:12+0900\n"
+"PO-Revision-Date: 2011-02-08 23:14+0900\n"
 "Last-Translator: Yosuke Matsusaka <yosuke.matsusaka@aist.go.jp>\n"
 "Language-Team: Japanese\n"
 "MIME-Version: 1.0\n"
@@ -16,12 +16,110 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: ../openhrivoice/bundlexinclude.py:29
+#: ../openhrivoice/FestivalRTC.py:38
+msgid "English speech synthesis component."
+msgstr "英語音声合成コンポーネント"
+
+#: ../openhrivoice/FestivalRTC.py:122
+#: ../openhrivoice/OpenJTalkRTC.py:257
+msgid "Format of output audio (fixed to 16bit)."
+msgstr "出力される音声のフォーマット（16bitに固定）"
+
+#: ../openhrivoice/FestivalRTC.py:126
+#: ../openhrivoice/OpenJTalkRTC.py:261
+msgid "Sampling frequency of output audio (fixed to 16kHz)."
+msgstr "出力される音声の周波数（16kHzに固定）"
+
+#: ../openhrivoice/FestivalRTC.py:130
+#: ../openhrivoice/OpenJTalkRTC.py:265
+msgid "Character of the voice (fixed to male)."
+msgstr "音声のキャラクタ（男性に固定）"
+
+#: ../openhrivoice/FestivalRTC.py:156
+#: ../openhrivoice/OpenJTalkRTC.py:293
+msgid "Text to be synthesized."
+msgstr "合成されるテキストデータ"
+
+#: ../openhrivoice/FestivalRTC.py:163
+#: ../openhrivoice/OpenJTalkRTC.py:300
+msgid "Synthesized audio data."
+msgstr "合成された音声データ"
+
+#: ../openhrivoice/FestivalRTC.py:168
+#: ../openhrivoice/OpenJTalkRTC.py:305
+msgid "Status of audio output (one of \"started\", \"finished\")."
+msgstr "音声合成の状態 (\"started\"か\"finished\")"
+
+#: ../openhrivoice/FestivalRTC.py:173
+#: ../openhrivoice/OpenJTalkRTC.py:310
+msgid "Time aliment information of each phonemes (to be used to lip-sync)."
+msgstr "各音韻の時間情報（リップシンクに使用）"
+
+#: ../openhrivoice/JuliusRTC.py:33
+msgid "Julius (English and Japanese) speech recognition component."
+msgstr "Juliusを用いた日本語・英語音声認識コンポーネント"
+
+#: ../openhrivoice/JuliusRTC.py:238
+msgid "Specify target language."
+msgstr "対象とする言語を指定する"
+
+#: ../openhrivoice/JuliusRTC.py:242
+msgid "Specify acoustic model (fixed to male)"
+msgstr "音響モデルを設定する（男性に固定）"
+
+#: ../openhrivoice/JuliusRTC.py:246
+msgid "Specify voice activity detection trigger (fixed to internal)."
+msgstr "音声検出トリガを設定する（外部か内部）"
+
+#: ../openhrivoice/JuliusRTC.py:276
+msgid "Audio data (in packets) to be recognized."
+msgstr "認識する音声データ（パケット形式）"
+
+#: ../openhrivoice/JuliusRTC.py:283
+msgid "Grammar ID to be activated."
+msgstr "有効化する文法ID"
+
+#: ../openhrivoice/JuliusRTC.py:291
+msgid "Status of the recognizer (one of \"LISTEN [accepting speech]\", \"STARTREC [start recognition process]\", \"ENDREC [end recognition process]\", \"REJECTED [rejected speech input]\")"
+msgstr "音声認識器の状態 (\"LISTEN [音声入力受付中]\", \"STARTREC [音声認識処理開始]\", \"ENDREC [音声認識処理終了]\", \"REJECTED [入力棄却]\")"
+
+#: ../openhrivoice/JuliusRTC.py:296
+msgid "Recognition result in XML format."
+msgstr "音声認識結果（XML形式）"
+
+#: ../openhrivoice/JuliusRTC.py:301
+msgid "Log of audio data."
+msgstr "音声データのログ"
+
+#: ../openhrivoice/JuliusRTC.py:413
+#: ../openhrivoice/XSLTRTC.py:107
+#: ../openhrivoice/srgstopls.py:65
+#: ../openhrivoice/validatesrgs.py:62
+msgid "show file open dialog in GUI"
+msgstr "ファイルを開くダイアログをGUIで表示する"
+
+#: ../openhrivoice/OpenJTalkRTC.py:40
+msgid "Japanese speech synthesis component."
+msgstr "日本語音声合成コンポーネント"
+
+#: ../openhrivoice/XSLTRTC.py:35
+msgid "XML transformation component."
+msgstr "XSLTを用いたXML変換コンポーネント"
+
+#: ../openhrivoice/XSLTRTC.py:71
+msgid "Text data in XML format."
+msgstr "XML形式のテキストデータ"
+
+#: ../openhrivoice/XSLTRTC.py:78
+msgid "Text data in XML format (transformed)."
+msgstr "XML形式のテキストデータ（変換後）"
+
+#: ../openhrivoice/bundlexinclude.py:30
 msgid "Bundle multiple xincuded XML files to one file."
 msgstr "xincludeタグで指定された複数のXMLをまとめて一つにする"
 
-#: ../openhrivoice/bundlexinclude.py:40
-#: ../openhrivoice/juliustographviz.py:49
+#: ../openhrivoice/bundlexinclude.py:41
+#: ../openhrivoice/juliustographviz.py:50
 #: ../openhrivoice/plstosinglewordgrammar.py:51
 #: ../openhrivoice/srgstojulius.py:50
 #: ../openhrivoice/srgstopls.py:59
@@ -29,11 +127,11 @@ msgstr "xincludeタグで指定された複数のXMLをまとめて一つにす�
 msgid "output verbose information"
 msgstr "デバッグ情報を出力する"
 
-#: ../openhrivoice/juliustographviz.py:28
+#: ../openhrivoice/juliustographviz.py:29
 msgid "Draw graph from Julius grammar."
 msgstr "Julius形式の文法をグラフにする"
 
-#: ../openhrivoice/juliustographviz.py:33
+#: ../openhrivoice/juliustographviz.py:34
 msgid "Draw graph of the SRGS grammar."
 msgstr "SRGS形式の文法をグラフにする"
 
@@ -63,10 +161,25 @@ msgstr "対象とするルールのIDを指定する"
 msgid "Generate W3C-PLS lexcon from the W3C-SRGS grammar."
 msgstr "W3C-SRGS形式の文法からW3C-PLS形式の発音辞書を生成する"
 
-#: ../openhrivoice/srgstopls.py:65
-#: ../openhrivoice/validatesrgs.py:62
-msgid "show file open dialog in GUI"
-msgstr "ファイルを開くダイアログをGUIで表示する"
+#: ../openhrivoice/utils.py:110
+msgid "enable manager to be controlled as corba servant"
+msgstr "マネージャをcorbaサーバンドとして起動する"
+
+#: ../openhrivoice/utils.py:113
+msgid "specify custom configuration file"
+msgstr "カスタム設定ファイルを指定する"
+
+#: ../openhrivoice/utils.py:116
+msgid "specify custom configuration parameter"
+msgstr "カスタムコンフィギュレーションパラメータを指定する"
+
+#: ../openhrivoice/utils.py:119
+msgid "specify custom corba endpoint"
+msgstr "corbaエンドポイントを指定する"
+
+#: ../openhrivoice/utils.py:122
+msgid "configure manager to be master"
+msgstr "マネージャをマスターとして起動する"
 
 #: ../openhrivoice/validatesrgs.py:31
 msgid "Validate format of the SRGS grammar file."

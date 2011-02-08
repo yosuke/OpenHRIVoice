@@ -1,0 +1,30 @@
+JuliusRTC0.rtc
+==============
+Juliusを用いた日本語・英語音声認識コンポーネント
+
+:Vendor: AIST
+:Version: 1.03
+:Category: communication
+
+Ports
+-----
+.. csv-table:: Ports
+   :header: "Name", "Type", "DataType", "Description"
+   :widths: 8, 8, 8, 26
+   
+   "data", "DataInPort", "TimedOctetSeq", "認識する音声データ（パケット形式）"
+   "activegrammar", "DataInPort", "TimedString", "有効化する文法ID"
+   "status", "DataOutPort", "TimedString", "音声認識機の状態 ('LISTEN [音声入力受付中]', 'STARTREC [音声認識処理開始]', 'ENDREC [音声認識処理終了]', 'REJECTED [入力棄却]')"
+   "result", "DataOutPort", "TimedString", "音声認識結果（XML形式）"
+   "log", "DataOutPort", "TimedOctetSeq", "音声データのログ"
+
+Configuration parameters
+------------------------
+.. csv-table:: Configration parameters
+   :header: "Name", "Description"
+   :widths: 12, 38
+   
+   "phonemodel", ""
+   "voiceactivitydetection", ""
+   "language", ""
+

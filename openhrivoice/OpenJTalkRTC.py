@@ -31,8 +31,13 @@ import RTC
 from __init__ import __version__
 import utils
 from parseopenjtalk import parseopenjtalk
+try:
+    import gettext
+    _ = gettext.translation(domain='openhrivoice', localedir=os.path.dirname(__file__)+'/../share/locale').ugettext
+except:
+    _ = lambda s: s
 
-__doc__ = 'Japanese speech synthesis component.'
+__doc__ = _('Japanese speech synthesis component.')
 
 class mysocket(socket.socket):
     def getline(self):
@@ -238,7 +243,7 @@ class OpenJTalkWrap2:
 
 OpenJTalkRTC_spec = ["implementation_id", "OpenJTalkRTC",
                      "type_name",         "OpenJTalkRTC",
-                     "description",       __doc__,
+                     "description",       __doc__.encode('UTF-8'),
                      "version",           __version__,
                      "vendor",            "AIST",
                      "category",          "communication",
@@ -249,15 +254,15 @@ OpenJTalkRTC_spec = ["implementation_id", "OpenJTalkRTC",
                      "conf.default.format", "int16",
                      "conf.__widget__.format", "radio",
                      "conf.__constraints__.format", "int16",
-                     "conf.__description__.format", "Format of output audio (fixed to 16bit).",
+                     "conf.__description__.format", _("Format of output audio (fixed to 16bit).").encode('UTF-8'),
                      "conf.default.rate", "16000",
                      "conf.__widget__.rate", "spin",
                      "conf.__constraints__.rate", "16000",
-                     "conf.__description__.rate", "Sampling frequency of output audio (fixed to 16kHz).",
+                     "conf.__description__.rate", _("Sampling frequency of output audio (fixed to 16kHz).").encode('UTF-8'),
                      "conf.default.character", "male",
                      "conf.__widget__.character", "radio",
                      "conf.__constraints__.character", "male",
-                     "conf.__description__.character", "Character of voice (fixed to male).",
+                     "conf.__description__.character", _("Character of the voice (fixed to male).").encode('UTF-8'),
                      ""]
 
 class DataListener(OpenRTM_aist.ConnectorDataListenerT):
@@ -285,24 +290,24 @@ class OpenJTalkRTC(OpenRTM_aist.DataFlowComponentBase):
         # create inport
         self._indata = RTC.TimedString(RTC.Time(0,0), "")
         self._inport = OpenRTM_aist.InPort("text", self._indata)
-        self._inport.appendProperty('description', 'Text to be synthesized.')
+        self._inport.appendProperty('description', _('Text to be synthesized.').encode('UTF-8'))
         self._inport.addConnectorDataListener(OpenRTM_aist.ConnectorDataListenerType.ON_BUFFER_WRITE,
                                               DataListener("ON_BUFFER_WRITE", self))
         self.registerInPort(self._inport._name, self._inport)
         # create outport for audio stream
         self._outdata = RTC.TimedOctetSeq(RTC.Time(0,0), None)
         self._outport = OpenRTM_aist.OutPort("result", self._outdata)
-        self._outport.appendProperty('description', 'Synthesized audio data.')
+        self._outport.appendProperty('description', _('Synthesized audio data.').encode('UTF-8'))
         self.registerOutPort(self._outport._name, self._outport)
         # create outport for status
         self._statusdata = RTC.TimedString(RTC.Time(0,0), "")
         self._statusport = OpenRTM_aist.OutPort("status", self._statusdata)
-        self._statusport.appendProperty('description', 'Status of audio output (one of "started", "finished").')
+        self._statusport.appendProperty('description', _('Status of audio output (one of "started", "finished").').encode('UTF-8'))
         self.registerOutPort(self._statusport._name, self._statusport)
         # create outport for duration
         self._durationdata = RTC.TimedString(RTC.Time(0,0), "")
         self._durationport = OpenRTM_aist.OutPort("duration", self._durationdata)
-        self._durationport.appendProperty('description', 'Time aliment information of each phonemes (to be used to lip-sync).')
+        self._durationport.appendProperty('description', _('Time aliment information of each phonemes (to be used to lip-sync).').encode('UTF-8'))
         self.registerOutPort(self._durationport._name, self._durationport)
         return RTC.RTC_OK
     
@@ -340,7 +345,11 @@ class OpenJTalkRTC(OpenRTM_aist.DataFlowComponentBase):
 
 class OpenJTalkRTCManager:
     def __init__(self):
-        parser = optparse.OptionParser(version=__version__, description=__doc__)
+        encoding = locale.getpreferredencoding()
+        sys.stdout = codecs.getwriter(encoding)(sys.stdout, errors = "replace")
+        sys.stderr = codecs.getwriter(encoding)(sys.stderr, errors = "replace")
+
+        parser = utils.MyParser(version=__version__, description=__doc__)
         utils.addmanageropts(parser)
         try:
             opts, args = parser.parse_args()
@@ -361,12 +370,6 @@ class OpenJTalkRTCManager:
         self._comp = manager.createComponent("OpenJTalkRTC")
 
 def main():
-    locale.setlocale(locale.LC_CTYPE, "")
-    encoding = locale.getlocale()[1]
-    if not encoding:
-        encoding = "us-ascii"
-    sys.stdout = codecs.getwriter(encoding)(sys.stdout, errors = "replace")
-    sys.stderr = codecs.getwriter(encoding)(sys.stderr, errors = "replace")
     manager = OpenJTalkRTCManager()
     manager.start()
 

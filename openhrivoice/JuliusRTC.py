@@ -24,8 +24,13 @@ import OpenRTM_aist
 import RTC
 from __init__ import __version__
 import utils
+try:
+    import gettext
+    _ = gettext.translation(domain='openhrivoice', localedir=os.path.dirname(__file__)+'/../share/locale').ugettext
+except:
+    _ = lambda s: s
 
-__doc__ = 'Julius (English and Japanese) speech recognition component.'
+__doc__ = _('Julius (English and Japanese) speech recognition component.')
 
 class JuliusWrap(threading.Thread):
     CB_DOCUMENT = 1
@@ -221,7 +226,7 @@ class JuliusWrap(threading.Thread):
 
 JuliusRTC_spec = ["implementation_id", "JuliusRTC",
                   "type_name",         "JuliusRTC",
-                  "description",       __doc__,
+                  "description",       __doc__.encode('UTF-8'),
                   "version",           __version__,
                   "vendor",            "AIST",
                   "category",          "communication",
@@ -230,15 +235,15 @@ JuliusRTC_spec = ["implementation_id", "JuliusRTC",
                   "language",          "Python",
                   "lang_type",         "script",
                   "conf.default.language", "japanese",
-                  "conf.__descirption__.language", "Specify target language.",
+                  "conf.__descirption__.language", _("Specify target language.").encode('UTF-8'),
                   "conf.__widget__.language", "radio",
                   "conf.__constraints__.language", "(japanese, english, german)",
                   "conf.default.phonemodel", "male",
-                  "conf.__descirption__.phonemodel", "Specify acoustic model (fixed to male)",
+                  "conf.__descirption__.phonemodel", _("Specify acoustic model (fixed to male)").encode('UTF-8'),
                   "conf.__widget__.phonemodel", "radio",
                   "conf.__constraints__.phonemodel", "(male)",
                   "conf.default.voiceactivitydetection", "internal",
-                  "conf.__descirption__.voiceactivitydetection", "Specify voice activity detection trigger (fixed to internal).",
+                  "conf.__descirption__.voiceactivitydetection", _("Specify voice activity detection trigger (fixed to internal).").encode('UTF-8'),
                   "conf.__widget__.voiceactivitydetection", "radio",
                   "conf.__constraints__.voiceactivitydetection", "(internal)",
                   ""]
@@ -268,14 +273,14 @@ class JuliusRTC(OpenRTM_aist.DataFlowComponentBase):
         # create inport for audio stream
         self._indata = RTC.TimedOctetSeq(RTC.Time(0,0), None)
         self._inport = OpenRTM_aist.InPort("data", self._indata)
-        self._inport.appendProperty('description', 'Audio data (in packets) to be recognized.')
+        self._inport.appendProperty('description', _('Audio data (in packets) to be recognized.').encode('UTF-8'))
         self._inport.addConnectorDataListener(OpenRTM_aist.ConnectorDataListenerType.ON_BUFFER_WRITE,
                                               DataListener("data", self, RTC.TimedOctetSeq))
         self.registerInPort(self._inport._name, self._inport)
         # create inport for active grammar
         self._grammardata = RTC.TimedString(RTC.Time(0,0), "")
         self._grammarport = OpenRTM_aist.InPort("activegrammar", self._grammardata)
-        self._grammarport.appendProperty('description', 'Grammar ID to be activated.')
+        self._grammarport.appendProperty('description', _('Grammar ID to be activated.').encode('UTF-8'))
         self._grammarport.addConnectorDataListener(OpenRTM_aist.ConnectorDataListenerType.ON_BUFFER_WRITE,
                                                    DataListener("activegrammar", self, RTC.TimedString))
         self.registerInPort(self._grammarport._name, self._grammarport)
@@ -283,19 +288,17 @@ class JuliusRTC(OpenRTM_aist.DataFlowComponentBase):
         self._statusdata = RTC.TimedString(RTC.Time(0,0), "")
         self._statusport = OpenRTM_aist.OutPort("status", self._statusdata)
         self._statusport.appendProperty('description',
-                                        'Status of the recognizer (one of "LISTEN [accepting speech]", ' +
-                                        '"STARTREC [start recognition process]", "ENDREC [end recognition process]", ' +
-                                        '"REJECTED [rejected speech input]")')
+                                        _('Status of the recognizer (one of "LISTEN [accepting speech]", "STARTREC [start recognition process]", "ENDREC [end recognition process]", "REJECTED [rejected speech input]")').encode('UTF-8'))
         self.registerOutPort(self._statusport._name, self._statusport)
         # create outport for result
         self._outdata = RTC.TimedString(RTC.Time(0,0), "")
         self._outport = OpenRTM_aist.OutPort("result", self._outdata)
-        self._outport.appendProperty('description', 'Recognition result in XML format.')
+        self._outport.appendProperty('description', _('Recognition result in XML format.').encode('UTF-8'))
         self.registerOutPort(self._outport._name, self._outport)
         # create outport for log
         self._logdata = RTC.TimedOctetSeq(RTC.Time(0,0), None)
         self._logport = OpenRTM_aist.OutPort("log", self._logdata)
-        self._logport.appendProperty('description', 'Log of audio data.')
+        self._logport.appendProperty('description', _('Log of audio data.').encode('UTF-8'))
         self.registerOutPort(self._logport._name, self._logport)
         return RTC.RTC_OK
 
@@ -398,12 +401,16 @@ class JuliusRTC(OpenRTM_aist.DataFlowComponentBase):
 
 class JuliusRTCManager:
     def __init__(self):
-        parser = optparse.OptionParser(version=__version__, usage="%prog [srgsfile]",
-                                       description=__doc__)
+        encoding = locale.getpreferredencoding()
+        sys.stdout = codecs.getwriter(encoding)(sys.stdout, errors = "replace")
+        sys.stderr = codecs.getwriter(encoding)(sys.stderr, errors = "replace")
+
+        parser = utils.MyParser(version=__version__, usage="%prog [srgsfile]",
+                                description=__doc__)
         utils.addmanageropts(parser)
         parser.add_option('-g', '--gui', dest='guimode', action="store_true",
                           default=False,
-                          help='show file open dialog in GUI')
+                          help=_('show file open dialog in GUI'))
         try:
             opts, args = parser.parse_args()
         except optparse.OptionError, e:
@@ -439,12 +446,6 @@ class JuliusRTCManager:
             self._comp[a].setgrammar(srgs)
 
 def main():
-    locale.setlocale(locale.LC_CTYPE, "")
-    encoding = locale.getlocale()[1]
-    if not encoding:
-        encoding = "us-ascii"
-    sys.stdout = codecs.getwriter(encoding)(sys.stdout, errors = "replace")
-    sys.stderr = codecs.getwriter(encoding)(sys.stderr, errors = "replace")
     manager = JuliusRTCManager()
     manager.start()
 
