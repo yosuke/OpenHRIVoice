@@ -1,15 +1,15 @@
 Usage: juliustographviz < [julius grammar]
 
-Draw graph from Julius grammar.
+Julius形式の文法をグラフにする
 
 Options:
   --version      show program's version number and exit
   -h, --help     show this help message and exit
-  -v, --verbose  output verbose information
+  -v, --verbose  デバッグ情報を出力する
 
 Examples:
 
-- Draw graph of the SRGS grammar.
+- SRGS形式の文法をグラフにする
 
   ::
   

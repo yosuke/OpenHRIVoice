@@ -221,7 +221,7 @@ class JuliusWrap(threading.Thread):
 
 JuliusRTC_spec = ["implementation_id", "JuliusRTC",
                   "type_name",         "JuliusRTC",
-                  "description",       "Julius speech recognition component (python implementation)",
+                  "description",       __doc__,
                   "version",           __version__,
                   "vendor",            "AIST",
                   "category",          "communication",

@@ -18,13 +18,20 @@ import codecs
 import optparse
 from parsesrgs import *
 from __init__ import __version__
+import locale
+import utils
+try:
+    import gettext
+    _ = gettext.translation(domain='openhrivoice', localedir=os.path.dirname(__file__)+'/../share/locale').ugettext
+except:
+    _ = lambda s: s
 
-__doc__ = 'Generate Julius grammar from the W3C-SRGS grammar.'
+__doc__ = _('Generate Julius grammar from the W3C-SRGS grammar.')
 
 __examples__ = '''
 Examples:
 
-- Generate Julius grammar fron the W3C-SRGS grammar.
+- '''+_('Generate Julius grammar fron the W3C-SRGS grammar.')+'''
 
   ::
   
@@ -32,21 +39,18 @@ Examples:
 '''
 
 def main():
-    sys.stdin = codecs.getreader('utf-8')(sys.stdin)
-    sys.stdout = codecs.getwriter('utf-8')(sys.stdout)
+    encoding = locale.getpreferredencoding()
+    sys.stdout = codecs.getwriter(encoding)(sys.stdout, errors = "replace")
+    sys.stderr = codecs.getwriter(encoding)(sys.stderr, errors = "replace")
     
-    class MyParser(optparse.OptionParser):
-        def format_epilog(self, formatter):
-            return self.epilog
-
-    parser = MyParser(version=__version__, usage="%prog [grammarfile]",
-                      description=__doc__, epilog=__examples__)
+    parser = utils.MyParser(version=__version__, usage="%prog [grammarfile]",
+                            description=__doc__, epilog=__examples__)
     parser.add_option('-v', '--verbose', dest='verbose', action='store_true',
                       default=False,
-                      help='output verbose information')
+                      help=_('output verbose information'))
     parser.add_option('-r', '--target-rule', dest='targetrule', action="store",
                       type="string",
-                      help='specify target rule id')
+                      help=_('specify target rule id'))
     try:
         opts, args = parser.parse_args()
     except optparse.OptionError, e:
@@ -58,6 +62,8 @@ def main():
         sys.exit(1)
 
     srgs = SRGS(args[0])
+
+    sys.stdout = codecs.getwriter('utf-8')(sys.stdout)
     print srgs.toJulius(opts.targetrule)
 
 if __name__ == '__main__':

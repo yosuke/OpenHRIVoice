@@ -14,16 +14,24 @@ http://www.opensource.org/licenses/eclipse-1.0.txt
 '''
 
 import sys
+import os
 import codecs
 import optparse
 from __init__ import __version__
+import locale
+import utils
+try:
+    import gettext
+    _ = gettext.translation(domain='openhrivoice', localedir=os.path.dirname(__file__)+'/../share/locale').ugettext
+except:
+    _ = lambda s: s
 
-__doc__ = 'Draw graph from Julius grammar.'
+__doc__ = _('Draw graph from Julius grammar.')
 
 __examples__ = '''
 Examples:
 
-- Draw graph of the SRGS grammar.
+- '''+_('Draw graph of the SRGS grammar.')+'''
 
   ::
   
@@ -31,24 +39,24 @@ Examples:
 '''
 
 def main():
-    sys.stdin = codecs.getreader('utf-8')(sys.stdin)
-    sys.stdout = codecs.getwriter('utf-8')(sys.stdout)
-    
-    class MyParser(optparse.OptionParser):
-        def format_epilog(self, formatter):
-            return self.epilog
+    encoding = locale.getpreferredencoding()
+    sys.stdout = codecs.getwriter(encoding)(sys.stdout, errors = "replace")
+    sys.stderr = codecs.getwriter(encoding)(sys.stderr, errors = "replace")
 
-    parser = MyParser(version=__version__, usage="%prog < [julius grammar]",
-                      description=__doc__, epilog=__examples__)
+    parser = utils.MyParser(version=__version__, usage="%prog < [julius grammar]",
+                            description=__doc__, epilog=__examples__)
     parser.add_option('-v', '--verbose', dest='verbose', action='store_true',
                       default=False,
-                      help='output verbose information')
+                      help=_('output verbose information'))
     try:
         opts, args = parser.parse_args()
     except optparse.OptionError, e:
         print >>sys.stderr, 'OptionError:', e
         sys.exit(1)
 
+    sys.stdin = codecs.getreader('utf-8')(sys.stdin)
+    sys.stdout = codecs.getwriter('utf-8')(sys.stdout)
+    
     fdfa = True
     fsa = list()
     dic = {}

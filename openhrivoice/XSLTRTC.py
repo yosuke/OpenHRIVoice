@@ -31,7 +31,7 @@ __doc__ = 'XML transformation component.'
 
 XSLTRTC_spec = ["implementation_id", "XSLTRTC",
                 "type_name",         "XSLTRTC",
-                "description",       "XSLT component (python implementation)",
+                "description",       __doc__,
                 "version",           __version__,
                 "vendor",            "AIST",
                 "category",          "communication",

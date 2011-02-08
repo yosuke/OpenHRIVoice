@@ -1,6 +1,6 @@
 OpenJTalkRTC0.rtc
 =================
-OpenJTalk speech synthesis component (python implementation)
+Japanese speech synthesis component.
 
 :Vendor: AIST
 :Version: 1.03

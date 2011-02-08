@@ -16,6 +16,39 @@ http://www.opensource.org/licenses/eclipse-1.0.txt
 import sys
 import os
 import platform
+import optparse
+try:
+    import gettext
+    _ = gettext.translation(domain='openhrivoice', localedir=os.path.dirname(__file__)+'/../share/locale').ugettext
+except:
+    _ = lambda s: s
+
+class MyParser(optparse.OptionParser):
+    def format_epilog(self, formatter):
+        if self.epilog is not None:
+            return self.epilog
+        else:
+            return ''
+
+    def exit(self, status=0, msg=None):
+        if msg is not None:
+            sys.stderr.write(msg)
+        sys.exit(status)
+
+    def print_usage(self, file=None):
+        if file == None :
+            file = sys.stdout
+        file.write(self.get_usage() + '\n')
+
+    def print_help(self, file=None):
+        if file == None :
+            file = sys.stdout
+        file.write(self.format_help() + '\n')
+
+    def print_version(self, file=None):
+        if file == None :
+            file = sys.stdout
+        file.write(self.get_version() + '\n')
 
 def askopenfilename(title=''):
     if platform.system() == 'Windows':

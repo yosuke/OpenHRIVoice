@@ -238,7 +238,7 @@ class OpenJTalkWrap2:
 
 OpenJTalkRTC_spec = ["implementation_id", "OpenJTalkRTC",
                      "type_name",         "OpenJTalkRTC",
-                     "description",       "OpenJTalk speech synthesis component (python implementation)",
+                     "description",       __doc__,
                      "version",           __version__,
                      "vendor",            "AIST",
                      "category",          "communication",

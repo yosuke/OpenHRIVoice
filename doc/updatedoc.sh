@@ -30,14 +30,20 @@ sleep 2
 rtdoc --format=rst /localhost/`hostname`.host_cxt/XSLTRTC0.rtc > xsltrtc.rst
 rtexit /localhost/`hostname`.host_cxt/XSLTRTC0.rtc
 
-bundlexinclude --help > bundlexinclude.rst
+LANG=C bundlexinclude --help > bundlexinclude.rst
+LANG=ja_JP.UTF-8 bundlexinclude --help > bundlexinclude-ja.rst
 
-juliustographviz --help > juliustographviz.rst
+LANG=C juliustographviz --help > juliustographviz.rst
+LANG=ja_JP.UTF-8 juliustographviz --help > juliustographviz-ja.rst
 
-plstosinglewordgrammar --help > plstosinglewordgrammar.rst
+LANG=C plstosinglewordgrammar --help > plstosinglewordgrammar.rst
+LANG=ja_JP.UTF-8 plstosinglewordgrammar --help > plstosinglewordgrammar-ja.rst
 
-srgstojulius --help > srgstojulius.rst
+LANG=C srgstojulius --help > srgstojulius.rst
+LANG=ja_JP.UTF-8 srgstojulius --help > srgstojulius-ja.rst
 
-srgstopls --help > srgstopls.rst
+LANG=C srgstopls --help > srgstopls.rst
+LANG=ja_JP.UTF-8 srgstopls --help > srgstopls-ja.rst
 
-validatesrgs --help > validatesrgs
+LANG=C validatesrgs --help > validatesrgs.rst
+LANG=ja_JP.UTF-8 validatesrgs --help > validatesrgs-ja.rst

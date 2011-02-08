@@ -22,13 +22,18 @@ from __init__ import __version__
 from lxml import etree
 from parsesrgs import *
 import utils
+try:
+    import gettext
+    _ = gettext.translation(domain='openhrivoice', localedir=os.path.dirname(__file__)+'/../share/locale').ugettext
+except:
+    _ = lambda s: s
 
-__doc__ = 'Validate format of the SRGS grammar file.'
+__doc__ = _('Validate format of the SRGS grammar file.')
 
 __examples__ = '''
 Examples:
 
-- Validate format of the SRGS grammar.
+- '''+_('Validate format of the SRGS grammar.')+'''
 
   ::
   
@@ -38,29 +43,23 @@ Examples:
 def main():
     global opts
     
-    locale.setlocale(locale.LC_CTYPE, "")
-    encoding = locale.getlocale()[1]
-    if not encoding:
-        encoding = "us-ascii"
+    encoding = locale.getpreferredencoding()
     sys.stdout = codecs.getwriter(encoding)(sys.stdout, errors = "replace")
     sys.stderr = codecs.getwriter(encoding)(sys.stderr, errors = "replace")
+
     if hasattr(sys, "frozen"):
         basedir = os.path.dirname(unicode(sys.executable, sys.getfilesystemencoding()))
     else:
         basedir = os.path.dirname(__file__)
 
-    class MyParser(optparse.OptionParser):
-        def format_epilog(self, formatter):
-            return self.epilog
-
-    parser = MyParser(version=__version__, usage="%prog [grammarfile]",
-                      description=__doc__, epilog=__examples__)
+    parser = utils.MyParser(version=__version__, usage="%prog [grammarfile]",
+                            description=__doc__, epilog=__examples__)
     parser.add_option('-v', '--verbose', dest='verbose', action='store_true',
                       default=False,
-                      help='output verbose information')
+                      help=_('output verbose information'))
     parser.add_option('-g', '--gui', dest='guimode', action="store_true",
                       default=False,
-                      help='show file open dialog in GUI')
+                      help=_('show file open dialog in GUI'))
     try:
         opts, args = parser.parse_args()
     except optparse.OptionError, e:

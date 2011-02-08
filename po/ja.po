@@ -1,0 +1,78 @@
+# Japanese translations for PACKAGE package.
+# Copyright (C) 2011 THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# Yosuke Matsusaka <yosuke.matsusaka@aist.go.jp>, 2011.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-02-08 13:27+0900\n"
+"PO-Revision-Date: 2011-02-08 13:34+0900\n"
+"Last-Translator: Yosuke Matsusaka <yosuke.matsusaka@aist.go.jp>\n"
+"Language-Team: Japanese\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#: ../openhrivoice/bundlexinclude.py:29
+msgid "Bundle multiple xincuded XML files to one file."
+msgstr "xincludeタグで指定された複数のXMLをまとめて一つにする"
+
+#: ../openhrivoice/bundlexinclude.py:40
+#: ../openhrivoice/juliustographviz.py:49
+#: ../openhrivoice/plstosinglewordgrammar.py:51
+#: ../openhrivoice/srgstojulius.py:50
+#: ../openhrivoice/srgstopls.py:59
+#: ../openhrivoice/validatesrgs.py:59
+msgid "output verbose information"
+msgstr "デバッグ情報を出力する"
+
+#: ../openhrivoice/juliustographviz.py:28
+msgid "Draw graph from Julius grammar."
+msgstr "Julius形式の文法をグラフにする"
+
+#: ../openhrivoice/juliustographviz.py:33
+msgid "Draw graph of the SRGS grammar."
+msgstr "SRGS形式の文法をグラフにする"
+
+#: ../openhrivoice/plstosinglewordgrammar.py:30
+msgid "Generate W3C-SRGS grammar from the W3C-PLS pronounciation dictionary."
+msgstr "W3C-PLS形式の発音辞書からW3C-SRGS形式の文法を生成する"
+
+#: ../openhrivoice/plstosinglewordgrammar.py:35
+msgid "Generate single words SRGS grammar from the PLS lexicon."
+msgstr "PLS形式の発話辞書からSRGS形式の文法を生成する"
+
+#: ../openhrivoice/srgstojulius.py:29
+msgid "Generate Julius grammar from the W3C-SRGS grammar."
+msgstr "W3C-SRGS形式の文法からJulius形式の文法を生成する"
+
+#: ../openhrivoice/srgstojulius.py:34
+msgid "Generate Julius grammar fron the W3C-SRGS grammar."
+msgstr "W3C-SRGS形式の文法からJulius形式の文法を生成する"
+
+#: ../openhrivoice/srgstojulius.py:53
+#: ../openhrivoice/srgstopls.py:62
+msgid "specify target rule id"
+msgstr "対象とするルールのIDを指定する"
+
+#: ../openhrivoice/srgstopls.py:36
+#: ../openhrivoice/srgstopls.py:41
+msgid "Generate W3C-PLS lexcon from the W3C-SRGS grammar."
+msgstr "W3C-SRGS形式の文法からW3C-PLS形式の発音辞書を生成する"
+
+#: ../openhrivoice/srgstopls.py:65
+#: ../openhrivoice/validatesrgs.py:62
+msgid "show file open dialog in GUI"
+msgstr "ファイルを開くダイアログをGUIで表示する"
+
+#: ../openhrivoice/validatesrgs.py:31
+msgid "Validate format of the SRGS grammar file."
+msgstr "SRGS文法ファイルの文法間違いをチェックする"
+
+#: ../openhrivoice/validatesrgs.py:36
+msgid "Validate format of the SRGS grammar."
+msgstr "SRGS文法ファイルの文法間違いをチェックする"
+

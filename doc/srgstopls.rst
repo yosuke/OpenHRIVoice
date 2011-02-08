@@ -17,3 +17,4 @@ Examples:
   ::
   
   $ srgstopls sample.grxml > sample-lex.xml
+

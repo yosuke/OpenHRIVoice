@@ -1,6 +1,6 @@
 XSLTRTC0.rtc
 ============
-XSLT component (python implementation)
+XML transformation component.
 
 :Vendor: AIST
 :Version: 1.03

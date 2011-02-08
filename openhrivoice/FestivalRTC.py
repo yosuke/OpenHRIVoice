@@ -102,7 +102,7 @@ class FestivalWrap:
 
 FestivalRTC_spec = ["implementation_id", "FestivalRTC",
                     "type_name",         "FestivalRTC",
-                    "description",       "Festival speech synthesis component (python implementation)",
+                    "description",       __doc__,
                     "version",           __version__,
                     "vendor",            "AIST",
                     "category",          "communication",

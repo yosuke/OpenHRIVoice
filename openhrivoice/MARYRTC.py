@@ -124,7 +124,7 @@ class MARYTalkWrap:
     
 MARYRTC_spec = ["implementation_id", "MARYRTC",
                 "type_name",         "MARYRTC",
-                "description",       "MARY speech synthesis component (python implementation)",
+                "description",       __doc__,
                 "version",           __version__,
                 "vendor",            "AIST",
                 "category",          "communication",

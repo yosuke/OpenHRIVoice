@@ -20,21 +20,25 @@ import platform
 import optparse
 import ctypes
 import codecs
-
+import locale
 from parsesrgs import *
 #from parsecmudict import *
 from parsevoxforgedict import *
 from parsejuliusdict import *
-
 from __init__ import __version__
 import utils
+try:
+    import gettext
+    _ = gettext.translation(domain='openhrivoice', localedir=os.path.dirname(__file__)+'/../share/locale').ugettext
+except:
+    _ = lambda s: s
 
-__doc__ = 'Generate W3C-PLS lexcon from the W3C-SRGS grammar.'
+__doc__ = _('Generate W3C-PLS lexcon from the W3C-SRGS grammar.')
 
 __examples__ = '''
 Examples:
 
-- Generate W3C-PLS lexcon from the W3C-SRGS grammar.
+- '''+_('Generate W3C-PLS lexcon from the W3C-SRGS grammar.')+'''
 
   ::
   
@@ -42,23 +46,23 @@ Examples:
 '''
 
 def main():
+    encoding = locale.getpreferredencoding()
+    sys.stdout = codecs.getwriter(encoding)(sys.stdout, errors = "replace")
+    sys.stderr = codecs.getwriter(encoding)(sys.stderr, errors = "replace")
+
     outfile = sys.stdout
 
-    class MyParser(optparse.OptionParser):
-        def format_epilog(self, formatter):
-            return self.epilog
-
-    parser = MyParser(version=__version__, usage="%prog [grammarfile]",
-                      description=__doc__, epilog=__examples__)
+    parser = utils.MyParser(version=__version__, usage="%prog [grammarfile]",
+                            description=__doc__, epilog=__examples__)
     parser.add_option('-v', '--verbose', dest='verbose', action='store_true',
                       default=False,
-                      help='output verbose information')
+                      help=_('output verbose information'))
     parser.add_option('-r', '--target-rule', dest='targetrule', action="store",
                       type="string",
-                      help='specify target rule id')
+                      help=_('specify target rule id'))
     parser.add_option('-g', '--gui', dest='guimode', action="store_true",
                       default=False,
-                      help='show file open dialog in GUI')
+                      help=_('show file open dialog in GUI'))
     try:
         opts, args = parser.parse_args()
     except optparse.OptionError, e:

@@ -1,9 +1,17 @@
 #!/usr/bin/env python
 
 from setuptools import setup, find_packages
+from setuptools.command.build_ext import build_ext
 import sys, os
+from seatsat.__init__ import __version__
 
-version = '1.04'
+cmd_classes = {}
+try:
+    from DistUtilsExtra.command import *
+    cmd_classes.update({"build": build_extra.build_extra,
+                        "build_i18n" :  build_i18n.build_i18n})
+except ImportError:
+    pass
 
 try:
     import py2exe
@@ -38,36 +46,37 @@ else:
     extra = {}
 
 setup(name='openhrivoice',
-    version=version,
-    description="Voice components for OpenRTM (part of OpenHRI softwares)",
-    long_description="""Voice components for OpenRTM (part of OpenHRI softwares).""",
-    classifiers=[],
-    keywords='',
-    author='Yosuke Matsusaka',
-    author_email='yosuke.matsusaka@aist.go.jp',
-    url='http://openhri.net/',
-    license='EPL',
-    packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
-    include_package_data=True,
-    package_data={'openhrivoice': ['*.dfa', '*.dict', '*.xsd']},
-    zip_safe=False,
-    install_requires=[
+      cmdclass=cmd_classes,
+      version=__version__,
+      description="Voice components for OpenRTM (part of OpenHRI softwares)",
+      long_description="""Voice components for OpenRTM (part of OpenHRI softwares).""",
+      classifiers=[],
+      keywords='',
+      author='Yosuke Matsusaka',
+      author_email='yosuke.matsusaka@aist.go.jp',
+      url='http://openhri.net/',
+      license='EPL',
+      packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
+      include_package_data=True,
+      package_data={'openhrivoice': ['*.dfa', '*.dict', '*.xsd']},
+      zip_safe=False,
+      install_requires=[
         # -*- Extra requirements: -*-
         ],
-    entry_points="""
-    [console_scripts]
-    openjtalkrtc = openhrivoice.OpenJTalkRTC:main
-    juliusrtc = openhrivoice.JuliusRTC:main
-    srgstopls = openhrivoice.srgstopls:main
-    srgstojulius = openhrivoice.srgstojulius:main
-    validatesrgs = openhrivoice.validatesrgs:main
-    bundlexinclude = openhrivoice.bundlexinclude:main
-    plstosinglewordgrammar = openhrivoice.plstosinglewordgrammar:main
-    juliustographviz = openhrivoice.juliustographviz:main
-    maryrtc = openhrivoice.MARYRTC:main
-    festivalrtc = openhrivoice.FestivalRTC:main
-    combineresultsrtc = openhrivoice.CombineResultsRTC:main
-    xsltrtc = openhrivoice.XSLTRTC:main
-    """,
-    **extra
-    )
+      entry_points="""
+      [console_scripts]
+      openjtalkrtc = openhrivoice.OpenJTalkRTC:main
+      juliusrtc = openhrivoice.JuliusRTC:main
+      srgstopls = openhrivoice.srgstopls:main
+      srgstojulius = openhrivoice.srgstojulius:main
+      validatesrgs = openhrivoice.validatesrgs:main
+      bundlexinclude = openhrivoice.bundlexinclude:main
+      plstosinglewordgrammar = openhrivoice.plstosinglewordgrammar:main
+      juliustographviz = openhrivoice.juliustographviz:main
+      maryrtc = openhrivoice.MARYRTC:main
+      festivalrtc = openhrivoice.FestivalRTC:main
+      combineresultsrtc = openhrivoice.CombineResultsRTC:main
+      xsltrtc = openhrivoice.XSLTRTC:main
+      """,
+      **extra
+      )

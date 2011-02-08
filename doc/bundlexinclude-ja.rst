@@ -1,9 +1,9 @@
 Usage: bundlexinclude [grammarfile]
 
-Bundle multiple xincuded XML files to one file.
+xincludeタグで指定された複数のXMLをまとめて一つにする
 
 Options:
   --version      show program's version number and exit
   -h, --help     show this help message and exit
-  -v, --verbose  output verbose information
+  -v, --verbose  デバッグ情報を出力する
 

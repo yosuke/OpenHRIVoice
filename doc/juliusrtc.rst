@@ -1,6 +1,6 @@
 JuliusRTC0.rtc
 ==============
-Julius speech recognition component (python implementation)
+Julius (English and Japanese) speech recognition component.
 
 :Vendor: AIST
 :Version: 1.03

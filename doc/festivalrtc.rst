@@ -1,6 +1,6 @@
 FestivalRTC0.rtc
 ================
-Festival speech synthesis component (python implementation)
+English speech synthesis component.
 
 :Vendor: AIST
 :Version: 1.03

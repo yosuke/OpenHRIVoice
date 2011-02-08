@@ -14,22 +14,31 @@ http://www.opensource.org/licenses/eclipse-1.0.txt
 '''
 
 import sys
+import os
 import codecs
 import optparse
 from __init__ import __version__
 from lxml import etree
+import locale
+import utils
+try:
+    import gettext
+    _ = gettext.translation(domain='openhrivoice', localedir=os.path.dirname(__file__)+'/../share/locale').ugettext
+except:
+    _ = lambda s: s
 
-__doc__ = 'Bundle multiple xincuded XML files to one file.'
+__doc__ = _('Bundle multiple xincuded XML files to one file.')
 
 def main():
-    sys.stdin = codecs.getreader('utf-8')(sys.stdin)
-    sys.stdout = codecs.getwriter('utf-8')(sys.stdout)
+    encoding = locale.getpreferredencoding()
+    sys.stdout = codecs.getwriter(encoding)(sys.stdout, errors = "replace")
+    sys.stderr = codecs.getwriter(encoding)(sys.stderr, errors = "replace")
 
-    parser = optparse.OptionParser(version=__version__, usage="%prog [grammarfile]",
-                                   description=__doc__)
+    parser = utils.MyParser(version=__version__, usage="%prog [grammarfile]",
+                            description=__doc__)
     parser.add_option('-v', '--verbose', dest='verbose', action='store_true',
                       default=False,
-                      help='output verbose information')
+                      help=_('output verbose information'))
     try:
         opts, args = parser.parse_args()
     except optparse.OptionError, e:

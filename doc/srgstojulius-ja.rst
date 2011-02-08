@@ -1,17 +1,17 @@
 Usage: srgstojulius [grammarfile]
 
-Generate Julius grammar from the W3C-SRGS grammar.
+W3C-SRGS形式の文法からJulius形式の文法を生成する
 
 Options:
   --version             show program's version number and exit
   -h, --help            show this help message and exit
-  -v, --verbose         output verbose information
+  -v, --verbose         デバッグ情報を出力する
   -r TARGETRULE, --target-rule=TARGETRULE
-                        specify target rule id
+                        対象とするルールのIDを指定する
 
 Examples:
 
-- Generate Julius grammar fron the W3C-SRGS grammar.
+- W3C-SRGS形式の文法からJulius形式の文法を生成する
 
   ::
   

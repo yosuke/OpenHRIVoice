@@ -17,15 +17,22 @@ import sys
 import os
 import codecs
 import optparse
+import locale
 from parsesrgs import PLS
 from __init__ import __version__
+import utils
+try:
+    import gettext
+    _ = gettext.translation(domain='openhrivoice', localedir=os.path.dirname(__file__)+'/../share/locale').ugettext
+except:
+    _ = lambda s: s
 
-__doc__ = 'Generate W3C-SRGS grammar from the W3C-PLS pronounciation dictionary.'
+__doc__ = _('Generate W3C-SRGS grammar from the W3C-PLS pronounciation dictionary.')
 
 __examples__ = '''
 Examples:
 
-- Generate single words SRGS grammar from the PLS lexicon.
+- '''+_('Generate single words SRGS grammar from the PLS lexicon.')+'''
 
   ::
   
@@ -33,18 +40,15 @@ Examples:
 '''
 
 def main():
-    sys.stdin = codecs.getreader('utf-8')(sys.stdin)
-    sys.stdout = codecs.getwriter('utf-8')(sys.stdout)
+    encoding = locale.getpreferredencoding()
+    sys.stdout = codecs.getwriter(encoding)(sys.stdout, errors = "replace")
+    sys.stderr = codecs.getwriter(encoding)(sys.stderr, errors = "replace")
 
-    class MyParser(optparse.OptionParser):
-        def format_epilog(self, formatter):
-            return self.epilog
-
-    parser = MyParser(version=__version__, usage="%prog [lexiconfile]",
-                      description=__doc__, epilog=__examples__)
+    parser = utils.MyParser(version=__version__, usage="%prog [lexiconfile]",
+                            description=__doc__, epilog=__examples__)
     parser.add_option('-v', '--verbose', dest='verbose', action='store_true',
                       default=False,
-                      help='output verbose information')
+                      help=_('output verbose information'))
     try:
         opts, args = parser.parse_args()
     except optparse.OptionError, e:
@@ -56,6 +60,8 @@ def main():
         sys.exit(1)
 
     lex = PLS().parse([args[0],])
+
+    sys.stdout = codecs.getwriter('utf-8')(sys.stdout)
     print '''<?xml version="1.0" encoding="UTF-8" ?>
 <grammar xmlns="http://www.w3.org/2001/06/grammar"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -64,7 +70,7 @@ def main():
          xml:lang="jp"
          version="1.0" mode="voice" root="command">
 '''
-    print '  <lexicon uri="%s"/>' % (sys.argv[1],)
+    print '  <lexicon uri="%s"/>' % (args[0],)
     print '''
   <rule id="command">
     <one-of>'''

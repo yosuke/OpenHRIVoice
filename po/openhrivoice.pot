@@ -1,0 +1,72 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2011-02-08 13:49+0900\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../openhrivoice/bundlexinclude.py:30
+msgid "Bundle multiple xincuded XML files to one file."
+msgstr ""
+
+#: ../openhrivoice/bundlexinclude.py:41 ../openhrivoice/juliustographviz.py:50
+#: ../openhrivoice/plstosinglewordgrammar.py:51
+#: ../openhrivoice/srgstojulius.py:50 ../openhrivoice/srgstopls.py:59
+#: ../openhrivoice/validatesrgs.py:59
+msgid "output verbose information"
+msgstr ""
+
+#: ../openhrivoice/juliustographviz.py:29
+msgid "Draw graph from Julius grammar."
+msgstr ""
+
+#: ../openhrivoice/juliustographviz.py:34
+msgid "Draw graph of the SRGS grammar."
+msgstr ""
+
+#: ../openhrivoice/plstosinglewordgrammar.py:30
+msgid "Generate W3C-SRGS grammar from the W3C-PLS pronounciation dictionary."
+msgstr ""
+
+#: ../openhrivoice/plstosinglewordgrammar.py:35
+msgid "Generate single words SRGS grammar from the PLS lexicon."
+msgstr ""
+
+#: ../openhrivoice/srgstojulius.py:29
+msgid "Generate Julius grammar from the W3C-SRGS grammar."
+msgstr ""
+
+#: ../openhrivoice/srgstojulius.py:34
+msgid "Generate Julius grammar fron the W3C-SRGS grammar."
+msgstr ""
+
+#: ../openhrivoice/srgstojulius.py:53 ../openhrivoice/srgstopls.py:62
+msgid "specify target rule id"
+msgstr ""
+
+#: ../openhrivoice/srgstopls.py:36 ../openhrivoice/srgstopls.py:41
+msgid "Generate W3C-PLS lexcon from the W3C-SRGS grammar."
+msgstr ""
+
+#: ../openhrivoice/srgstopls.py:65 ../openhrivoice/validatesrgs.py:62
+msgid "show file open dialog in GUI"
+msgstr ""
+
+#: ../openhrivoice/validatesrgs.py:31
+msgid "Validate format of the SRGS grammar file."
+msgstr ""
+
+#: ../openhrivoice/validatesrgs.py:36
+msgid "Validate format of the SRGS grammar."
+msgstr ""
