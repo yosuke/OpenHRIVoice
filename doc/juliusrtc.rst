@@ -1,5 +1,5 @@
-JuliusRTC0.rtc
-==============
+JuliusRTC
+=========
 Julius (English and Japanese) speech recognition component.
 
 :Vendor: AIST
@@ -18,9 +18,24 @@ Ports
    "result", "DataOutPort", "TimedString", "Recognition result in XML format."
    "log", "DataOutPort", "TimedOctetSeq", "Log of audio data."
 
+.. digraph:: comp
+
+   rankdir=LR;
+   JuliusRTC [shape=Mrecord, label="JuliusRTC"];
+   data [shape=plaintext, label="data"];
+   data -> JuliusRTC;
+   activegrammar [shape=plaintext, label="activegrammar"];
+   activegrammar -> JuliusRTC;
+   status [shape=plaintext, label="status"];
+   JuliusRTC -> status;
+   result [shape=plaintext, label="result"];
+   JuliusRTC -> result;
+   log [shape=plaintext, label="log"];
+   JuliusRTC -> log;
+
 Configuration parameters
 ------------------------
-.. csv-table:: Configration parameters
+.. csv-table:: Configuration parameters
    :header: "Name", "Description"
    :widths: 12, 38
    

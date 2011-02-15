@@ -1,5 +1,5 @@
-XSLTRTC0.rtc
-============
+XSLTRTC
+=======
 XML transformation component.
 
 :Vendor: AIST
@@ -14,4 +14,13 @@ Ports
    
    "text", "DataInPort", "TimedString", "Text data in XML format."
    "result", "DataOutPort", "TimedString", "Text data in XML format (transformed)."
+
+.. digraph:: comp
+
+   rankdir=LR;
+   XSLTRTC [shape=Mrecord, label="XSLTRTC"];
+   text [shape=plaintext, label="text"];
+   text -> XSLTRTC;
+   result [shape=plaintext, label="result"];
+   XSLTRTC -> result;
 

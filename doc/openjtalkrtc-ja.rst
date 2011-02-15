@@ -1,5 +1,5 @@
-OpenJTalkRTC0.rtc
-=================
+OpenJTalkRTC
+============
 日本語音声合成コンポーネント
 
 :Vendor: AIST
@@ -17,9 +17,22 @@ Ports
    "status", "DataOutPort", "TimedString", "音声合成の状態 ('started'か'finished')"
    "duration", "DataOutPort", "TimedString", "各音韻の時間情報（リップシンクに使用）"
 
+.. digraph:: comp
+
+   rankdir=LR;
+   OpenJTalkRTC [shape=Mrecord, label="OpenJTalkRTC"];
+   text [shape=plaintext, label="text"];
+   text -> OpenJTalkRTC;
+   result [shape=plaintext, label="result"];
+   OpenJTalkRTC -> result;
+   status [shape=plaintext, label="status"];
+   OpenJTalkRTC -> status;
+   duration [shape=plaintext, label="duration"];
+   OpenJTalkRTC -> duration;
+
 Configuration parameters
 ------------------------
-.. csv-table:: Configration parameters
+.. csv-table:: Configuration parameters
    :header: "Name", "Description"
    :widths: 12, 38
    

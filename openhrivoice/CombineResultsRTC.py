@@ -158,7 +158,7 @@ class CombineResultsRTCManager:
 
     def moduleInit(self, manager):
         profile=OpenRTM_aist.Properties(defaults_str=CombineResultsRTC_spec)
-        manager.registerFactory(profile, CombineResults, OpenRTM_aist.Delete)
+        manager.registerFactory(profile, CombineResultsRTC, OpenRTM_aist.Delete)
         self._comp = manager.createComponent("CombineResultsRTC?exec_cxt.periodic.rate=1")
 
 def main():
