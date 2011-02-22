@@ -31,7 +31,7 @@ __doc__ = _('Generate Julius grammar from the W3C-SRGS grammar.')
 __examples__ = '''
 Examples:
 
-- '''+_('Generate Julius grammar fron the W3C-SRGS grammar.')+'''
+- '''+_('Generate Julius grammar from the W3C-SRGS grammar.')+'''
 
   ::
   
@@ -63,7 +63,6 @@ def main():
 
     srgs = SRGS(args[0])
 
-    sys.stdout = codecs.getwriter('utf-8')(sys.stdout)
     print srgs.toJulius(opts.targetrule)
 
 if __name__ == '__main__':

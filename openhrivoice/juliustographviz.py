@@ -40,6 +40,7 @@ Examples:
 
 def main():
     encoding = locale.getpreferredencoding()
+    sys.stdin = codecs.getreader(encoding)(sys.stdin, errors = "replace")
     sys.stdout = codecs.getwriter(encoding)(sys.stdout, errors = "replace")
     sys.stderr = codecs.getwriter(encoding)(sys.stderr, errors = "replace")
 
@@ -54,9 +55,6 @@ def main():
         print >>sys.stderr, 'OptionError:', e
         sys.exit(1)
 
-    sys.stdin = codecs.getreader('utf-8')(sys.stdin)
-    sys.stdout = codecs.getwriter('utf-8')(sys.stdout)
-    
     fdfa = True
     fsa = list()
     dic = {}

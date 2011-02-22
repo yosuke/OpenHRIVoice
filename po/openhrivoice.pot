@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-16 06:54+0900\n"
+"POT-Creation-Date: 2011-02-22 11:25+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -112,7 +112,7 @@ msgstr ""
 msgid "Bundle multiple xincuded XML files to one file."
 msgstr ""
 
-#: ../openhrivoice/bundlexinclude.py:41 ../openhrivoice/juliustographviz.py:50
+#: ../openhrivoice/bundlexinclude.py:41 ../openhrivoice/juliustographviz.py:51
 #: ../openhrivoice/plstosinglewordgrammar.py:51
 #: ../openhrivoice/srgstojulius.py:50 ../openhrivoice/srgstopls.py:59
 #: ../openhrivoice/validatesrgs.py:59
@@ -135,12 +135,8 @@ msgstr ""
 msgid "Generate single words SRGS grammar from the PLS lexicon."
 msgstr ""
 
-#: ../openhrivoice/srgstojulius.py:29
+#: ../openhrivoice/srgstojulius.py:29 ../openhrivoice/srgstojulius.py:34
 msgid "Generate Julius grammar from the W3C-SRGS grammar."
-msgstr ""
-
-#: ../openhrivoice/srgstojulius.py:34
-msgid "Generate Julius grammar fron the W3C-SRGS grammar."
 msgstr ""
 
 #: ../openhrivoice/srgstojulius.py:53 ../openhrivoice/srgstopls.py:62
