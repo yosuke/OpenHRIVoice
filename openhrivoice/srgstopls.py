@@ -46,11 +46,11 @@ Examples:
 '''
 
 def main():
+    outfile = sys.stdout
+
     encoding = locale.getpreferredencoding()
     sys.stdout = codecs.getwriter(encoding)(sys.stdout, errors = "replace")
     sys.stderr = codecs.getwriter(encoding)(sys.stderr, errors = "replace")
-
-    outfile = sys.stdout
 
     parser = utils.MyParser(version=__version__, usage="%prog [grammarfile]",
                             description=__doc__, epilog=__examples__)
@@ -73,7 +73,8 @@ def main():
         sel = utils.askopenfilename(title="select W3C-SRGS grammar file")
         if sel is not None:
             args.append(sel)
-        outfile = utils.asksaveasfile()
+        outname = utils.asksaveasfile()
+        outfile = open(outname, 'w')
     
     if len(args) == 0:
         parser.error("wrong number of arguments")
@@ -86,8 +87,8 @@ def main():
         basedir = os.path.dirname(unicode(sys.executable, sys.getfilesystemencoding()))
     else:
         basedir = os.path.dirname(__file__)
-    if srgs._lang == "jp":
-        alphabet = "X-KANA"
+    if srgs._lang in ("jp", "ja"):
+        alphabet = "x-KANA"
         meca = None
         if platform.system() == "Windows":
             dic = JuliusDict(os.path.join(basedir, 'dictation-kit-v4.0-win\model\lang_m\web.60k.htkdic'))
@@ -99,7 +100,7 @@ def main():
                 pass
             dic = JuliusDict('/usr/share/julius-runkit/model/lang_m/web.60k.htkdic')
     else:
-        alphabet = "X-ARPAbet"
+        alphabet = "x-ARPAbet"
         if platform.system() == "Windows":
             dic = VoxforgeDict(os.path.join(basedir, 'julius-voxforge-build726\dict'))
         else:
