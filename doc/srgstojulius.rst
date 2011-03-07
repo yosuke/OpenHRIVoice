@@ -11,7 +11,7 @@ Options:
 
 Examples:
 
-- Generate Julius grammar fron the W3C-SRGS grammar.
+- Generate Julius grammar from the W3C-SRGS grammar.
 
   ::
   

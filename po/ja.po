@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-02-08 23:12+0900\n"
-"PO-Revision-Date: 2011-02-08 23:14+0900\n"
+"POT-Creation-Date: 2011-03-07 13:44+0900\n"
+"PO-Revision-Date: 2011-03-07 13:46+0900\n"
 "Last-Translator: Yosuke Matsusaka <yosuke.matsusaka@aist.go.jp>\n"
 "Language-Team: Japanese\n"
 "MIME-Version: 1.0\n"
@@ -119,7 +119,7 @@ msgid "Bundle multiple xincuded XML files to one file."
 msgstr "xincludeタグで指定された複数のXMLをまとめて一つにする"
 
 #: ../openhrivoice/bundlexinclude.py:41
-#: ../openhrivoice/juliustographviz.py:50
+#: ../openhrivoice/juliustographviz.py:51
 #: ../openhrivoice/plstosinglewordgrammar.py:51
 #: ../openhrivoice/srgstojulius.py:50
 #: ../openhrivoice/srgstopls.py:59
@@ -144,11 +144,8 @@ msgid "Generate single words SRGS grammar from the PLS lexicon."
 msgstr "PLS形式の発話辞書からSRGS形式の文法を生成する"
 
 #: ../openhrivoice/srgstojulius.py:29
-msgid "Generate Julius grammar from the W3C-SRGS grammar."
-msgstr "W3C-SRGS形式の文法からJulius形式の文法を生成する"
-
 #: ../openhrivoice/srgstojulius.py:34
-msgid "Generate Julius grammar fron the W3C-SRGS grammar."
+msgid "Generate Julius grammar from the W3C-SRGS grammar."
 msgstr "W3C-SRGS形式の文法からJulius形式の文法を生成する"
 
 #: ../openhrivoice/srgstojulius.py:53
@@ -161,23 +158,31 @@ msgstr "対象とするルールのIDを指定する"
 msgid "Generate W3C-PLS lexcon from the W3C-SRGS grammar."
 msgstr "W3C-SRGS形式の文法からW3C-PLS形式の発音辞書を生成する"
 
-#: ../openhrivoice/utils.py:110
+#: ../openhrivoice/utils.py:30
+msgid "show this help message and exit"
+msgstr "このヘルプ画面を表示して終了する"
+
+#: ../openhrivoice/utils.py:35
+msgid "show program's version number and exit"
+msgstr "プログラムのバージョンを表示して終了する"
+
+#: ../openhrivoice/utils.py:122
 msgid "enable manager to be controlled as corba servant"
 msgstr "マネージャをcorbaサーバンドとして起動する"
 
-#: ../openhrivoice/utils.py:113
+#: ../openhrivoice/utils.py:125
 msgid "specify custom configuration file"
 msgstr "カスタム設定ファイルを指定する"
 
-#: ../openhrivoice/utils.py:116
+#: ../openhrivoice/utils.py:128
 msgid "specify custom configuration parameter"
 msgstr "カスタムコンフィギュレーションパラメータを指定する"
 
-#: ../openhrivoice/utils.py:119
+#: ../openhrivoice/utils.py:131
 msgid "specify custom corba endpoint"
 msgstr "corbaエンドポイントを指定する"
 
-#: ../openhrivoice/utils.py:122
+#: ../openhrivoice/utils.py:134
 msgid "configure manager to be master"
 msgstr "マネージャをマスターとして起動する"
 
@@ -188,4 +193,7 @@ msgstr "SRGS文法ファイルの文法間違いをチェックする"
 #: ../openhrivoice/validatesrgs.py:36
 msgid "Validate format of the SRGS grammar."
 msgstr "SRGS文法ファイルの文法間違いをチェックする"
+
+#~ msgid "Generate Julius grammar fron the W3C-SRGS grammar."
+#~ msgstr "W3C-SRGS形式の文法からJulius形式の文法を生成する"
 

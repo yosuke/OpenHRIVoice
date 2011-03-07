@@ -13,7 +13,7 @@
 ;General
 
 !define PACKAGE_NAME "OpenHRIVoice"
-!define PACKAGE_VERSION "1.04"
+!define PACKAGE_VERSION "1.05"
 !define OUTFILE "${PACKAGE_NAME}-${PACKAGE_VERSION}-installer.exe"
 !define TOP_SRCDIR "..\.."
 !define TOP_BUILDDIR "..\.."
@@ -86,24 +86,24 @@ Section $(TEXT_SecBase) SecBase
   !insertmacro UNINSTALL.LOG_OPEN_INSTALL
 
   ; Main executables
-  File "/oname=juliusrtc.exe" "${TOP_BUILDDIR}\dist\pyJuliusRTC.exe"
-  File "/oname=openjtalkrtc.exe" "${TOP_BUILDDIR}\dist\pyOpenJTalkRTC.exe"
-  File "/oname=festivalrtc.exe" "${TOP_BUILDDIR}\dist\pyFestivalRTC.exe"
-  File "/oname=combineresultsrtc.exe" "${TOP_BUILDDIR}\dist\pyCombineResultsRTC.exe"
-  File "/oname=xsltrtc.exe" "${TOP_BUILDDIR}\dist\pyXSLTRTC.exe"
+  File "/oname=juliusrtc.exe" "${TOP_BUILDDIR}\dist\JuliusRTC.exe"
+  File "/oname=openjtalkrtc.exe" "${TOP_BUILDDIR}\dist\OpenJTalkRTC.exe"
+  File "/oname=festivalrtc.exe" "${TOP_BUILDDIR}\dist\FestivalRTC.exe"
+  File "/oname=combineresultsrtc.exe" "${TOP_BUILDDIR}\dist\CombineResultsRTC.exe"
+  File "/oname=xsltrtc.exe" "${TOP_BUILDDIR}\dist\XSLTRTC.exe"
   File "${TOP_BUILDDIR}\dist\srgstopls.exe"
   File "${TOP_BUILDDIR}\dist\validatesrgs.exe"
   File "${TOP_BUILDDIR}\dist\w9xpopen.exe"
   File "rtc.conf"
-  File "${TOP_SRCDIR}\pyJuliusRTC\dummy.dfa"
-  File "${TOP_SRCDIR}\pyJuliusRTC\dummy.dict"
-  File "${TOP_SRCDIR}\pyJuliusRTC\dummy-en.dfa"
-  File "${TOP_SRCDIR}\pyJuliusRTC\dummy-en.dict"
-  File "${TOP_SRCDIR}\pyJuliusRTC\grammar.xsd"
-  File "${TOP_SRCDIR}\pyJuliusRTC\grammar-core.xsd"
-  File "${TOP_SRCDIR}\pyJuliusRTC\pls.xsd"
-  File "${TOP_SRCDIR}\pyOpenJTalkRTC\windows\open_jtalk.exe"
-  File "/oname=License-Open_JTalk.txt" "${TOP_SRCDIR}\pyOpenJTalkRTC\windows\COPYING"
+  File "${TOP_SRCDIR}\openhrivoice\dummy.dfa"
+  File "${TOP_SRCDIR}\openhrivoice\dummy.dict"
+  File "${TOP_SRCDIR}\openhrivoice\dummy-en.dfa"
+  File "${TOP_SRCDIR}\openhrivoice\dummy-en.dict"
+  File "${TOP_SRCDIR}\openhrivoice\grammar.xsd"
+  File "${TOP_SRCDIR}\openhrivoice\grammar-core.xsd"
+  File "${TOP_SRCDIR}\openhrivoice\pls.xsd"
+  File "${TOP_SRCDIR}\windows\openjtalk\open_jtalk.exe"
+  File "/oname=License-Open_JTalk.txt" "${TOP_SRCDIR}\windows\openjtalk\COPYING"
 
   ; Required Libralies
   File /r "${TOP_BUILDDIR}\dist\*.pyd"

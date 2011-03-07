@@ -3,7 +3,7 @@ OpenJTalkRTC
 日本語音声合成コンポーネント
 
 :Vendor: AIST
-:Version: 1.03
+:Version: 1.05
 :Category: communication
 
 Ports

@@ -3,7 +3,7 @@ Usage: bundlexinclude [grammarfile]
 xincludeタグで指定された複数のXMLをまとめて一つにする
 
 Options:
-  --version      show program's version number and exit
-  -h, --help     show this help message and exit
+  --version      プログラムのバージョンを表示して終了する
+  -h, --help     このヘルプ画面を表示して終了する
   -v, --verbose  デバッグ情報を出力する
 

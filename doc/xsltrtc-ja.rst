@@ -3,7 +3,7 @@ XSLTRTC
 XSLTを用いたXML変換コンポーネント
 
 :Vendor: AIST
-:Version: 1.03
+:Version: 1.05
 :Category: communication
 
 Ports

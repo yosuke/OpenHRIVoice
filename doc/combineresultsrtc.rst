@@ -3,7 +3,7 @@ CombineResultsRTC
 Combine Results from Speech Recognizers
 
 :Vendor: Yosuke Matsusaka, AIST
-:Version: 1.03
+:Version: 1.05
 :Category: Speech
 
 Ports

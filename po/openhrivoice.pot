@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-03-03 13:34+0900\n"
+"POT-Creation-Date: 2011-03-07 13:59+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -147,23 +147,31 @@ msgstr ""
 msgid "Generate W3C-PLS lexcon from the W3C-SRGS grammar."
 msgstr ""
 
-#: ../openhrivoice/utils.py:110
-msgid "enable manager to be controlled as corba servant"
+#: ../openhrivoice/utils.py:30
+msgid "show this help message and exit"
 msgstr ""
 
-#: ../openhrivoice/utils.py:113
-msgid "specify custom configuration file"
-msgstr ""
-
-#: ../openhrivoice/utils.py:116
-msgid "specify custom configuration parameter"
-msgstr ""
-
-#: ../openhrivoice/utils.py:119
-msgid "specify custom corba endpoint"
+#: ../openhrivoice/utils.py:35
+msgid "show program's version number and exit"
 msgstr ""
 
 #: ../openhrivoice/utils.py:122
+msgid "enable manager to be controlled as corba servant"
+msgstr ""
+
+#: ../openhrivoice/utils.py:125
+msgid "specify custom configuration file"
+msgstr ""
+
+#: ../openhrivoice/utils.py:128
+msgid "specify custom configuration parameter"
+msgstr ""
+
+#: ../openhrivoice/utils.py:131
+msgid "specify custom corba endpoint"
+msgstr ""
+
+#: ../openhrivoice/utils.py:134
 msgid "configure manager to be master"
 msgstr ""
 
