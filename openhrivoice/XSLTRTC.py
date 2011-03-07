@@ -24,8 +24,8 @@ from lxml import etree
 from StringIO import StringIO
 import OpenRTM_aist
 import RTC
-from __init__ import __version__
-import utils
+from openhrivoice.__init__ import __version__
+from openhrivoice import utils
 try:
     import gettext
     _ = gettext.translation(domain='openhrivoice', localedir=os.path.dirname(__file__)+'/../share/locale').ugettext

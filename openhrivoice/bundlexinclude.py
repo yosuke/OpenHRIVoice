@@ -17,10 +17,10 @@ import sys
 import os
 import codecs
 import optparse
-from __init__ import __version__
+from openhrivoice.__init__ import __version__
 from lxml import etree
 import locale
-import utils
+from openhrivoice import utils
 try:
     import gettext
     _ = gettext.translation(domain='openhrivoice', localedir=os.path.dirname(__file__)+'/../share/locale').ugettext

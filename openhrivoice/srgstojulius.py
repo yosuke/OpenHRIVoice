@@ -16,10 +16,10 @@ http://www.opensource.org/licenses/eclipse-1.0.txt
 import sys
 import codecs
 import optparse
-from parsesrgs import *
-from __init__ import __version__
+from openhrivoice.parsesrgs import *
+from openhrivoice.__init__ import __version__
 import locale
-import utils
+from openhrivoice import utils
 try:
     import gettext
     _ = gettext.translation(domain='openhrivoice', localedir=os.path.dirname(__file__)+'/../share/locale').ugettext

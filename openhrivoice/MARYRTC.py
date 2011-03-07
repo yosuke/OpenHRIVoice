@@ -25,8 +25,8 @@ import wave
 import optparse
 import OpenRTM_aist
 import RTC
-from __init__ import __version__
-import utils
+from openhrivoice.__init__ import __version__
+from openhrivoice import utils
 
 __doc__ = 'English and German speech sysnthesis component.'
 

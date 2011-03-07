@@ -15,7 +15,7 @@ http://www.opensource.org/licenses/eclipse-1.0.txt
 
 import sys, os, re, codecs
 from lxml import etree
-from hiragana2phoneme import hiragana2phoneme
+from openhrivoice.hiragana2phoneme import hiragana2phoneme
 
 def isempty(node):
     if node.nodeName == '#text':

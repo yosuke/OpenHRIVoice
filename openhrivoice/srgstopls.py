@@ -21,12 +21,12 @@ import optparse
 import ctypes
 import codecs
 import locale
-from parsesrgs import *
-#from parsecmudict import *
-from parsevoxforgedict import *
-from parsejuliusdict import *
-from __init__ import __version__
-import utils
+from openhrivoice.parsesrgs import *
+#from openhrivoice.parsecmudict import *
+from openhrivoice.parsevoxforgedict import *
+from openhrivoice.parsejuliusdict import *
+from openhrivoice.__init__ import __version__
+from openhrivoice import utils
 try:
     import gettext
     _ = gettext.translation(domain='openhrivoice', localedir=os.path.dirname(__file__)+'/../share/locale').ugettext

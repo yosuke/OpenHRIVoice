@@ -25,8 +25,8 @@ import optparse
 import OpenRTM_aist
 import RTC
 from xml.dom import minidom
-import utils
-from __init__ import __version__
+from openhrivoice import utils
+from openhrivoice.__init__ import __version__
 
 __doc__ = 'Combine results from speech recognizers component.'
 

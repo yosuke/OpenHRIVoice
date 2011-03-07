@@ -28,9 +28,9 @@ import wave
 import socket
 import OpenRTM_aist
 import RTC
-from __init__ import __version__
-import utils
-from parseopenjtalk import parseopenjtalk
+from openhrivoice.__init__ import __version__
+from openhrivoice import utils
+from openhrivoice.parseopenjtalk import parseopenjtalk
 try:
     import gettext
     _ = gettext.translation(domain='openhrivoice', localedir=os.path.dirname(__file__)+'/../share/locale').ugettext

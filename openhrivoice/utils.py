@@ -24,6 +24,16 @@ except:
     _ = lambda s: s
 
 class MyParser(optparse.OptionParser):
+    def _add_help_option (self):
+        self.add_option("-h", "--help",
+                        action="help",
+                        help=_("show this help message and exit"))
+
+    def _add_version_option (self):
+        self.add_option("--version",
+                        action="version",
+                        help=_("show program's version number and exit"))
+
     def format_epilog(self, formatter):
         if self.epilog is not None:
             return self.epilog

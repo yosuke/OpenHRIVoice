@@ -3,7 +3,7 @@
 from setuptools import setup, find_packages
 from setuptools.command.build_ext import build_ext
 import sys, os
-from seatsat.__init__ import __version__
+from openhrivoice.__init__ import __version__
 
 cmd_classes = {}
 try:
@@ -18,7 +18,6 @@ try:
     sys.path.append("openhrivoice")
 except ImportError:
     pass
-
 
 if sys.platform == "win32":
     # py2exe options

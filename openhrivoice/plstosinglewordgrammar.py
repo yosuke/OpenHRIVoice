@@ -18,9 +18,9 @@ import os
 import codecs
 import optparse
 import locale
-from parsesrgs import PLS
-from __init__ import __version__
-import utils
+from openhrivoice.parsesrgs import PLS
+from openhrivoice.__init__ import __version__
+from openhrivoice import utils
 try:
     import gettext
     _ = gettext.translation(domain='openhrivoice', localedir=os.path.dirname(__file__)+'/../share/locale').ugettext
