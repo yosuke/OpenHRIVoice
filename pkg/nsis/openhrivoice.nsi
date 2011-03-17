@@ -102,8 +102,8 @@ Section $(TEXT_SecBase) SecBase
   File "${TOP_SRCDIR}\openhrivoice\grammar.xsd"
   File "${TOP_SRCDIR}\openhrivoice\grammar-core.xsd"
   File "${TOP_SRCDIR}\openhrivoice\pls.xsd"
-  File "${TOP_SRCDIR}\windows\openjtalk\open_jtalk.exe"
-  File "/oname=License-Open_JTalk.txt" "${TOP_SRCDIR}\windows\openjtalk\COPYING"
+  File "${TOP_SRCDIR}\pkg\nsis\open_jtalk.exe"
+  File "${TOP_SRCDIR}\pkg\nsis\License-Open_JTalk.txt"
 
   ; Required Libralies
   File /r "${TOP_BUILDDIR}\dist\*.pyd"
