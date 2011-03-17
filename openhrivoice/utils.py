@@ -95,7 +95,7 @@ def askopenfilenames(title=''):
         rt.withdraw()
         sel = tkFileDialog.askopenfilenames(title=title)
         if isinstance(sel, unicode):
-            sel = rt.tk.splitlist(sel)
+            sel = [unicode(s, 'utf-8') for s in rt.tk.splitlist(sel)]
         return sel
     return None
 
