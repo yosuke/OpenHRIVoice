@@ -277,12 +277,12 @@ class DataListener(OpenRTM_aist.ConnectorDataListenerT):
 class OpenJTalkRTC(OpenRTM_aist.DataFlowComponentBase):
     def __init__(self, manager):
         OpenRTM_aist.DataFlowComponentBase.__init__(self, manager)
-        self._logger = OpenRTM_aist.Manager.instance().getLogbuf("OpenJTalkRTC")
-        self._logger.RTC_INFO("OpenJTalkRTC version " + __version__)
-        self._logger.RTC_INFO("Copyright (C) 2010-2011 Yosuke Matsusaka")
 
     def onInitialize(self):
         OpenRTM_aist.DataFlowComponentBase.onInitialize(self)
+        self._logger = OpenRTM_aist.Manager.instance().getLogbuf(self._properties.getProperty("instance_name"))
+        self._logger.RTC_INFO("OpenJTalkRTC version " + __version__)
+        self._logger.RTC_INFO("Copyright (C) 2010-2011 Yosuke Matsusaka")
         self._j = OpenJTalkWrap()
         self._prevtime = time.time()
         # bind configuration parameters

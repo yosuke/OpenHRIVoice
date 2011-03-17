@@ -262,14 +262,15 @@ class DataListener(OpenRTM_aist.ConnectorDataListenerT):
 class JuliusRTC(OpenRTM_aist.DataFlowComponentBase):
     def __init__(self, manager):
         OpenRTM_aist.DataFlowComponentBase.__init__(self, manager)
-        self._logger = OpenRTM_aist.Manager.instance().getLogbuf("JuliusRTC")
-        self._logger.RTC_INFO("JuliusRTC version " + __version__)
-        self._logger.RTC_INFO("Copyright (C) 2010-2011 Yosuke Matsusaka")
-
-    def onInitialize(self):
         self._lang = 'en'
         self._srgs = None
         self._j = None
+
+    def onInitialize(self):
+        OpenRTM_aist.DataFlowComponentBase.onInitialize(self)
+        self._logger = OpenRTM_aist.Manager.instance().getLogbuf(self._properties.getProperty("instance_name"))
+        self._logger.RTC_INFO("JuliusRTC version " + __version__)
+        self._logger.RTC_INFO("Copyright (C) 2010-2011 Yosuke Matsusaka")
         # create inport for audio stream
         self._indata = RTC.TimedOctetSeq(RTC.Time(0,0), None)
         self._inport = OpenRTM_aist.InPort("data", self._indata)
@@ -303,6 +304,7 @@ class JuliusRTC(OpenRTM_aist.DataFlowComponentBase):
         return RTC.RTC_OK
 
     def onActivated(self, ec_id):
+        OpenRTM_aist.DataFlowComponentBase.onActivated(self, ec_id)
         self._lang = self._srgs._lang
         self._j = JuliusWrap(self._lang)
         self._j.start()
@@ -324,9 +326,11 @@ class JuliusRTC(OpenRTM_aist.DataFlowComponentBase):
                 self._j.switchgrammar(data.data)
 
     def onExecute(self, ec_id):
+        OpenRTM_aist.DataFlowComponentBase.onExecute(self, ec_id)
         return RTC.RTC_OK
 
     def onDeactivate(self, ec_id):
+        OpenRTM_aist.DataFlowComponentBase.onDeactivate(self, ec_id)
         if self._j:
             self._j.terminate()
             self._j.join()
@@ -334,6 +338,7 @@ class JuliusRTC(OpenRTM_aist.DataFlowComponentBase):
         return RTC.RTC_OK
 
     def onFinalize(self):
+        OpenRTM_aist.DataFlowComponentBase.onFinalize(self)
         if self._j:
             self._j.terminate()
             self._j.join()

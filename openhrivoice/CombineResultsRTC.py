@@ -54,9 +54,6 @@ class DataListener(OpenRTM_aist.ConnectorDataListenerT):
 class CombineResultsRTC(OpenRTM_aist.DataFlowComponentBase):
     def __init__(self, manager):
         OpenRTM_aist.DataFlowComponentBase.__init__(self, manager)
-        self._logger = OpenRTM_aist.Manager.instance().getLogbuf("CombineResultsRTC")
-        self._logger.RTC_INFO("CombineResultsRTC version " + __version__)
-        self._logger.RTC_INFO("Copyright (C) 2010-2011 Yosuke Matsusaka")
         self._data = {}
         self._port = {}
         self._statusports = ('status1', 'status2')
@@ -67,6 +64,9 @@ class CombineResultsRTC(OpenRTM_aist.DataFlowComponentBase):
 
     def onInitialize(self):
         OpenRTM_aist.DataFlowComponentBase.onInitialize(self)
+        self._logger = OpenRTM_aist.Manager.instance().getLogbuf(self._properties.getProperty("instance_name"))
+        self._logger.RTC_INFO("CombineResultsRTC version " + __version__)
+        self._logger.RTC_INFO("Copyright (C) 2010-2011 Yosuke Matsusaka")
         self.createInPort('status1', RTC.TimedString)
         self._port['status1'].appendProperty('description', 'Status of recognizer 1.')
         self.createInPort('result1', RTC.TimedString)

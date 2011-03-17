@@ -58,13 +58,13 @@ class DataListener(OpenRTM_aist.ConnectorDataListenerT):
 class XSLTRTC(OpenRTM_aist.DataFlowComponentBase):
     def __init__(self, manager):
         OpenRTM_aist.DataFlowComponentBase.__init__(self, manager)
-        self._logger = OpenRTM_aist.Manager.instance().getLogbuf("XSLTRTC")
-        self._logger.RTC_INFO("XSLTRTC version " + __version__)
-        self._logger.RTC_INFO("Copyright (C) 2010-2011 Yosuke Matsusaka")
+        self._transform = None
 
     def onInitialize(self):
         OpenRTM_aist.DataFlowComponentBase.onInitialize(self)
-        self._transform = None
+        self._logger = OpenRTM_aist.Manager.instance().getLogbuf(self._properties.getProperty("instance_name"))
+        self._logger.RTC_INFO("XSLTRTC version " + __version__)
+        self._logger.RTC_INFO("Copyright (C) 2010-2011 Yosuke Matsusaka")
         # create inport
         self._indata = RTC.TimedString(RTC.Time(0,0), "")
         self._inport = OpenRTM_aist.InPort("text", self._indata)

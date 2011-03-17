@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-03-07 13:59+0900\n"
+"POT-Creation-Date: 2011-03-17 23:20+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -64,30 +64,30 @@ msgstr ""
 msgid "Specify voice activity detection trigger (fixed to internal)."
 msgstr ""
 
-#: ../openhrivoice/JuliusRTC.py:276
+#: ../openhrivoice/JuliusRTC.py:277
 msgid "Audio data (in packets) to be recognized."
 msgstr ""
 
-#: ../openhrivoice/JuliusRTC.py:283
+#: ../openhrivoice/JuliusRTC.py:284
 msgid "Grammar ID to be activated."
 msgstr ""
 
-#: ../openhrivoice/JuliusRTC.py:291
+#: ../openhrivoice/JuliusRTC.py:292
 msgid ""
 "Status of the recognizer (one of \"LISTEN [accepting speech]\", \"STARTREC "
 "[start recognition process]\", \"ENDREC [end recognition process]\", "
 "\"REJECTED [rejected speech input]\")"
 msgstr ""
 
-#: ../openhrivoice/JuliusRTC.py:296
+#: ../openhrivoice/JuliusRTC.py:297
 msgid "Recognition result in XML format."
 msgstr ""
 
-#: ../openhrivoice/JuliusRTC.py:301
+#: ../openhrivoice/JuliusRTC.py:302
 msgid "Log of audio data."
 msgstr ""
 
-#: ../openhrivoice/JuliusRTC.py:413 ../openhrivoice/XSLTRTC.py:107
+#: ../openhrivoice/JuliusRTC.py:418 ../openhrivoice/XSLTRTC.py:107
 #: ../openhrivoice/srgstopls.py:65 ../openhrivoice/validatesrgs.py:62
 msgid "show file open dialog in GUI"
 msgstr ""
