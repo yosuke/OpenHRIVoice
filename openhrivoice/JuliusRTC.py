@@ -444,7 +444,7 @@ class JuliusRTCManager:
         profile = OpenRTM_aist.Properties(defaults_str = JuliusRTC_spec)
         manager.registerFactory(profile, JuliusRTC, OpenRTM_aist.Delete)
         for a in self._grammars:
-            print "compiling grammar..."
+            print "compiling grammar: %s" % (a,)
             srgs = SRGS(a)
             print "done"
             self._comp[a] = manager.createComponent("JuliusRTC?exec_cxt.periodic.rate=1")

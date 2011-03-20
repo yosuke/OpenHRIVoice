@@ -31,6 +31,7 @@ import RTC
 from openhrivoice.__init__ import __version__
 from openhrivoice import utils
 from openhrivoice.parseopenjtalk import parseopenjtalk
+from openhrivoice.VoiceSynthComponentBase import *
 try:
     import gettext
     _ = gettext.translation(domain='openhrivoice', localedir=os.path.dirname(__file__)+'/../share/locale').ugettext
@@ -50,8 +51,9 @@ class mysocket(socket.socket):
                 break
         return s
 
-class OpenJTalkWrap:
+class OpenJTalkWrap(VoiceSynthBase):
     def __init__(self):
+        VoiceSynthBase.__init__(self)
         self._args = (("td", "tree-dur.inf"),
                       ("tf", "tree-lf0.inf"),
                       ("tm", "tree-mgc.inf"),
@@ -69,9 +71,6 @@ class OpenJTalkWrap:
                       ("cf", "gv-lf0.pdf"),
                       ("cm", "gv-mgc.pdf"),
                       ("k", "gv-switch.inf"))
-        self._wf = None
-        self._samplerate = 16000
-        self._durationdata = ""
         self._platform = platform.system()
         if hasattr(sys, "frozen"):
             self._basedir = os.path.dirname(unicode(sys.executable, sys.getfilesystemencoding()))
@@ -86,17 +85,10 @@ class OpenJTalkWrap:
             self._phonemodel = "/usr/lib/hts-voice/nitech-jp-atr503-m001"
             self._dicfile = "/usr/lib/open_jtalk/dic/utf-8"
 
-    def gettempname(self):
-        # get temp file name
-        fn = tempfile.mkstemp()
-        os.close(fn[0])
-        return fn[1]
-
-    def write(self, data):
-        print data
-        if self._wf is not None:
-            self._wf.close()
-            self._wf = None
+    def synth(self, data):
+        if self._fp is not None:
+            self._fp.close()
+            self._fp = None
             os.remove(self._wavfile)
         self._textfile = self.gettempname()
         self._wavfile = self.gettempname()
@@ -119,38 +111,26 @@ class OpenJTalkWrap:
         self._cmdarg.append(self._logfile)
         self._cmdarg.append(self._textfile)
         # run OpenJTalk
-        #print " ".join(self._cmdarg)
-        self._p = subprocess.Popen(self._cmdarg)
-        self._p.wait()
+        p = subprocess.Popen(self._cmdarg)
+        p.wait()
         # read duration data
         d = parseopenjtalk()
         d.parse(self._logfile)
         self._durationdata = d.toseg().encode("utf-8")
-        print self._durationdata.decode("utf-8")
         # read data
-        self._wf = wave.open(self._wavfile, 'rb')
-        #pobj._outdata.channels = wf.getnchannels()
-        #pobj._outdata.samplebytes = wf.getsampwidth()
-        self._samplerate = self._wf.getframerate()
+        self._fp = wave.open(self._wavfile, 'rb')
+        #self._channels = wf.getnchannels()
+        #self._samplebytes = wf.getsampwidth()
+        self._samplerate = self._fp.getframerate()
         os.remove(self._textfile)
         os.remove(self._logfile)
-    
-    def readdata(self, chunk):
-        if self._wf is None:
-            return None
-        data = self._wf.readframes(chunk)
-        if data != '':
-            return data
-        self._wf.close()
-        self._wf = None
-        os.remove(self._wavfile)
-        return None
     
     def terminate(self):
         pass
 
-class OpenJTalkWrap2:
+class OpenJTalkWrap2(VoiceSynthBase):
     def __init__(self):
+        VoiceSynthBase.__init__(self)
         self._args = (("td", "tree-dur.inf"),
                       ("tf", "tree-lf0.inf"),
                       ("tm", "tree-mgc.inf"),
@@ -168,7 +148,6 @@ class OpenJTalkWrap2:
                       ("cf", "gv-lf0.pdf"),
                       ("cm", "gv-mgc.pdf"),
                       ("k", "gv-switch.inf"))
-        self._samplerate = 16000
         self._platform = platform.system()
         if hasattr(sys, "frozen"):
             self._basedir = os.path.dirname(unicode(sys.executable, sys.getfilesystemencoding()))
@@ -194,7 +173,6 @@ class OpenJTalkWrap2:
         self._cmdarg.append("-w")
         self._cmdarg.append(str(self._moduleport))
         # run OpenJTalk
-        #print " ".join(self._cmdarg)
         self._p = subprocess.Popen(self._cmdarg)
         self._modulesocket = mysocket(socket.AF_INET, socket.SOCK_STREAM)
         self._modulesocket.settimeout(5)
@@ -214,8 +192,7 @@ class OpenJTalkWrap2:
         s.close()
         return port
 
-    def write(self, data):
-        print data
+    def synth(self, data):
         self._modulesocket.sendall(data.encode("utf-8")+"\n")
         # read duration data
         d = ""
@@ -225,7 +202,6 @@ class OpenJTalkWrap2:
             l = self._modulesocket.getline()
         dd = parseopenjtalk(d)
         self._durationdata = dd.toseg().encode("utf-8")
-        print self._durationdata
         # read data
         self._dlen = int(self._modulesocket.getline())
         self._rlen = 0
@@ -248,7 +224,7 @@ OpenJTalkRTC_spec = ["implementation_id", "OpenJTalkRTC",
                      "vendor",            "AIST",
                      "category",          "communication",
                      "activity_type",     "DataFlowComponent",
-                     "max_instance",      "1",
+                     "max_instance",      "5",
                      "language",          "Python",
                      "lang_type",         "script",
                      "conf.default.format", "int16",
@@ -265,84 +241,15 @@ OpenJTalkRTC_spec = ["implementation_id", "OpenJTalkRTC",
                      "conf.__description__.character", _("Character of the voice (fixed to male).").encode('UTF-8'),
                      ""]
 
-class DataListener(OpenRTM_aist.ConnectorDataListenerT):
-    def __init__(self, name, obj):
-        self._name = name
-        self._obj = obj
-    
-    def __call__(self, info, cdrdata):
-        data = OpenRTM_aist.ConnectorDataListenerT.__call__(self, info, cdrdata, RTC.TimedString(RTC.Time(0,0),""))
-        self._obj.onData(self._name, data)
-
-class OpenJTalkRTC(OpenRTM_aist.DataFlowComponentBase):
+class OpenJTalkRTC(VoiceSynthComponentBase):
     def __init__(self, manager):
-        OpenRTM_aist.DataFlowComponentBase.__init__(self, manager)
+        VoiceSynthComponentBase.__init__(self, manager)
 
     def onInitialize(self):
-        OpenRTM_aist.DataFlowComponentBase.onInitialize(self)
-        self._logger = OpenRTM_aist.Manager.instance().getLogbuf(self._properties.getProperty("instance_name"))
-        self._logger.RTC_INFO("OpenJTalkRTC version " + __version__)
-        self._logger.RTC_INFO("Copyright (C) 2010-2011 Yosuke Matsusaka")
-        self._j = OpenJTalkWrap()
-        self._prevtime = time.time()
-        # bind configuration parameters
-        #self.bindParameter("rate", self._rate, self._rate)
-        # create inport
-        self._indata = RTC.TimedString(RTC.Time(0,0), "")
-        self._inport = OpenRTM_aist.InPort("text", self._indata)
-        self._inport.appendProperty('description', _('Text to be synthesized.').encode('UTF-8'))
-        self._inport.addConnectorDataListener(OpenRTM_aist.ConnectorDataListenerType.ON_BUFFER_WRITE,
-                                              DataListener("ON_BUFFER_WRITE", self))
-        self.registerInPort(self._inport._name, self._inport)
-        # create outport for audio stream
-        self._outdata = RTC.TimedOctetSeq(RTC.Time(0,0), None)
-        self._outport = OpenRTM_aist.OutPort("result", self._outdata)
-        self._outport.appendProperty('description', _('Synthesized audio data.').encode('UTF-8'))
-        self.registerOutPort(self._outport._name, self._outport)
-        # create outport for status
-        self._statusdata = RTC.TimedString(RTC.Time(0,0), "")
-        self._statusport = OpenRTM_aist.OutPort("status", self._statusdata)
-        self._statusport.appendProperty('description', _('Status of audio output (one of "started", "finished").').encode('UTF-8'))
-        self.registerOutPort(self._statusport._name, self._statusport)
-        # create outport for duration
-        self._durationdata = RTC.TimedString(RTC.Time(0,0), "")
-        self._durationport = OpenRTM_aist.OutPort("duration", self._durationdata)
-        self._durationport.appendProperty('description', _('Time aliment information of each phonemes (to be used to lip-sync).').encode('UTF-8'))
-        self.registerOutPort(self._durationport._name, self._durationport)
+        VoiceSynthComponentBase.onInitialize(self)
+        self._wrap = OpenJTalkWrap()
         return RTC.RTC_OK
     
-    def onData(self, name, data):
-        udata = data.data.decode("utf-8")
-        self._j.write(udata)
-
-    def onExecute(self, ec_id):
-        OpenRTM_aist.DataFlowComponentBase.onExecute(self, ec_id)
-        # send stream
-        now = time.time()
-        chunk = int(self._j._samplerate * (now - self._prevtime))
-        self._prevtime = now
-        if chunk > 0:
-            data = self._j.readdata(chunk)
-            if data is not None:
-                self._outdata.data = data
-                self._outport.write(self._outdata)
-                if self._statusdata.data != "started":
-                    self._logger.RTC_INFO("streaming start")
-                    self._statusdata.data = "started"
-                    self._statusport.write(self._statusdata)
-                    self._durationdata.data = self._j._durationdata
-                    self._durationport.write(self._durationdata)
-            else:
-                if self._statusdata.data != "finished":
-                    self._logger.RTC_INFO("streaming finished")
-                    self._statusdata.data = "finished"
-                    self._statusport.write(self._statusdata)
-        return RTC.RTC_OK
-
-    def onFinalize(self):
-        self._j.terminate()
-        return RTC.RTC_OK
-
 class OpenJTalkRTCManager:
     def __init__(self):
         encoding = locale.getpreferredencoding()
