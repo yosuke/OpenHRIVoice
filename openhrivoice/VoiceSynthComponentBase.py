@@ -134,7 +134,7 @@ class VoiceSynthComponentBase(OpenRTM_aist.DataFlowComponentBase):
                 data = self._wrap.readdata(chunk)
             if data is not None:
                 if self._statusdata.data != "started":
-                    self._logger.RTC_INFO("streaming start")
+                    self._logger.RTC_INFO("stream started")
                     self._statusdata.data = "started"
                     self._statusport.write(self._statusdata)
                     self._durdata.data = self._wrap._durationdata
@@ -146,7 +146,7 @@ class VoiceSynthComponentBase(OpenRTM_aist.DataFlowComponentBase):
                 self._outport.write(self._outdata)
             else:
                 if self._statusdata.data != "finished":
-                    self._logger.RTC_INFO("streaming finished")
+                    self._logger.RTC_INFO("stream finished")
                     self._statusdata.data = "finished"
                     self._statusport.write(self._statusdata)
         except:

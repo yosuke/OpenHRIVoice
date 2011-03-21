@@ -29,6 +29,7 @@ import OpenRTM_aist
 import RTC
 from openhrivoice.__init__ import __version__
 from openhrivoice import utils
+from openhrivoice.VoiceSynthComponentBase import *
 try:
     import gettext
     _ = gettext.translation(domain='openhrivoice', localedir=os.path.dirname(__file__)+'/../share/locale').ugettext
@@ -54,7 +55,7 @@ class FestivalWrap(VoiceSynthBase):
         self._cmdline =[self._binfile, '--pipe']
         self._cmdline.extend(self._opt)
         
-    def write(self, data):
+    def synth(self, data):
         if self._fp is not None:
             self._fp.close()
             self._fp = None
