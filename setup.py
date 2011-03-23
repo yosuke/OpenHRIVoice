@@ -3,6 +3,8 @@
 from setuptools import setup, find_packages
 from setuptools.command.build_ext import build_ext
 import sys, os
+from glob import glob
+import matplotlib
 from openhrivoice.__init__ import __version__
 
 cmd_classes = {}
@@ -19,8 +21,11 @@ try:
 except ImportError:
     pass
 
+data_files = []
+
 if sys.platform == "win32":
     # py2exe options
+    data_files = matplotlib.get_py2exe_datafiles()
     extra = {
         "console": [
                     "openhrivoice/JuliusRTC.py",
@@ -31,12 +36,17 @@ if sys.platform == "win32":
                     "openhrivoice/plstosinglewordgrammar.py",
                     "openhrivoice/OpenJTalkRTC.py",
                     "openhrivoice/FestivalRTC.py",
+                    "openhrivoice/CombineResultsRTC.py",
                     "openhrivoice/XSLTRTC.py",
-                    "openhrivoice/CombineResultsRTC.py"
+                    "openhrivoice/WavePlayerRTC.py",
+                    "openhrivoice/SpecgramRTC.py",
                     ],
         "options": {
             "py2exe": {
-                "includes": "xml.etree.ElementTree, lxml._elementpath, OpenRTM_aist, RTC",
+                "includes": ["xml.etree.ElementTree", "lxml._elementpath", "OpenRTM_aist", "RTC",
+                             "matplotlib.backends",  "matplotlib.backends.backend_tkagg",
+                             "matplotlib.figure","pylab", "numpy", "matplotlib.numerix.fft"],
+                "excludes": ["_gtkagg", "_wxagg"],
                 "dll_excludes": ["ierutil.dll", "powrprof.dll", "msimg32.dll", "mpr.dll", "urlmon.dll", "dnsapi.dll"],
             }
         }
@@ -55,9 +65,10 @@ setup(name='openhrivoice',
       author_email='yosuke.matsusaka@aist.go.jp',
       url='http://openhri.net/',
       license='EPL',
-      packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
+      packages=find_packages(exclude=['ez_setup', 'doc', 'examples', 'tests']),
       include_package_data=True,
       package_data={'openhrivoice': ['*.dfa', '*.dict', '*.xsd']},
+      data_files=data_files,
       zip_safe=False,
       install_requires=[
         # -*- Extra requirements: -*-
@@ -76,6 +87,8 @@ setup(name='openhrivoice',
       festivalrtc = openhrivoice.FestivalRTC:main
       combineresultsrtc = openhrivoice.CombineResultsRTC:main
       xsltrtc = openhrivoice.XSLTRTC:main
+      waveplayerrtc = openhrivoice.WavePlayerRTC:main
+      specgramrtc = openhrivoice.SpecgramRTC:main
       """,
       **extra
       )
