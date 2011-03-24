@@ -62,11 +62,11 @@ class SpecgramRTC(OpenRTM_aist.DataFlowComponentBase):
     def __init__(self, manager):
         try:
             OpenRTM_aist.DataFlowComponentBase.__init__(self, manager)
-            self._x = []
             self._NFFT = 256
             self._Fs = 16000
             self._noverlap = 128
             self._recordlen = int(self._Fs * 5.0)
+            self._x = numpy.ones(self._recordlen)
         except:
             self._logger.RTC_ERROR(traceback.format_exc())
 
@@ -83,14 +83,13 @@ class SpecgramRTC(OpenRTM_aist.DataFlowComponentBase):
             self._inport.addConnectorDataListener(OpenRTM_aist.ConnectorDataListenerType.ON_BUFFER_WRITE,
                                                   DataListener("ON_BUFFER_WRITE", self))
             self.addInPort(self._inport._name, self._inport)
-            matplotlib.pyplot.show()
         except:
             self._logger.RTC_ERROR(traceback.format_exc())
         return RTC.RTC_OK
     
     def onData(self, name, data):
         try:
-            self._x += data.data
+            self._x = numpy.concatenate((self._x, numpy.fromstring(data.data, numpy.int16)))
             self._x = self._x[-self._recordlen:]
         except:
             self._logger.RTC_ERROR(traceback.format_exc())
@@ -98,8 +97,7 @@ class SpecgramRTC(OpenRTM_aist.DataFlowComponentBase):
     def onExecute(self, ec_id):
         try:
             OpenRTM_aist.DataFlowComponentBase.onExecute(self, ec_id)
-            matplotlib.pyplot.specgram(self._x, NFFT=self._NFFT, Fs=self._Fs, noverlap=self._noverlap)
-            matplotlib.pyplot.show()
+            matplotlib.pyplot.specgram(numpy.asarray(self._x), NFFT=self._NFFT, Fs=self._Fs, noverlap=self._noverlap)
         except:
             self._logger.RTC_ERROR(traceback.format_exc())
         return RTC.RTC_OK
@@ -131,6 +129,8 @@ class SpecgramRTCManager:
         profile = OpenRTM_aist.Properties(defaults_str=SpecgramRTC_spec)
         manager.registerFactory(profile, SpecgramRTC, OpenRTM_aist.Delete)
         self._comp = manager.createComponent("SpecgramRTC")
+        matplotlib.pyplot.subplot('111')
+        matplotlib.pyplot.show()
 
 def main():
     manager = SpecgramRTCManager()
