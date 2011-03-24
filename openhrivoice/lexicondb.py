@@ -43,6 +43,8 @@ create table data (
                     self.register(t, v, 'KANA')
             del dic
             self._db.commit()
+            self._db.execute('create index text_index on data(text);')
+            self._db.commit()
 
     def register(self, text, pronounce, alphabet):
         sql = u'insert into data values (?,?,?);'
