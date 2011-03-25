@@ -16,6 +16,7 @@ http://www.opensource.org/licenses/eclipse-1.0.txt
 import sys, os, re, codecs
 from lxml import etree
 from openhrivoice.hiragana2phoneme import hiragana2phoneme
+from openhrivoice.lexicondb import *
 
 def isempty(node):
     if node.nodeName == '#text':
@@ -38,10 +39,11 @@ class PLS:
                     if elem.tag.find("lexeme") >= 0:
                         for g in grapheme:
                             for p in phoneme:
+                                (ptype, pval) = p.strip('{}').split('|')
                                 try:
-                                    self._dict[g].append(p)
+                                    self._dict[g].append(pval)
                                 except KeyError:
-                                    self._dict[g] = [p,]
+                                    self._dict[g] = [pval,]
                         grapheme = []
                         phoneme = []
                     if elem.tag.find("grapheme") >= 0:
@@ -233,10 +235,10 @@ class SRGS:
         else:
             root = self._rules[rootrule]
 
-        if self._lex is None:
-            print "[error] <lexicon uri=...> node is required in the grammar file."
-            return None
-        lex = PLS().parse(self._lex)
+        lex = None
+        if self._lex is not None:
+            lex = PLS().parse(self._lex)
+        lexdb = LexiconDB('test.db')
 
         dfa = DFA()
         startstate = dfa.newstate()
@@ -260,12 +262,16 @@ class SRGS:
             #dict['<sp>'] = ('sp',)
         for v in revdfa:
             if v[1] != -1:
-                try:
-                    if dict.has_key(v[1]) == False:
-                        dict[v[1]] = lex._dict[v[1]]
-                except KeyError:
-                    print "[error] undefined lexicon: %s" % (v[1],)
-                    return ""
+                if dict.has_key(v[1]) == False:
+                    p = None
+                    if lex is not None:
+                        p = lex._dict.get(v[1])
+                    if p is None:
+                        p = lexdb.substringlookup(v[1])
+                    if len(p) == 0:
+                        print "[error] undefined lexicon: %s" % (v[1],)
+                        return ""
+                    dict[v[1]] = p
         dict2id = {}
         for k in dict.keys():
             dict2id[k] = len(dict2id)
@@ -283,14 +289,7 @@ class SRGS:
         h2p =  hiragana2phoneme()
         for k in dict.keys():
             for p in dict[k]:
-                if p[:2] == '{{':
-                    (ptype, pval) = p.strip('{}').split('|')
-                    if ptype.upper() in ('KANA', 'X-KANA'):
-                        phonedict.append((dict2id[k], k, h2p.convert(pval)))
-                    else:
-                        phonedict.append((dict2id[k], k, pval))
-                else:
-                    phonedict.append((dict2id[k], k, p))
+                phonedict.append((dict2id[k], k, h2p.convert(p)))
         phonedict.sort(lambda x, y: x[0] - y[0])
 
         str = u""

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-03-17 23:20+0900\n"
+"POT-Creation-Date: 2011-03-22 14:42+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,36 +16,20 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../openhrivoice/FestivalRTC.py:38
+#: ../openhrivoice/FestivalRTC.py:39
 msgid "English speech synthesis component."
 msgstr ""
 
-#: ../openhrivoice/FestivalRTC.py:122 ../openhrivoice/OpenJTalkRTC.py:257
+#: ../openhrivoice/FestivalRTC.py:96 ../openhrivoice/OpenJTalkRTC.py:233
 msgid "Format of output audio (fixed to 16bit)."
 msgstr ""
 
-#: ../openhrivoice/FestivalRTC.py:126 ../openhrivoice/OpenJTalkRTC.py:261
+#: ../openhrivoice/FestivalRTC.py:100 ../openhrivoice/OpenJTalkRTC.py:237
 msgid "Sampling frequency of output audio (fixed to 16kHz)."
 msgstr ""
 
-#: ../openhrivoice/FestivalRTC.py:130 ../openhrivoice/OpenJTalkRTC.py:265
+#: ../openhrivoice/FestivalRTC.py:104 ../openhrivoice/OpenJTalkRTC.py:241
 msgid "Character of the voice (fixed to male)."
-msgstr ""
-
-#: ../openhrivoice/FestivalRTC.py:156 ../openhrivoice/OpenJTalkRTC.py:293
-msgid "Text to be synthesized."
-msgstr ""
-
-#: ../openhrivoice/FestivalRTC.py:163 ../openhrivoice/OpenJTalkRTC.py:300
-msgid "Synthesized audio data."
-msgstr ""
-
-#: ../openhrivoice/FestivalRTC.py:168 ../openhrivoice/OpenJTalkRTC.py:305
-msgid "Status of audio output (one of \"started\", \"finished\")."
-msgstr ""
-
-#: ../openhrivoice/FestivalRTC.py:173 ../openhrivoice/OpenJTalkRTC.py:310
-msgid "Time aliment information of each phonemes (to be used to lip-sync)."
 msgstr ""
 
 #: ../openhrivoice/JuliusRTC.py:33
@@ -92,7 +76,11 @@ msgstr ""
 msgid "show file open dialog in GUI"
 msgstr ""
 
-#: ../openhrivoice/OpenJTalkRTC.py:40
+#: ../openhrivoice/MARYRTC.py:37
+msgid "English and German speech synthesis component."
+msgstr ""
+
+#: ../openhrivoice/OpenJTalkRTC.py:41
 msgid "Japanese speech synthesis component."
 msgstr ""
 

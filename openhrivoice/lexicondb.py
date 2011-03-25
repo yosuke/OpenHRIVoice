@@ -32,6 +32,8 @@ create table data (
 );
 """
             self._db.execute(sql)
+            self._db.execute('create index text_index on data(text);')
+            self._db.execute('create index alphabet_index on data(alphabet);')
             dic = VoxforgeDict('/usr/share/doc/julius-voxforge/dict.gz')
             for t, vs in dic._dict.iteritems():
                 for v in vs:
@@ -42,8 +44,6 @@ create table data (
                 for v in vs:
                     self.register(t, v, 'KANA')
             del dic
-            self._db.commit()
-            self._db.execute('create index text_index on data(text);')
             self._db.commit()
 
     def register(self, text, pronounce, alphabet):
