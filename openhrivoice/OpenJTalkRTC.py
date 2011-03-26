@@ -30,6 +30,7 @@ import OpenRTM_aist
 import RTC
 from openhrivoice.__init__ import __version__
 from openhrivoice import utils
+from openhrivoice.config import config
 from openhrivoice.parseopenjtalk import parseopenjtalk
 from openhrivoice.VoiceSynthComponentBase import *
 try:
@@ -54,6 +55,7 @@ class mysocket(socket.socket):
 class OpenJTalkWrap(VoiceSynthBase):
     def __init__(self):
         VoiceSynthBase.__init__(self)
+        self._config = config()
         self._args = (("td", "tree-dur.inf"),
                       ("tf", "tree-lf0.inf"),
                       ("tm", "tree-mgc.inf"),
@@ -71,19 +73,6 @@ class OpenJTalkWrap(VoiceSynthBase):
                       ("cf", "gv-lf0.pdf"),
                       ("cm", "gv-mgc.pdf"),
                       ("k", "gv-switch.inf"))
-        self._platform = platform.system()
-        if hasattr(sys, "frozen"):
-            self._basedir = os.path.dirname(unicode(sys.executable, sys.getfilesystemencoding()))
-        else:
-            self._basedir = os.path.dirname(__file__)
-        if self._platform == "Windows":
-            self._binfile = os.path.join(self._basedir, "open_jtalk.exe")
-            self._phonemodel =  os.path.join(self._basedir, "3rdparty", "hts_voice_nitech_jp_atr503_m001-1.01")
-            self._dicfile = os.path.join(self._basedir, "3rdparty", "open_jtalk_dic_utf_8-1.00")
-        else:
-            self._binfile = "open_jtalk"
-            self._phonemodel = "/usr/lib/hts-voice/nitech-jp-atr503-m001"
-            self._dicfile = "/usr/lib/open_jtalk/dic/utf-8"
 
     def synth(self, data):
         if self._fp is not None:
@@ -99,12 +88,12 @@ class OpenJTalkWrap(VoiceSynthBase):
         fp.close()
         # command line for OpenJTalk
         self._cmdarg = []
-        self._cmdarg.append(self._binfile)
+        self._cmdarg.append(self._conf._openjtalk_bin)
         for o, v in self._args:
             self._cmdarg.append("-"+o)
-            self._cmdarg.append(os.path.join(self._phonemodel, v))
+            self._cmdarg.append(os.path.join(self._conf._openjtalk_phonemodel_ja, v))
         self._cmdarg.append("-x")
-        self._cmdarg.append(self._dicfile)
+        self._cmdarg.append(self._conf._openjtalk_dicfile_ja)
         self._cmdarg.append("-ow")
         self._cmdarg.append(self._wavfile)
         self._cmdarg.append("-ot")
@@ -131,6 +120,7 @@ class OpenJTalkWrap(VoiceSynthBase):
 class OpenJTalkWrap2(VoiceSynthBase):
     def __init__(self):
         VoiceSynthBase.__init__(self)
+        self._config = config()
         self._args = (("td", "tree-dur.inf"),
                       ("tf", "tree-lf0.inf"),
                       ("tm", "tree-mgc.inf"),
@@ -148,28 +138,15 @@ class OpenJTalkWrap2(VoiceSynthBase):
                       ("cf", "gv-lf0.pdf"),
                       ("cm", "gv-mgc.pdf"),
                       ("k", "gv-switch.inf"))
-        self._platform = platform.system()
-        if hasattr(sys, "frozen"):
-            self._basedir = os.path.dirname(unicode(sys.executable, sys.getfilesystemencoding()))
-        else:
-            self._basedir = os.path.dirname(__file__)
-        if self._platform == "Windows":
-            self._binfile = os.path.join(self._basedir, "open_jtalk.exe")
-            self._phonemodel =  os.path.join(self._basedir, "3rdparty", "hts_voice_nitech_jp_atr503_m001-1.01")
-            self._dicfile = os.path.join(self._basedir, "3rdparty", "open_jtalk_dic_utf_8-1.00")
-        else:
-            self._binfile = "open_jtalk"
-            self._phonemodel = "/usr/lib/hts-voice/nitech-jp-atr503-m001"
-            self._dicfile = "/usr/lib/open_jtalk/dic/utf-8"
         # command line for OpenJTalk
         self._moduleport = self.getunusedport()
         self._cmdarg = []
-        self._cmdarg.append(self._binfile)
+        self._cmdarg.append(self._conf._openjtalk_bin)
         for o, v in self._args:
             self._cmdarg.append("-"+o)
-            self._cmdarg.append(os.path.join(self._phonemodel, v))
+            self._cmdarg.append(os.path.join(self._conf._openjtalk_phonemodel_ja, v))
         self._cmdarg.append("-x")
-        self._cmdarg.append(self._dicfile)
+        self._cmdarg.append(self._conf._openjtalk_dicfile_ja)
         self._cmdarg.append("-w")
         self._cmdarg.append(str(self._moduleport))
         # run OpenJTalk

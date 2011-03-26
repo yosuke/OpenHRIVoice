@@ -15,6 +15,7 @@ http://www.opensource.org/licenses/eclipse-1.0.txt
 
 import sys, os, re, codecs
 from lxml import etree
+from openhrivoice.config import config
 from openhrivoice.hiragana2phoneme import hiragana2phoneme
 from openhrivoice.lexicondb import *
 
@@ -108,6 +109,7 @@ class SRGS:
     """ Utility class to parse W3C Speech Recognition Grammar Specification."""
 
     def __init__(self, file):
+        self._config = config()
         self._filename = file
         self._rules = {}
         self._lang = "en"
@@ -238,7 +240,7 @@ class SRGS:
         lex = None
         if self._lex is not None:
             lex = PLS().parse(self._lex)
-        lexdb = LexiconDB('test.db')
+        lexdb = LexiconDB(self._config._lexicondb)
 
         dfa = DFA()
         startstate = dfa.newstate()

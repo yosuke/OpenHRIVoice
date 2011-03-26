@@ -14,6 +14,7 @@ http://www.opensource.org/licenses/eclipse-1.0.txt
 '''
 
 import sqlite3
+from openhrivoice.config import config
 from openhrivoice.parsejuliusdict import *
 from openhrivoice.parsevoxforgedict import *
 
@@ -21,6 +22,7 @@ class LexiconDB:
     ''' Utility class to store pronunciation dictionary to database'''
     
     def __init__(self, fname):
+        self._config = config()
         self._db = sqlite3.connect(fname)
         tbls = self._db.execute("select * from sqlite_master where type = 'table' and name = 'data';")
         if len(tbls.fetchall()) == 0:
@@ -34,12 +36,12 @@ create table data (
             self._db.execute(sql)
             self._db.execute('create index text_index on data(text);')
             self._db.execute('create index alphabet_index on data(alphabet);')
-            dic = VoxforgeDict('/usr/share/doc/julius-voxforge/dict.gz')
+            dic = VoxforgeDict(self._config._julius_dict_en)
             for t, vs in dic._dict.iteritems():
                 for v in vs:
                     self.register(t.lower(), v, 'ARPAbet')
             del dic
-            dic = JuliusDict('/usr/share/julius-runkit/model/lang_m/web.60k.htkdic')
+            dic = JuliusDict(self._config._julius_dict_ja)
             for t, vs in dic._dict.iteritems():
                 for v in vs:
                     self.register(t, v, 'KANA')

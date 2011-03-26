@@ -29,6 +29,7 @@ import OpenRTM_aist
 import RTC
 from openhrivoice.__init__ import __version__
 from openhrivoice import utils
+from openhrivoice.config import config
 from openhrivoice.VoiceSynthComponentBase import *
 try:
     import gettext
@@ -41,19 +42,9 @@ __doc__ = _('English speech synthesis component.')
 class FestivalWrap(VoiceSynthBase):
     def __init__(self):
         VoiceSynthBase.__init__(self)
-        self._platform = platform.system()
-        if hasattr(sys, "frozen"):
-            self._basedir = os.path.dirname(unicode(sys.executable, sys.getfilesystemencoding()))
-        else:
-            self._basedir = os.path.dirname(__file__)
-        if self._platform == "Windows":
-            self._binfile = os.path.join(self._basedir, "3rdparty", "festival-1.96.03-win\\festival\\festival.exe")
-            self._opt =  ["--libdir", os.path.join(self._basedir, "3rdparty", "festival-1.96.03-win\\festival\\lib")]
-        else:
-            self._binfile = "festival"
-            self._opt = []
-        self._cmdline =[self._binfile, '--pipe']
-        self._cmdline.extend(self._opt)
+        self._config = config()
+        self._cmdline =[self._config._festival_bin, '--pipe']
+        self._cmdline.extend(self._config._festival_opt)
         
     def synth(self, data):
         if self._fp is not None:

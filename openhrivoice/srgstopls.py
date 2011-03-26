@@ -27,6 +27,7 @@ from openhrivoice.parsevoxforgedict import *
 from openhrivoice.parsejuliusdict import *
 from openhrivoice.__init__ import __version__
 from openhrivoice import utils
+from openhrivoice.config import config
 try:
     import gettext
     _ = gettext.translation(domain='openhrivoice', localedir=os.path.dirname(__file__)+'/../share/locale').ugettext
@@ -49,6 +50,7 @@ def main():
     outfile = sys.stdout
 
     encoding = locale.getpreferredencoding()
+    conf = config()
     sys.stdout = codecs.getwriter(encoding)(sys.stdout, errors = "replace")
     sys.stderr = codecs.getwriter(encoding)(sys.stderr, errors = "replace")
 
@@ -90,21 +92,15 @@ def main():
     if srgs._lang in ("jp", "ja"):
         alphabet = "x-KANA"
         meca = None
-        if platform.system() == "Windows":
-            dic = JuliusDict(os.path.join(basedir, 'dictation-kit-v4.0-win\model\lang_m\web.60k.htkdic'))
-        else:
-            try:
-                import MeCab
-                meca = MeCab.Tagger('-Oyomi')
-            except:
-                pass
-            dic = JuliusDict('/usr/share/julius-runkit/model/lang_m/web.60k.htkdic')
+        try:
+            import MeCab
+            meca = MeCab.Tagger('-Oyomi')
+        except:
+            pass
+        dic = JuliusDict(conf._julius_dict_ja)
     else:
         alphabet = "x-ARPAbet"
-        if platform.system() == "Windows":
-            dic = VoxforgeDict(os.path.join(basedir, 'julius-voxforge-build726\dict'))
-        else:
-            dic = VoxforgeDict('/usr/share/doc/julius-voxforge/dict.gz')
+        dic = VoxforgeDict(conf._julius_dict_en)
     print >> outfile, '''<?xml version="1.0" encoding="UTF-8"?>
 <lexicon version="1.0"
      xmlns="http://www.w3.org/2005/01/pronunciation-lexicon"

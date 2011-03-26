@@ -24,6 +24,7 @@ import OpenRTM_aist
 import RTC
 from openhrivoice.__init__ import __version__
 from openhrivoice import utils
+from openhrivoice.config import config
 try:
     import gettext
     _ = gettext.translation(domain='openhrivoice', localedir=os.path.dirname(__file__)+'/../share/locale').ugettext
@@ -38,6 +39,7 @@ class JuliusWrap(threading.Thread):
     
     def __init__(self, language='jp'):
         threading.Thread.__init__(self)
+        self._config = config()
         self._running = False
         self._platform = platform.system()
         self._gotinput = False
@@ -50,49 +52,22 @@ class JuliusWrap(threading.Thread):
         self._firstgrammar = True
         self._activegrammars = {}
         self._prevdata = ''
-        if hasattr(sys, "frozen"):
-            self._basedir = os.path.dirname(unicode(sys.executable, sys.getfilesystemencoding()))
-        else:
-            self._basedir = os.path.dirname(__file__)
         self._modulesocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self._audiosocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self._cmdline = []
-        if self._platform == "Windows":
-            self._cmdline.append(os.path.join(self._basedir, "3rdparty", "dictation-kit-v4.0-win\\bin\\julius.exe"))
-            if self._lang == 'jp':
-                self._cmdline.extend(['-h',  os.path.join(self._basedir, "3rdparty", "dictation-kit-v4.0-win\\model\\phone_m\\hmmdefs_ptm_gid.binhmm")])
-                self._cmdline.extend(['-hlist', os.path.join(self._basedir, "3rdparty", "dictation-kit-v4.0-win\\model\\phone_m\\logicalTri")])
-                self._cmdline.extend(["-dfa", os.path.join(self._basedir, "dummy.dfa")])
-                self._cmdline.extend(["-v" , os.path.join(self._basedir, "dummy.dict")])
-                self._cmdline.extend(["-sb", "80.0"])
-            else:
-                self._cmdline.extend(['-h', os.path.join(self._basedir, "3rdparty", "julius-voxforge-build726\\hmmdefs")])
-                self._cmdline.extend(['-hlist', os.path.join(self._basedir, "3rdparty", "julius-voxforge-build726\\tiedlist")])
-                self._cmdline.extend(["-dfa", os.path.join(self._basedir, "dummy-en.dfa")])
-                self._cmdline.extend(["-v", os.path.join(self._basedir, "dummy-en.dict")])
-                self._cmdline.extend(["-sb", "160.0"])
+        self._cmdline.append(self._config._julius_bin)
+        if self._lang == 'jp':
+            self._cmdline.extend(['-h',  self._config._julius_hmm_ja])
+            self._cmdline.extend(['-hlist', self._config._julius_hlist_ja])
+            self._cmdline.extend(["-dfa", os.path.join(self._config._basedir, "dummy.dfa")])
+            self._cmdline.extend(["-v" , os.path.join(self._config._basedir, "dummy.dict")])
+            self._cmdline.extend(["-sb", "80.0"])
         else:
-            self._cmdline.append("/usr/bin/julius")
-            if self._lang == 'jp':
-                self._cmdline.extend(["-h", "/usr/share/julius-runkit/model/phone_m/hmmdefs_ptm_gid.binhmm"])
-                self._cmdline.extend(["-hlist", "/usr/share/julius-runkit/model/phone_m/logicalTri"])
-                self._cmdline.extend(["-dfa", os.path.join(self._basedir, "dummy.dfa")])
-                self._cmdline.extend(["-v", os.path.join(self._basedir, "dummy.dict")])
-                #self._cmdline += " -d /usr/share/julius-runkit/model/lang_m/web.60k.8-8.bingramv4.gz"
-                #self._cmdline += " -v /usr/share/julius-runkit/model/lang_m/web.60k.htkdic"
-                self._cmdline.extend(["-sb", "80.0"])
-            elif self._lang == 'de':
-                self._cmdline.extend(["-h", "/usr/share/julius-voxforge-de/acoustic/hmmdefs"])
-                self._cmdline.extend(["-hlist", "/usr/share/julius-voxforge-de/acoustic/tiedlist"])
-                self._cmdline.extend(["-dfa", os.path.join(self._basedir, "dummy-en.dfa")])
-                self._cmdline.extend(["-v", os.path.join(self._basedir, "dummy-en.dict")])
-                self._cmdline.extend(["-sb", "120.0"])
-            else:
-                self._cmdline.extend(["-h", "/usr/share/julius-voxforge/acoustic/hmmdefs"])
-                self._cmdline.extend(["-hlist", "/usr/share/julius-voxforge/acoustic/tiedlist"])
-                self._cmdline.extend(["-dfa", os.path.join(self._basedir, "dummy-en.dfa")])
-                self._cmdline.extend(["-v", os.path.join(self._basedir, "dummy-en.dict")])
-                self._cmdline.extend(["-sb", "160.0"])
+            self._cmdline.extend(['-h',  self._config._julius_hmm_en])
+            self._cmdline.extend(['-hlist', self._config._julius_hlist_en])
+            self._cmdline.extend(["-dfa", os.path.join(self._config._basedir, "dummy-en.dfa")])
+            self._cmdline.extend(["-v", os.path.join(self._config._basedir, "dummy-en.dict")])
+            self._cmdline.extend(["-sb", "160.0"])
         self._audioport = self.getunusedport()
         self._moduleport = self.getunusedport()
         self._cmdline.extend(["-input", "adinnet",  "-adport",  str(self._audioport)])
