@@ -28,6 +28,7 @@ from openhrivoice.parsejuliusdict import *
 from openhrivoice.__init__ import __version__
 from openhrivoice import utils
 from openhrivoice.config import config
+from openhrivoice.lexicondb import LexiconDB
 try:
     import gettext
     _ = gettext.translation(domain='openhrivoice', localedir=os.path.dirname(__file__)+'/../share/locale').ugettext
@@ -85,22 +86,11 @@ def main():
     outfile = codecs.getwriter('utf-8')(outfile)
 
     srgs = SRGS(args[0])
-    if hasattr(sys, "frozen"):
-        basedir = os.path.dirname(unicode(sys.executable, sys.getfilesystemencoding()))
-    else:
-        basedir = os.path.dirname(__file__)
+    dic = LexiconDB(conf._lexicondb)
     if srgs._lang in ("jp", "ja"):
         alphabet = "x-KANA"
-        meca = None
-        try:
-            import MeCab
-            meca = MeCab.Tagger('-Oyomi')
-        except:
-            pass
-        dic = JuliusDict(conf._julius_dict_ja)
     else:
         alphabet = "x-ARPAbet"
-        dic = VoxforgeDict(conf._julius_dict_en)
     print >> outfile, '''<?xml version="1.0" encoding="UTF-8"?>
 <lexicon version="1.0"
      xmlns="http://www.w3.org/2005/01/pronunciation-lexicon"
@@ -111,12 +101,7 @@ def main():
     for w in set(srgs.wordlist()):
         print >> outfile, '  <lexeme>'
         print >> outfile, '    <grapheme>'+w+'</grapheme>'
-        prons = dic.lookup(w)
-        if len(prons) == 0 and srgs._lang == "jp":
-            if meca is not None:
-                yomi = dic.katakana2hiragana(unicode(meca.parse(w.encode('euc-jp')), 'euc-jp').strip())
-                prons.append(yomi.replace(u'う',u'ー').replace(u'ーー',u'ーう'))
-        for r in prons:
+        for r in dic.substringlookup(w):
             print >> outfile, '    <phoneme>{{' + alphabet + '|' + r + '}}</phoneme>'
         print >> outfile, '  </lexeme>'
     print >> outfile, '</lexicon>'
