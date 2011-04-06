@@ -55,7 +55,7 @@ class mysocket(socket.socket):
 class OpenJTalkWrap(VoiceSynthBase):
     def __init__(self):
         VoiceSynthBase.__init__(self)
-        self._config = config()
+        self._conf = config()
         self._args = (("td", "tree-dur.inf"),
                       ("tf", "tree-lf0.inf"),
                       ("tm", "tree-mgc.inf"),
@@ -120,7 +120,7 @@ class OpenJTalkWrap(VoiceSynthBase):
 class OpenJTalkWrap2(VoiceSynthBase):
     def __init__(self):
         VoiceSynthBase.__init__(self)
-        self._config = config()
+        self._conf = config()
         self._args = (("td", "tree-dur.inf"),
                       ("tf", "tree-lf0.inf"),
                       ("tm", "tree-mgc.inf"),
