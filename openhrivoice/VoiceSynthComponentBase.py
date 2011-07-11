@@ -38,7 +38,9 @@ class VoiceSynthBase:
         self._samplerate = 16000
         self._durationdata = ""
         self._fp = None
-        self._wavefile = ""
+        self._history = []
+        self._cache = {}
+        self._cachesize = 10
         
     def gettempname(self):
         # get temp file name
@@ -47,6 +49,25 @@ class VoiceSynthBase:
         return fn[1]
 
     def synth(self, data):
+        if self._fp is not None:
+            self._fp.close()
+            self._fp = None
+        self._history.append(data)
+        try:
+            (self._durationdata, wavfile) = self._cache[data]
+            self._fp = wave.open(wavfile, 'rb')
+        except KeyError:
+            (self._durationdata, wavfile) = self.synthreal(data)
+            self._history.append(data)
+            self._cache[data] = (self._durationdata, wavfile)
+            self._fp = wave.open(wavfile, 'rb')
+            if len(self._history) > self._cachesize:
+                d = self._history.pop(0)
+                (logdata, wavfile) = self._cache[d]
+                del self._cache[d]
+                os.remove(wavfile)
+
+    def synthreal(self, data):
         pass
         
     def readdata(self, chunk):
@@ -57,12 +78,10 @@ class VoiceSynthBase:
         except ValueError:
             self._fp.close()
             self._fp = None
-            os.remove(self._wavfile)
             return None
         if data == '':
             self._fp.close()
             self._fp = None
-            os.remove(self._wavfile)
             return None
         return data
     
@@ -129,26 +148,27 @@ class VoiceSynthComponentBase(OpenRTM_aist.DataFlowComponentBase):
             now = time.clock()
             chunk = int(self._wrap._samplerate * (now - self._prevtime))
             data = None
+            #self._logger.RTC_INFO(chunk)
             if chunk > 0:
                 self._prevtime = now
                 data = self._wrap.readdata(chunk)
-            if data is not None:
-                if self._statusdata.data != "started":
-                    self._logger.RTC_INFO("stream started")
-                    self._statusdata.data = "started"
-                    self._statusport.write(self._statusdata)
-                    self._durdata.data = self._wrap._durationdata
-                    self._durport.write(self._durdata)
-                    data2 = self._wrap.readdata(int(self._wrap._samplerate * 1.0))
-                    if data2 is not None:
-                        data += data2
-                self._outdata.data = data
-                self._outport.write(self._outdata)
-            else:
-                if self._statusdata.data != "finished":
-                    self._logger.RTC_INFO("stream finished")
-                    self._statusdata.data = "finished"
-                    self._statusport.write(self._statusdata)
+                if data is not None:
+                    if self._statusdata.data != "started":
+                        self._logger.RTC_INFO("stream started")
+                        self._statusdata.data = "started"
+                        self._statusport.write(self._statusdata)
+                        self._durdata.data = self._wrap._durationdata
+                        self._durport.write(self._durdata)
+                        data2 = self._wrap.readdata(int(self._wrap._samplerate * 1.0))
+                        if data2 is not None:
+                            data += data2
+                        self._outdata.data = data
+                        self._outport.write(self._outdata)
+                else:
+                    if self._statusdata.data != "finished":
+                        self._logger.RTC_INFO("stream finished")
+                        self._statusdata.data = "finished"
+                        self._statusport.write(self._statusdata)
         except:
             self._logger.RTC_ERROR(traceback.format_exc())
         return RTC.RTC_OK

@@ -73,46 +73,44 @@ class OpenJTalkWrap(VoiceSynthBase):
                       ("cf", "gv-lf0.pdf"),
                       ("cm", "gv-mgc.pdf"),
                       ("k", "gv-switch.inf"))
+        self._samplerate = 32000
 
-    def synth(self, data):
-        if self._fp is not None:
-            self._fp.close()
-            self._fp = None
-            os.remove(self._wavfile)
-        self._textfile = self.gettempname()
-        self._wavfile = self.gettempname()
-        self._logfile = self.gettempname()
+    def synthreal(self, data):
+        textfile = self.gettempname()
+        wavfile = self.gettempname()
+        logfile = self.gettempname()
         # text file which specifies synthesized string
-        fp = codecs.open(self._textfile, 'w', 'utf-8')
+        fp = codecs.open(textfile, 'w', 'utf-8')
         fp.write(u"%s\n" % (data,))
         fp.close()
         # command line for OpenJTalk
-        self._cmdarg = []
-        self._cmdarg.append(self._conf._openjtalk_bin)
+        cmdarg = []
+        cmdarg.append(self._conf._openjtalk_bin)
         for o, v in self._args:
-            self._cmdarg.append("-"+o)
-            self._cmdarg.append(os.path.join(self._conf._openjtalk_phonemodel_ja, v))
-        self._cmdarg.append("-x")
-        self._cmdarg.append(self._conf._openjtalk_dicfile_ja)
-        self._cmdarg.append("-ow")
-        self._cmdarg.append(self._wavfile)
-        self._cmdarg.append("-ot")
-        self._cmdarg.append(self._logfile)
-        self._cmdarg.append(self._textfile)
+            cmdarg.append("-"+o)
+            #cmdarg.append(os.path.join(self._conf._openjtalk_phonemodel_male_ja, v))
+            cmdarg.append(os.path.join(self._conf._openjtalk_phonemodel_female_ja, v))
+        cmdarg.append("-s")
+        cmdarg.append("32000")
+        cmdarg.append("-p")
+        cmdarg.append("160")
+        cmdarg.append("-x")
+        cmdarg.append(self._conf._openjtalk_dicfile_ja)
+        cmdarg.append("-ow")
+        cmdarg.append(wavfile)
+        cmdarg.append("-ot")
+        cmdarg.append(logfile)
+        cmdarg.append(textfile)
         # run OpenJTalk
-        p = subprocess.Popen(self._cmdarg)
+        p = subprocess.Popen(cmdarg)
         p.wait()
         # read duration data
         d = parseopenjtalk()
-        d.parse(self._logfile)
-        self._durationdata = d.toseg().encode("utf-8")
-        # read data
-        self._fp = wave.open(self._wavfile, 'rb')
-        #self._channels = wf.getnchannels()
-        #self._samplebytes = wf.getsampwidth()
-        self._samplerate = self._fp.getframerate()
-        os.remove(self._textfile)
-        os.remove(self._logfile)
+        d.parse(logfile)
+        durationdata = d.toseg().encode("utf-8")
+        os.remove(textfile)
+        os.remove(logfile)
+        return (durationdata, wavfile)
     
     def terminate(self):
         pass
@@ -214,8 +212,8 @@ OpenJTalkRTC_spec = ["implementation_id", "OpenJTalkRTC",
                      "conf.__description__.rate", _("Sampling frequency of output audio (fixed to 16kHz).").encode('UTF-8'),
                      "conf.default.character", "male",
                      "conf.__widget__.character", "radio",
-                     "conf.__constraints__.character", "male",
-                     "conf.__description__.character", _("Character of the voice (fixed to male).").encode('UTF-8'),
+                     "conf.__constraints__.character", "(male, female)",
+                     "conf.__description__.character", _("Character of the voice.").encode('UTF-8'),
                      ""]
 
 class OpenJTalkRTC(VoiceSynthComponentBase):

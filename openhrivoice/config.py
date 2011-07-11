@@ -63,11 +63,13 @@ class config():
 
         if self._platform == "Windows":
             self._openjtalk_bin = os.path.join(self._basedir, "open_jtalk.exe")
-            self._openjtalk_phonemodel_ja =  os.path.join(self._basedir, "3rdparty", "hts_voice_nitech_jp_atr503_m001-1.01")
+            self._openjtalk_phonemodel_male_ja =  os.path.join(self._basedir, "3rdparty", "hts_voice_nitech_jp_atr503_m001-1.01")
+            self._openjtalk_phonemodel_female_ja =  os.path.join(self._basedir, "3rdparty", "MMDAgent-Example/Voice/mei_normal")
             self._openjtalk_dicfile_ja = os.path.join(self._basedir, "3rdparty", "open_jtalk_dic_utf_8-1.00")
         else:
             self._openjtalk_bin = "open_jtalk"
-            self._openjtalk_phonemodel_ja = "/usr/lib/hts-voice/nitech-jp-atr503-m001"
+            self._openjtalk_phonemodel_male_ja = "/usr/lib/hts-voice/nitech-jp-atr503-m001"
+            self._openjtalk_phonemodel_female_ja = "/usr/lib/mmdagent/voice/mei_normal"
             self._openjtalk_dicfile_ja = "/usr/lib/open_jtalk/dic/utf-8"
 
         if self._platform == "Windows":

@@ -16,6 +16,9 @@ echo "connecting components..."
 rtcon /localhost/`hostname`.host_cxt/ConsoleIn0.rtc:out /localhost/`hostname`.host_cxt/OpenJTalkRTC0.rtc:text
 rtcon /localhost/`hostname`.host_cxt/OpenJTalkRTC0.rtc:result /localhost/`hostname`.host_cxt/PulseAudioOutput0.rtc:AudioDataIn
 
+echo "configureing components..."
+rtconf /localhost/`hostname`.host_cxt/PulseAudioOutput0.rtc set OutputSampleRate 32000
+
 echo "activating components..."
 rtact /localhost/`hostname`.host_cxt/PulseAudioOutput0.rtc
 rtact /localhost/`hostname`.host_cxt/OpenJTalkRTC0.rtc
