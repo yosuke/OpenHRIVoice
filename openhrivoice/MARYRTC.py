@@ -34,41 +34,26 @@ try:
 except:
     _ = lambda s: s
 
-__doc__ = _('English and German speech synthesis component.')
+__doc__ = _('German speech synthesis component using MARY.')
 
 class MARYTalkWrap(VoiceSynthBase):
     def __init__(self):
         VoiceSynthBase.__init__(self)
         self._baseurl = "http://localhost:59125/"
-        self._input_type = "TEXT"
-        self._output_type = "AUDIO"
-        self._audio = "WAVE"
-        self._characters = {}
-        self._defaultcharacter = None
-        self._voice = None
-        self._locale = None
-        self._gender = None
-        self._voice_type = None
+        self._voice_type = {}
         voiceinfo = urllib.urlopen(self._baseurl + 'voices').readlines()
         for v in voiceinfo:
             (id, lang, gender, type) = v.strip().split()
-            idstr = "%s-%s-%s" % (gender, lang, id)
-            if not self._defaultcharacter:
-                self._defaultcharacter = idstr
-            self._characters[idstr] = (id, lang, gender, type)
+            if lang == 'de':
+                self._voice_type[gender] = id
             
-    def setcharacter(self, idstr):
-        (self._voice, self._locale, self._gender, self._voice_type) = self._characters[idstr]
-
-    def getaudio(self, data):
-        if not self._voice:
-            return None
+    def getaudio(self, data, character):
         query = [
-                 ('INPUT_TYPE', self._input_type),
+                 ('INPUT_TYPE', 'TEXT'),
                  ('OUTPUT_TYPE', 'AUDIO'),
-                 ('AUDIO', self._audio),
-                 ('LOCALE', self._locale),
-                 ('VOICE', self._voice),
+                 ('AUDIO', 'WAVE'),
+                 ('LOCALE', 'de'),
+                 ('VOICE', self._voice_type[character]),
                  ('INPUT_TEXT', data),
                  ]
         maryurl = self._baseurl + 'process?' + urllib.urlencode(query)
@@ -76,15 +61,13 @@ class MARYTalkWrap(VoiceSynthBase):
         urllib.urlretrieve(maryurl, wavfile)
         return wavfile
 
-    def getdurations(self, data):
-        if not self._voice:
-            return None
+    def getdurations(self, data, character):
         query = [
-                 ('INPUT_TYPE', self._input_type),
+                 ('INPUT_TYPE', 'TEXT'),
                  ('OUTPUT_TYPE', 'REALISED_DURATIONS'),
-                 ('AUDIO', self._audio),
-                 ('LOCALE', self._locale),
-                 ('VOICE', self._voice),
+                 ('AUDIO', 'WAVE'),
+                 ('LOCALE', 'de'),
+                 ('VOICE', self._voice_type[character]),
                  ('INPUT_TEXT', data),
                  ]
         maryurl = self._baseurl + 'process?' + urllib.urlencode(query)
@@ -95,18 +78,10 @@ class MARYTalkWrap(VoiceSynthBase):
         #d = '#\n0.001 125 sil\n' + '\n'.join(d.split('\n')[1:]) + ('%f 125 sil\n' % (lasttime + 0.001,))
         return d
 
-    def synth(self, data):
-        if self._fp is not None:
-            self._fp.close()
-            self._fp = None
-            os.remove(self._wavfile)
-        self._wavfile = self.getaudio(data)
-        self._durations = self.getdurations(data)
-        # read audio data
-        self._fp = wave.open(self._wavfile, 'rb')
-        #self._channels = self._fp.getnchannels()
-        #self._samplebytes = self._fp.getsampwidth()
-        self._samplerate = self._fp.getframerate()
+    def synthreal(self, data, samplerate, character):
+        wavfile = self.getaudio(data, character)
+        durations = self.getdurations(data, character)
+        return (durations, wavfile)
 
 MARYRTC_spec = ["implementation_id", "MARYRTC",
                 "type_name",         "MARYRTC",
@@ -118,36 +93,32 @@ MARYRTC_spec = ["implementation_id", "MARYRTC",
                 "max_instance",      "5",
                 "language",          "Python",
                 "lang_type",         "script",
-                "conf.default.format", "int16"
-                "conf.default.rate", "16000"
-                "conf.default.character", ""
+                "conf.default.format", "int16",
+                "conf.default.rate", "16000",
+                "conf.default.character", "male",
                 "conf.__widget__.format", "radio",
-                "conf.__constraints__.format", "int16",
+                "conf.__constraints__.format", "(int16)",
                 "conf.__description__.format", "Format of output audio (fixed to 16bit).",
                 "conf.__widget__.rate", "spin",
-                "conf.__constraints__.rate", "16000",
+                "conf.__constraints__.rate", "x == 16000",
                 "conf.__description__.rate", "Sampling frequency of output audio (fixed to 16kHz).",
                 "conf.__widget__.character", "radio",
-                "conf.__constraints__.character", "",
-                "conf.__description__.character", "Character of voice.",
+                "conf.__constraints__.character", "(male, female)",
+                "conf.__description__.character", "Character of the voice.",
                 ""]
 
 class MARYRTC(VoiceSynthComponentBase):
     def __init__(self, manager):
         VoiceSynthComponentBase.__init__(self, manager)
-        self._character = []
 
     def onInitialize(self):
         VoiceSynthComponentBase.onInitialize(self)
-        self._wrap = MARYTalkWrap()
-        # bind configuration parameters
-        self.bindParameter("character", self._character, self._wrap._defaultcharacter)
+        try:
+            self._wrap = MARYTalkWrap()
+        except:
+            self._logger.RTC_ERROR(traceback.format_exc())
+            return RTC.RTC_ERROR
         return RTC.RTC_OK
-
-    def onData(self, name, data):
-        self._wrap.setcharacter(self._character)
-        VoiceSynthComponentBase.onData(self, name, data)
-
 
 class MARYRTCManager:
     def __init__(self):
