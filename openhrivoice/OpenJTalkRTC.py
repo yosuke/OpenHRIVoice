@@ -73,9 +73,8 @@ class OpenJTalkWrap(VoiceSynthBase):
                       ("cf", "gv-lf0.pdf"),
                       ("cm", "gv-mgc.pdf"),
                       ("k", "gv-switch.inf"))
-        self._samplerate = 32000
 
-    def synthreal(self, data):
+    def synthreal(self, data, samplerate, character):
         textfile = self.gettempname()
         wavfile = self.gettempname()
         logfile = self.gettempname()
@@ -88,8 +87,10 @@ class OpenJTalkWrap(VoiceSynthBase):
         cmdarg.append(self._conf._openjtalk_bin)
         for o, v in self._args:
             cmdarg.append("-"+o)
-            #cmdarg.append(os.path.join(self._conf._openjtalk_phonemodel_male_ja, v))
-            cmdarg.append(os.path.join(self._conf._openjtalk_phonemodel_female_ja, v))
+            if character == "female":
+                cmdarg.append(os.path.join(self._conf._openjtalk_phonemodel_female_ja, v))
+            else:
+                cmdarg.append(os.path.join(self._conf._openjtalk_phonemodel_male_ja, v))
         cmdarg.append("-s")
         cmdarg.append("32000")
         cmdarg.append("-p")
@@ -104,6 +105,13 @@ class OpenJTalkWrap(VoiceSynthBase):
         # run OpenJTalk
         p = subprocess.Popen(cmdarg)
         p.wait()
+        # convert samplerate
+        if samplerate != 32000:
+            wavfile2 = self.gettempname()
+            p = subprocess.Popen(["sox", "-t", "wav", wavfile, "-r", str(samplerate), "-t", "wav", wavfile2])
+            p.wait()
+            os.remove(wavfile)
+            wavfile = wavfile2
         # read duration data
         d = parseopenjtalk()
         d.parse(logfile)
@@ -204,7 +212,7 @@ OpenJTalkRTC_spec = ["implementation_id", "OpenJTalkRTC",
                      "lang_type",         "script",
                      "conf.default.format", "int16",
                      "conf.__widget__.format", "radio",
-                     "conf.__constraints__.format", "int16",
+                     "conf.__constraints__.format", "(int16)",
                      "conf.__description__.format", _("Format of output audio (fixed to 16bit).").encode('UTF-8'),
                      "conf.default.rate", "16000",
                      "conf.__widget__.rate", "spin",

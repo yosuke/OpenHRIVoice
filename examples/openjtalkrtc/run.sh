@@ -16,16 +16,64 @@ echo "connecting components..."
 rtcon /localhost/`hostname`.host_cxt/ConsoleIn0.rtc:out /localhost/`hostname`.host_cxt/OpenJTalkRTC0.rtc:text
 rtcon /localhost/`hostname`.host_cxt/OpenJTalkRTC0.rtc:result /localhost/`hostname`.host_cxt/PulseAudioOutput0.rtc:AudioDataIn
 
-echo "configureing components..."
+echo "configureing components... 32000Hz male"
 rtconf /localhost/`hostname`.host_cxt/PulseAudioOutput0.rtc set OutputSampleRate 32000
+rtconf /localhost/`hostname`.host_cxt/OpenJTalkRTC0.rtc set rate 32000
+rtconf /localhost/`hostname`.host_cxt/OpenJTalkRTC0.rtc set character male
+
+sleep 1
 
 echo "activating components..."
 rtact /localhost/`hostname`.host_cxt/PulseAudioOutput0.rtc
 rtact /localhost/`hostname`.host_cxt/OpenJTalkRTC0.rtc
 rtact /localhost/`hostname`.host_cxt/ConsoleIn0.rtc
 
-echo "synthesising for 30 seconds..."
-sleep 30
+echo "synthesising for 15 seconds..."
+sleep 15
+
+echo "deactivating components..."
+rtdeact /localhost/`hostname`.host_cxt/PulseAudioOutput0.rtc
+rtdeact /localhost/`hostname`.host_cxt/OpenJTalkRTC0.rtc
+rtdeact /localhost/`hostname`.host_cxt/ConsoleIn0.rtc
+
+sleep 1
+
+echo "configureing components... 32000Hz female"
+rtconf /localhost/`hostname`.host_cxt/PulseAudioOutput0.rtc set OutputSampleRate 32000
+rtconf /localhost/`hostname`.host_cxt/OpenJTalkRTC0.rtc set rate 32000
+rtconf /localhost/`hostname`.host_cxt/OpenJTalkRTC0.rtc set character female
+
+sleep 1
+
+echo "activating components..."
+rtact /localhost/`hostname`.host_cxt/PulseAudioOutput0.rtc
+rtact /localhost/`hostname`.host_cxt/OpenJTalkRTC0.rtc
+rtact /localhost/`hostname`.host_cxt/ConsoleIn0.rtc
+
+echo "synthesising for 15 seconds..."
+sleep 15
+
+echo "deactivating components..."
+rtdeact /localhost/`hostname`.host_cxt/PulseAudioOutput0.rtc
+rtdeact /localhost/`hostname`.host_cxt/OpenJTalkRTC0.rtc
+rtdeact /localhost/`hostname`.host_cxt/ConsoleIn0.rtc
+
+sleep 1
+
+echo "configureing components... 16000Hz male"
+rtconf /localhost/`hostname`.host_cxt/PulseAudioOutput0.rtc set OutputSampleRate 16000
+rtconf /localhost/`hostname`.host_cxt/OpenJTalkRTC0.rtc set rate 16000
+rtconf /localhost/`hostname`.host_cxt/OpenJTalkRTC0.rtc set character male
+
+sleep 1
+
+echo "activating components..."
+rtact /localhost/`hostname`.host_cxt/PulseAudioOutput0.rtc
+rtact /localhost/`hostname`.host_cxt/OpenJTalkRTC0.rtc
+rtact /localhost/`hostname`.host_cxt/ConsoleIn0.rtc
+
+echo "synthesising for 15 seconds..."
+sleep 15
 
 echo "existing components..."
 rtexit /localhost/`hostname`.host_cxt/PulseAudioOutput0.rtc

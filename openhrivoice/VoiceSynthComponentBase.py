@@ -35,7 +35,6 @@ except:
 
 class VoiceSynthBase:
     def __init__(self):
-        self._samplerate = 16000
         self._durationdata = ""
         self._fp = None
         self._history = []
@@ -48,26 +47,26 @@ class VoiceSynthBase:
         os.close(fn[0])
         return fn[1]
 
-    def synth(self, data):
+    def synth(self, data, samplerate, character):
         if self._fp is not None:
             self._fp.close()
             self._fp = None
-        self._history.append(data)
         try:
-            (self._durationdata, wavfile) = self._cache[data]
+            (self._durationdata, wavfile) = self._cache[(data, samplerate, character)]
             self._fp = wave.open(wavfile, 'rb')
         except KeyError:
-            (self._durationdata, wavfile) = self.synthreal(data)
-            self._history.append(data)
-            self._cache[data] = (self._durationdata, wavfile)
+            (self._durationdata, wavfile) = self.synthreal(data, samplerate, character)
+            self._history.append((data, samplerate, character))
+            self._cache[(data, samplerate, character)] = (self._durationdata, wavfile)
             self._fp = wave.open(wavfile, 'rb')
             if len(self._history) > self._cachesize:
                 d = self._history.pop(0)
                 (logdata, wavfile) = self._cache[d]
                 del self._cache[d]
+                del logdata
                 os.remove(wavfile)
 
-    def synthreal(self, data):
+    def synthreal(self, data, samplerate, character):
         pass
         
     def readdata(self, chunk):
@@ -108,6 +107,11 @@ class VoiceSynthComponentBase(OpenRTM_aist.DataFlowComponentBase):
         self._logger.RTC_INFO(self._properties.getProperty("type_name") + " version " + self._properties.getProperty("version"))
         self._logger.RTC_INFO("Copyright (C) 2010-2011 Yosuke Matsusaka")
         self._prevtime = time.clock()
+        # configuration parameters
+        self._samplerate = [16000,]
+        self.bindParameter("rate", self._samplerate, 16000)
+        self._character = ["male",]
+        self.bindParameter("character", self._character, "male")
         # create inport
         self._indata = RTC.TimedString(RTC.Time(0,0), "")
         self._inport = OpenRTM_aist.InPort("text", self._indata)
@@ -135,9 +139,9 @@ class VoiceSynthComponentBase(OpenRTM_aist.DataFlowComponentBase):
     def onData(self, name, data):
         try:
             udata = data.data.decode("utf-8")
-            self._logger.RTC_INFO(udata)
+            self._logger.RTC_INFO(udata + " " + str(self._samplerate[0]) + " " + self._character[0])
             if self._wrap is not None:
-                self._wrap.synth(udata)
+                self._wrap.synth(udata, self._samplerate[0], self._character[0])
         except:
             self._logger.RTC_ERROR(traceback.format_exc())
 
@@ -146,9 +150,8 @@ class VoiceSynthComponentBase(OpenRTM_aist.DataFlowComponentBase):
         try:
             # send stream
             now = time.clock()
-            chunk = int(self._wrap._samplerate * (now - self._prevtime))
+            chunk = int(self._samplerate[0] * (now - self._prevtime))
             data = None
-            #self._logger.RTC_INFO(chunk)
             if chunk > 0:
                 self._prevtime = now
                 data = self._wrap.readdata(chunk)
@@ -159,7 +162,7 @@ class VoiceSynthComponentBase(OpenRTM_aist.DataFlowComponentBase):
                         self._statusport.write(self._statusdata)
                         self._durdata.data = self._wrap._durationdata
                         self._durport.write(self._durdata)
-                        data2 = self._wrap.readdata(int(self._wrap._samplerate * 1.0))
+                        data2 = self._wrap.readdata(int(self._samplerate[0] * 1.0))
                         if data2 is not None:
                             data += data2
                         self._outdata.data = data
