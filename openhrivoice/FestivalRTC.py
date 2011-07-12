@@ -46,30 +46,23 @@ class FestivalWrap(VoiceSynthBase):
         self._cmdline =[self._config._festival_bin, '--pipe']
         self._cmdline.extend(self._config._festival_opt)
         
-    def synth(self, data):
-        if self._fp is not None:
-            self._fp.close()
-            self._fp = None
-            os.remove(self._wavfile)
-        self._durfile = self.gettempname().replace("\\", "\\\\")
-        self._wavfile = self.gettempname().replace("\\", "\\\\")
+    def synthreal(self, data, samplerate, character):
+        durfile = self.gettempname().replace("\\", "\\\\")
+        wavfile = self.gettempname().replace("\\", "\\\\")
         # run Festival
-        self._p = subprocess.Popen(self._cmdline, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
-        self._p.stdin.write('(set! u (Utterance Text "' + data + '"))')
-        self._p.stdin.write('(utt.synth u)')
-        self._p.stdin.write('(utt.save.segs u "' + self._durfile + '")')
-        self._p.stdin.write('(utt.save.wave u "' + self._wavfile + '")')
-        self._p.communicate()
+        p = subprocess.Popen(self._cmdline, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
+        p.stdin.write('(set! u (Utterance Text "' + data + '"))')
+        p.stdin.write('(utt.synth u)')
+        p.stdin.write('(utt.save.segs u "' + durfile + '")')
+        p.stdin.write('(utt.save.wave u "' + wavfile + '")')
+        p.communicate()
 
         # read data
-        self._fp = wave.open(self._wavfile, 'rb')
-        #self._channels = self._fp.getnchannels()
-        #self._samplebytes = self._fp.getsampwidth()
-        self._samplerate = self._fp.getframerate()
-        df = open(self._durfile, 'r')
-        self._durationdata = df.read().encode("utf-8")
+        df = open(durfile, 'r')
+        durationdata = df.read().encode("utf-8")
         df.close()
-        os.remove(self._durfile)
+        os.remove(durfile)
+        return (durationdata, wavfile)
         
 FestivalRTC_spec = ["implementation_id", "FestivalRTC",
                     "type_name",         "FestivalRTC",
@@ -87,11 +80,11 @@ FestivalRTC_spec = ["implementation_id", "FestivalRTC",
                     "conf.__description__.format", _("Format of output audio (fixed to 16bit).").encode('UTF-8'),
                     "conf.default.rate", "16000",
                     "conf.__widget__.rate", "spin",
-                    "conf.__constraints__.rate", "16000",
+                    "conf.__constraints__.rate", "x == 16000",
                     "conf.__description__.rate", _("Sampling frequency of output audio (fixed to 16kHz).").encode('UTF-8'),
                     "conf.default.character", "male",
                     "conf.__widget__.character", "radio",
-                    "conf.__constraints__.character", "male",
+                    "conf.__constraints__.character", "(male)",
                     "conf.__description__.character", _("Character of the voice (fixed to male).").encode('UTF-8'),
                     ""]
 
@@ -101,7 +94,11 @@ class FestivalRTC(VoiceSynthComponentBase):
 
     def onInitialize(self):
         VoiceSynthComponentBase.onInitialize(self)
-        self._wrap = FestivalWrap()
+        try:
+            self._wrap = FestivalWrap()
+        except:
+            self._logger.RTC_ERROR(traceback.format_exc())
+            return RTC.RTC_ERROR
         return RTC.RTC_OK
 
 
