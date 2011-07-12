@@ -30,27 +30,42 @@ class PLS:
 
     def __init__(self):
         self._dict = {}
+        self._alphabet = {}
 
     def parse(self, files):
         grapheme = []
         phoneme = []
+        ipa = ''
+        sampa = ''
         try:
             for f in files:
                 for event, elem in etree.iterparse(f):
                     if elem.tag.find("lexeme") >= 0:
                         for g in grapheme:
                             for p in phoneme:
-                                (ptype, pval) = p.strip('{}').split('|')
+                                try:
+                                    (ptype, pval) = p.strip('{}').split('|')
+                                except ValueError:
+                                    ptype = 'ipa'
+                                    pval = p
                                 try:
                                     self._dict[g].append(pval)
                                 except KeyError:
                                     self._dict[g] = [pval,]
                         grapheme = []
                         phoneme = []
-                    if elem.tag.find("grapheme") >= 0:
+                    elif elem.tag.find("grapheme") >= 0:
                         grapheme.append(elem.text)
-                    if elem.tag.find("phoneme") >= 0:
+                    elif elem.tag.find("phoneme") >= 0:
                         phoneme.append(elem.text)
+                    elif elem.tag.find("alphabet") >= 0:
+                        self._alphabet[ipa] = sampa
+                        ipa = ''
+                        sampa = ''
+                    elif elem.tag.find("ipa") >= 0:
+                        ipa = elem.text
+                    elif elem.tag.find("sampa") >= 0:
+                        sampa = elem.text
         except etree.XMLSyntaxError, e:
             print "[error] invalid xml syntax"
             print e
