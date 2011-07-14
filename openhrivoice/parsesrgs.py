@@ -15,8 +15,8 @@ http://www.opensource.org/licenses/eclipse-1.0.txt
 
 import sys, os, re, codecs
 from lxml import etree
+from openhrivoice.__init__ import __version__
 from openhrivoice.config import config
-from openhrivoice.hiragana2phoneme import hiragana2phoneme
 from openhrivoice.lexicondb import *
 
 def isempty(node):
@@ -24,6 +24,10 @@ def isempty(node):
         if node.data.strip('\n ') == '':
             return True
     return False
+
+class nulltransform:
+    def convert(self, text):
+        return text
 
 class PLS:
     """ Utility class to parse W3C Pronunciation Lexicon Specification."""
@@ -246,7 +250,6 @@ class SRGS:
             pass
     
     def toJulius(self, rootrule = None):
-
         if rootrule is None:
             root = self._rules[self._rootrule]
         else:
@@ -255,7 +258,7 @@ class SRGS:
         lex = None
         if self._lex is not None:
             lex = PLS().parse(self._lex)
-        lexdb = LexiconDB(self._config._lexicondb)
+        lexdb = LexiconDB(self._config._lexicondb, __version__)
 
         dfa = DFA()
         startstate = dfa.newstate()
@@ -270,13 +273,22 @@ class SRGS:
         revdfa = dfa.reverse()
 
         dict = {}
-        if self._lang == 'jp':
+        if self._lang in ('jp', 'ja'):
             dict['<s>'] = ('silB',)
             dict['</s>'] = ('silE',)
+            from openhrivoice.hiragana2phoneme import hiragana2phoneme
+            conv = hiragana2phoneme()
+        elif self._lang == 'de':
+            dict['<s>'] = ('sil',)
+            dict['</s>'] = ('sil',)
+            from openhrivoice.sampa2simon import ipa2simon
+            conv = ipa2simon()
         else:
             dict['<s>'] = ('sil',)
             dict['</s>'] = ('sil',)
             #dict['<sp>'] = ('sp',)
+            conv = nulltransform()
+
         for v in revdfa:
             if v[1] != -1:
                 if dict.has_key(v[1]) == False:
@@ -303,10 +315,9 @@ class SRGS:
         jdfa.sort(lambda x, y: x[0] - y[0])
 
         phonedict = list()
-        h2p =  hiragana2phoneme()
         for k in dict.keys():
             for p in dict[k]:
-                phonedict.append((dict2id[k], k, h2p.convert(p)))
+                phonedict.append((dict2id[k], k, conv.convert(p)))
         phonedict.sort(lambda x, y: x[0] - y[0])
 
         str = u""

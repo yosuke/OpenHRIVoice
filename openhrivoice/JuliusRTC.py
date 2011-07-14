@@ -56,12 +56,18 @@ class JuliusWrap(threading.Thread):
         self._audiosocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self._cmdline = []
         self._cmdline.append(self._config._julius_bin)
-        if self._lang == 'jp':
+        if self._lang in ('ja', 'jp'):
             self._cmdline.extend(['-h',  self._config._julius_hmm_ja])
             self._cmdline.extend(['-hlist', self._config._julius_hlist_ja])
             self._cmdline.extend(["-dfa", os.path.join(self._config._basedir, "dummy.dfa")])
             self._cmdline.extend(["-v" , os.path.join(self._config._basedir, "dummy.dict")])
             self._cmdline.extend(["-sb", "80.0"])
+        elif self._lang == 'de':
+            self._cmdline.extend(['-h',  self._config._julius_hmm_de])
+            self._cmdline.extend(['-hlist', self._config._julius_hlist_de])
+            self._cmdline.extend(["-dfa", os.path.join(self._config._basedir, "dummy-en.dfa")])
+            self._cmdline.extend(["-v", os.path.join(self._config._basedir, "dummy-en.dict")])
+            self._cmdline.extend(["-sb", "160.0"])
         else:
             self._cmdline.extend(['-h',  self._config._julius_hmm_en])
             self._cmdline.extend(['-hlist', self._config._julius_hlist_en])
@@ -84,6 +90,7 @@ class JuliusWrap(threading.Thread):
         self._cmdline.extend(["-record", self._logdir])
         self._cmdline.extend(["-smpFreq", "16000"])
         self._cmdline.extend(["-forcedict"])
+        self._cmdline.extend(["-nolog"])
         print "command line: %s" % " ".join(self._cmdline)
         self._running = True
         self._p = subprocess.Popen(self._cmdline)

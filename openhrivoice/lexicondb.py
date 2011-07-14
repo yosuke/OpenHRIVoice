@@ -21,32 +21,63 @@ from openhrivoice.parsevoxforgedict import *
 class LexiconDB:
     ''' Utility class to store pronunciation dictionary to database'''
     
-    def __init__(self, fname):
+    def __init__(self, fname, version):
         self._config = config()
         self._db = sqlite3.connect(fname)
-        tbls = self._db.execute("select * from sqlite_master where type = 'table' and name = 'data';")
-        if len(tbls.fetchall()) == 0:
-            sql = u"""
-create table data (
-  text varchar(10),
-  pronounce varchar(200),
-  alphabet varchar(10)
-);
-"""
-            self._db.execute(sql)
-            self._db.execute('create index text_index on data(text);')
-            self._db.execute('create index alphabet_index on data(alphabet);')
+        createtable = False
+
+        if not self.tableexist('version'):
+            # create version table if not
+            self.createversiontable(version)
+            createtable = True
+        elif len(self._db.execute(u"select text from version where text = '%s';" % (version,)).fetchall()) == 0:
+            # check version
+            self._db.execute(u'drop table version;')
+            self.createversiontable(version)
+            createtable = True
+
+        if createtable == True:
+            if self.tableexist('data'):
+                self._db.execute(u'drop table data;')
+            self.createdatatable()
+
             dic = VoxforgeDict(self._config._julius_dict_en)
             for t, vs in dic._dict.iteritems():
                 for v in vs:
                     self.register(t.lower(), v, 'ARPAbet')
             del dic
+
             dic = JuliusDict(self._config._julius_dict_ja)
             for t, vs in dic._dict.iteritems():
                 for v in vs:
                     self.register(t, v, 'KANA')
             del dic
             self._db.commit()
+
+    def tableexist(self, name):
+        tbls = self._db.execute("select * from sqlite_master where type = 'table' and name = '%s';" % (name,))
+        return (len(tbls.fetchall()) != 0)
+
+    def createversiontable(self, version):
+        sql = u"""
+create table version (
+  text varchar(10)
+);
+"""
+        self._db.execute(sql)
+        self._db.execute(u'insert into version values (?);', (version,))
+
+    def createdatatable(self):
+        sql = u"""
+create table data (
+  text varchar(10),
+  pronounce varchar(200),
+  alphabet varchar(10)
+);
+"""
+        self._db.execute(sql)
+        self._db.execute('create index text_index on data(text);')
+        self._db.execute('create index alphabet_index on data(alphabet);')
 
     def register(self, text, pronounce, alphabet):
         sql = u'insert into data values (?,?,?);'

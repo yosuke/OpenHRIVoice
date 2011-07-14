@@ -124,14 +124,11 @@ class sampa2simon:
             self._dict[i] = i
 
     def convert(self, text):
-        text = text.replace('6', 'ah');
-        text = text.replace('2', 'oeh');
-        text = text.replace('~', 'nas');
-        text = text.replace('<', 'nsb');
         text = text.replace('_', '');
         text = text.replace('^', '');
+        text = text.replace('~', 'nas');
+        text = text.replace('<', 'nsb');
         text = text.replace('?', 'gls');
-        text = text.replace('9', 'oe');
         ret = ''
         for i in text.split(' '):
             try:
@@ -139,6 +136,15 @@ class sampa2simon:
             except KeyError:
                 pass
         return ret.strip(' ')
+
+class ipa2simon:
+    def __init__(self):
+        from openhrivoice.ipa2sampa import ipa2sampa
+        self._i2s = ipa2sampa()
+        self._s2s = sampa2simon()
+    
+    def convert(self, text):
+        return self._s2s(self._i2s(text))
 
 def main():
     import sys, codecs, parsesrgs, ipa2sampa
