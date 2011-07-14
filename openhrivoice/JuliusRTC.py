@@ -84,6 +84,7 @@ class JuliusWrap(threading.Thread):
             self._cmdline.extend(["-b", "-1", "-b2", "80", "-s", "500" ,"-m", "1000"])
         self._cmdline.extend(["-n", "5", "-output", "5"])
         self._cmdline.extend(["-pausesegment", "-rejectshort", "200"])
+        self._cmdline.extend(["-nostrip"])
         #self._cmdline.extend(["-multipath"])
         self._cmdline.extend(["-spmodel", "sp", "-iwsp", "-iwsppenalty", "-70.0"])
         self._cmdline.extend(["-penalty1", "5.0", "-penalty2", "20.0", "-iwcd1", "max", "-gprune", "safe"])
