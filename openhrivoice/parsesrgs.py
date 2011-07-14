@@ -317,7 +317,10 @@ class SRGS:
         phonedict = list()
         for k in dict.keys():
             for p in dict[k]:
-                phonedict.append((dict2id[k], k, conv.convert(p)))
+                if p in ('sil', 'silE', 'silB'):
+                    phonedict.append((dict2id[k], k, p))
+                else:
+                    phonedict.append((dict2id[k], k, conv.convert(p)))
         phonedict.sort(lambda x, y: x[0] - y[0])
 
         str = u""

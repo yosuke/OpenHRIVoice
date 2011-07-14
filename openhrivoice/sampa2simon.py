@@ -119,6 +119,21 @@ class sampa2simon:
             'kp',
             'gb',
             'Nm',]
+        self._paired = [
+            'ts',
+            'aU',
+            'dZ',
+            'aI',
+            'OY',
+            'ah',
+            'OI',
+            'EI',
+            'dz',
+            'tS',
+            'tK',
+            'kp',
+            'gb',
+            'Nm',]
         self._dict = {}
         for i in self._phonemes:
             self._dict[i] = i
@@ -135,6 +150,8 @@ class sampa2simon:
                 ret = ret + ' ' + self._dict[i]
             except KeyError:
                 pass
+        for p in self._paired:
+            ret = ret.replace(p[0] + ' ' + p[1], p)
         return ret.strip(' ')
 
 class ipa2simon:
@@ -144,7 +161,7 @@ class ipa2simon:
         self._s2s = sampa2simon()
     
     def convert(self, text):
-        return self._s2s(self._i2s(text))
+        return self._s2s.convert(self._i2s.convert(text))
 
 def main():
     import sys, codecs, parsesrgs, ipa2sampa

@@ -91,7 +91,7 @@ class JuliusWrap(threading.Thread):
         self._cmdline.extend(["-record", self._logdir])
         self._cmdline.extend(["-smpFreq", "16000"])
         self._cmdline.extend(["-forcedict"])
-        self._cmdline.extend(["-nolog"])
+        #self._cmdline.extend(["-nolog"])
         print "command line: %s" % " ".join(self._cmdline)
         self._running = True
         self._p = subprocess.Popen(self._cmdline)
