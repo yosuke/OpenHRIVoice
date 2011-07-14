@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lexicon version="1.0"
+         xmlns="http://www.w3.org/2005/01/pronunciation-lexicon"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://www.w3.org/2005/01/pronunciation-lexicon
+                             http://www.w3.org/TR/2007/CR-pronunciation-lexicon-20071212/pls.xsd"
+         alphabet="ipa" xml:lang="de">
+  <lexeme>
+    <grapheme>gute</grapheme>
+    <phoneme>guːtə</phoneme>
+  </lexeme>
+  <lexeme>
+    <grapheme>guten</grapheme>
+    <phoneme>guːtn̩</phoneme>
+  </lexeme>
+  <lexeme>
+    <grapheme>morgen</grapheme>
+    <phoneme>mɔʀgŋ̩</phoneme>
+  </lexeme>
+  <lexeme>
+    <grapheme>tag</grapheme>
+    <phoneme>taːg</phoneme>
+    <phoneme>tak</phoneme>
+    <phoneme>taːk</phoneme>
+  </lexeme>
+  <lexeme>
+    <grapheme>abend</grapheme>
+    <phoneme>aːbənt</phoneme>
+  </lexeme>
+  <lexeme>
+    <grapheme>nacht</grapheme>
+    <phoneme>naχt</phoneme>
+  </lexeme>
+  <lexeme>
+    <grapheme>auf</grapheme>
+    <phoneme>aʊ̯f</phoneme>
+  </lexeme>
+  <lexeme>
+    <grapheme>wiedersehen</grapheme>
+    <phoneme>viːdɐzeːən</phoneme>
+  </lexeme>
+</lexicon>
