@@ -40,6 +40,7 @@ class VoiceSynthBase:
         self._history = []
         self._cache = {}
         self._cachesize = 10
+        self._copyrights = []
         
     def gettempname(self):
         # get temp file name

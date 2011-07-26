@@ -248,6 +248,20 @@ class JuliusRTC(OpenRTM_aist.DataFlowComponentBase):
         self._lang = 'en'
         self._srgs = None
         self._j = None
+        self._copyrights = ['''
+Large Vocabulary Continuous Speech Recognition Engine Julius
+(http://julius.sourceforge.jp/)
+Copyright (c) 1997-2000 Information-technology Promotion Agency, Japan
+Copyright (c) 1991-2008 Kawahara Lab., Kyoto University
+Copyright (c) 2000-2005 Shikano Lab., Nara Institute of Science and Technology
+Copyright (c) 2005-2008 Julius project team, Nagoya Institute of Technology
+''',
+'''
+VoxForge English Acoustic Model for HTK/Juilus
+(http://www.voxforge.org/)
+Copyright (c) 2005-2009 Ken MacLean <contact@voxforge.org>
+Copyright (c) 2005-2009 Free Software Foundation
+''']
 
     def onInitialize(self):
         OpenRTM_aist.DataFlowComponentBase.onInitialize(self)
@@ -284,6 +298,14 @@ class JuliusRTC(OpenRTM_aist.DataFlowComponentBase):
         self._logport = OpenRTM_aist.OutPort("log", self._logdata)
         self._logport.appendProperty('description', _('Log of audio data.').encode('UTF-8'))
         self.registerOutPort(self._logport._name, self._logport)
+
+        self._logger.RTC_INFO("This component depends on following softwares and datas:")
+        self._logger.RTC_INFO('')
+        for c in self._copyrights:
+            for l in c.strip('\n').split('\n'):
+                self._logger.RTC_INFO('  '+l)
+            self._logger.RTC_INFO('')
+
         return RTC.RTC_OK
 
     def onActivated(self, ec_id):
@@ -366,9 +388,10 @@ class JuliusRTC(OpenRTM_aist.DataFlowComponentBase):
                     hypo.setAttribute("score", str(score))
                     hypo.setAttribute("likelihood", s['score'])
                     hypo.setAttribute("text", " ".join(text))
+                    self._logger.RTC_INFO("#%s: %s" % (s['rank'], " ".join(text)))
                     listentext.appendChild(hypo)
                 data = doc.toxml(encoding="utf-8")
-                self._logger.RTC_INFO(data.decode('utf-8', 'backslashreplace'))
+                #self._logger.RTC_INFO(data.decode('utf-8', 'backslashreplace'))
                 self._outdata.data = data
                 self._outport.write()
         elif type == JuliusWrap.CB_LOGWAVE:

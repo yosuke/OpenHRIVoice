@@ -73,6 +73,23 @@ class OpenJTalkWrap(VoiceSynthBase):
                       ("cf", "gv-lf0.pdf"),
                       ("cm", "gv-mgc.pdf"),
                       ("k", "gv-switch.inf"))
+        cmdarg = []
+        cmdarg.append(self._conf._openjtalk_bin)
+        (stdoutstr, stderrstr) = subprocess.Popen(cmdarg, stdout = subprocess.PIPE, stderr = subprocess.PIPE).communicate()
+        self._copyrights = []
+        for l in stderrstr.split('\n\n'):
+            if l.count('All rights reserved.') > 0:
+                self._copyrights.append(l)
+        self._copyrights.append('''The Nitech Japanese Speech Database "NIT ATR503 M001"
+released by HTS Working Group (http://hts.sp.nitech.ac.jp/)
+Copyright (C) 2003-2011  Nagoya Institute of Technology
+Some rights reserved.
+''')
+        self._copyrights.append('''HTS Voice "Mei (Normal)"
+released by MMDAgent Project Team (http://www.mmdagent.jp/)
+Copyright (C) 2009-2011  Nagoya Institute of Technology
+Some rights reserved.
+''')
 
     def synthreal(self, data, samplerate, character):
         textfile = self.gettempname()
@@ -108,7 +125,7 @@ class OpenJTalkWrap(VoiceSynthBase):
         # convert samplerate
         if samplerate != 32000:
             wavfile2 = self.gettempname()
-            p = subprocess.Popen(["sox", "-t", "wav", wavfile, "-r", str(samplerate), "-t", "wav", wavfile2])
+            p = subprocess.Popen([self._conf._sox_bin, "-t", "wav", wavfile, "-r", str(samplerate), "-t", "wav", wavfile2])
             p.wait()
             os.remove(wavfile)
             wavfile = wavfile2
@@ -231,6 +248,12 @@ class OpenJTalkRTC(VoiceSynthComponentBase):
     def onInitialize(self):
         VoiceSynthComponentBase.onInitialize(self)
         self._wrap = OpenJTalkWrap()
+        self._logger.RTC_INFO("This component depends on following softwares and datas:")
+        self._logger.RTC_INFO('')
+        for c in self._wrap._copyrights:
+            for l in c.strip('\n').split('\n'):
+                self._logger.RTC_INFO('  '+l)
+            self._logger.RTC_INFO('')
         return RTC.RTC_OK
     
 class OpenJTalkRTCManager:

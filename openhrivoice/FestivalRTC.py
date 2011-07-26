@@ -45,17 +45,39 @@ class FestivalWrap(VoiceSynthBase):
         self._config = config()
         self._cmdline =[self._config._festival_bin, '--pipe']
         self._cmdline.extend(self._config._festival_opt)
+        self._copyrights = []
+        self._copyrights.append('''The Festival Speech Synthesis System
+(http://www.cstr.ed.ac.uk/projects/festival/)
+Copyright (C) 1996-2006 Centre for Speech Technology Research, University of Edinburgh, UK
+All rights reserved.
+''')
+        self._copyrights.append('''Diphone Synthesizer Voice for American English
+released by Alan W Black and Kevin Lenzo (http://www.cstr.ed.ac.uk/projects/festival/)
+Copyright (C) 1998 Centre for Speech Technology Research, University of Edinburgh, UK
+All rights reserved.
+''')
         
     def synthreal(self, data, samplerate, character):
+        textfile = self.gettempname()
         durfile = self.gettempname().replace("\\", "\\\\")
         wavfile = self.gettempname().replace("\\", "\\\\")
+        # text file which specifies synthesized string
+        fp = codecs.open(textfile, 'w', 'utf-8')
+        fp.write('(set! u (Utterance Text "' + data + '"))')
+        fp.write('(utt.synth u)')
+        fp.write('(utt.save.segs u "' + durfile + '")')
+        fp.write('(utt.save.wave u "' + wavfile + '")')
+        fp.close()
         # run Festival
-        p = subprocess.Popen(self._cmdline, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
-        p.stdin.write('(set! u (Utterance Text "' + data + '"))')
-        p.stdin.write('(utt.synth u)')
-        p.stdin.write('(utt.save.segs u "' + durfile + '")')
-        p.stdin.write('(utt.save.wave u "' + wavfile + '")')
-        p.communicate()
+        cmdarg =[self._config._festival_bin,] + self._config._festival_opt + ['-b', textfile]
+        p = subprocess.Popen(cmdarg)
+        p.wait()
+        #p = subprocess.Popen(self._cmdline, stdout=subprocess.PIPE, stdin=subprocess.PIPE)
+        #p.stdin.write('(set! u (Utterance Text "' + data + '"))')
+        #p.stdin.write('(utt.synth u)')
+        #p.stdin.write('(utt.save.segs u "' + durfile + '")')
+        #p.stdin.write('(utt.save.wave u "' + wavfile + '")')
+        #p.communicate()
 
         # read data
         df = open(durfile, 'r')
@@ -99,6 +121,12 @@ class FestivalRTC(VoiceSynthComponentBase):
         except:
             self._logger.RTC_ERROR(traceback.format_exc())
             return RTC.RTC_ERROR
+        self._logger.RTC_INFO("This component depends on following softwares and datas:")
+        self._logger.RTC_INFO('')
+        for c in self._wrap._copyrights:
+            for l in c.strip('\n').split('\n'):
+                self._logger.RTC_INFO('  '+l)
+            self._logger.RTC_INFO('')
         return RTC.RTC_OK
 
 

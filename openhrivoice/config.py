@@ -82,3 +82,9 @@ class config():
         else:
             self._festival_bin = "festival"
             self._festival_opt = []
+
+        if self._platform == "Windows":
+            self._soxdir = os.path.join(self._basedir, "3rdparty", "sox-14.3.2-win32", "sox")
+            self._sox_bin = os.path.join(self._julius_runkitdir, "bin", "julius.exe")
+        else:
+            self._sox_bin = "sox"
