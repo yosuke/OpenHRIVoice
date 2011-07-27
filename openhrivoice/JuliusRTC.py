@@ -388,7 +388,7 @@ Copyright (c) 2005-2009 Free Software Foundation
                     hypo.setAttribute("score", str(score))
                     hypo.setAttribute("likelihood", s['score'])
                     hypo.setAttribute("text", " ".join(text))
-                    self._logger.RTC_INFO("#%s: %s" % (s['rank'], " ".join(text)))
+                    self._logger.RTC_INFO("#%s: %s (%s)" % (s['rank'], " ".join(text), str(score)))
                     listentext.appendChild(hypo)
                 data = doc.toxml(encoding="utf-8")
                 #self._logger.RTC_INFO(data.decode('utf-8', 'backslashreplace'))

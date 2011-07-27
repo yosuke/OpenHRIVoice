@@ -66,9 +66,9 @@ class config():
 
         if self._platform == "Windows":
             self._openjtalk_bin = os.path.join(self._basedir, "open_jtalk.exe")
-            self._openjtalk_phonemodel_male_ja =  os.path.join(self._basedir, "3rdparty", "hts_voice_nitech_jp_atr503_m001-1.01")
-            self._openjtalk_phonemodel_female_ja =  os.path.join(self._basedir, "3rdparty", "MMDAgent-Example/Voice/mei_normal")
-            self._openjtalk_dicfile_ja = os.path.join(self._basedir, "3rdparty", "open_jtalk_dic_utf_8-1.00")
+            self._openjtalk_phonemodel_male_ja =  os.path.join(self._basedir, "3rdparty", "hts_voice_nitech_jp_atr503_m001-1.04")
+            self._openjtalk_phonemodel_female_ja =  os.path.join(self._basedir, "3rdparty", "MMDAgent_Example-1.0/Voice/mei_normal")
+            self._openjtalk_dicfile_ja = os.path.join(self._basedir, "3rdparty", "open_jtalk_dic_utf_8-1.04")
         else:
             self._openjtalk_bin = "open_jtalk"
             self._openjtalk_phonemodel_male_ja = "/usr/lib/hts-voice/nitech-jp-atr503-m001"
@@ -84,7 +84,7 @@ class config():
             self._festival_opt = []
 
         if self._platform == "Windows":
-            self._soxdir = os.path.join(self._basedir, "3rdparty", "sox-14.3.2-win32", "sox")
-            self._sox_bin = os.path.join(self._julius_runkitdir, "bin", "julius.exe")
+            self._soxdir = os.path.join(self._basedir, "3rdparty", "sox-14.3.2")
+            self._sox_bin = os.path.join(self._soxdir, "sox.exe")
         else:
             self._sox_bin = "sox"

@@ -44,6 +44,11 @@ InstallDirRegKey ${INSTDIR_REG_ROOT} ${INSTDIR_REG_KEY} "InstallDir"
 
 !insertmacro MUI_PAGE_WELCOME
 !insertmacro MUI_PAGE_LICENSE $(MUILicense)
+!insertmacro MUI_PAGE_LICENSE $(MUILicense_Julius)
+!insertmacro MUI_PAGE_LICENSE $(MUILicense_OpenJTalk)
+!insertmacro MUI_PAGE_LICENSE $(MUILicense_Male)
+!insertmacro MUI_PAGE_LICENSE $(MUILicense_Mei)
+!insertmacro MUI_PAGE_LICENSE $(MUILicense_Festival)
 !insertmacro MUI_PAGE_COMPONENTS
 !insertmacro MUI_PAGE_DIRECTORY
 !insertmacro MUI_PAGE_INSTFILES
@@ -65,6 +70,16 @@ InstallDirRegKey ${INSTDIR_REG_ROOT} ${INSTDIR_REG_KEY} "InstallDir"
 
 LicenseLangString MUILicense ${LANG_ENGLISH} "${TOP_SRCDIR}\COPYING"
 LicenseLangString MUILicense ${LANG_JAPANESE} "${TOP_SRCDIR}\COPYING"
+LicenseLangString MUILicense_Julius ${LANG_ENGLISH} "C:\Program Files (x86)\OpenHRIVoice\3rdparty\dictation-kit-v4.0-win\doc\LICENSE.txt"
+LicenseLangString MUILicense_Julius ${LANG_JAPANESE} "C:\Program Files (x86)\OpenHRIVoice\3rdparty\dictation-kit-v4.0-win\doc\LICENSE.txt"
+LicenseLangString MUILicense_OpenJTalk ${LANG_ENGLISH} "${TOP_SRCDIR}\pkg\nsis\License-Open_JTalk.txt"
+LicenseLangString MUILicense_OpenJTalk ${LANG_JAPANESE} "${TOP_SRCDIR}\pkg\nsis\License-Open_JTalk.txt"
+LicenseLangString MUILicense_Male ${LANG_ENGLISH} "C:\Program Files (x86)\OpenHRIVoice\3rdparty\hts_voice_nitech_jp_atr503_m001-1.04\COPYING"
+LicenseLangString MUILicense_Male ${LANG_JAPANESE} "C:\Program Files (x86)\OpenHRIVoice\3rdparty\hts_voice_nitech_jp_atr503_m001-1.04\COPYING"
+LicenseLangString MUILicense_Mei ${LANG_ENGLISH} "C:\Program Files (x86)\OpenHRIVoice\3rdparty\MMDAgent_Example-1.0\Voice\mei_normal\COPYRIGHT.txt"
+LicenseLangString MUILicense_Mei ${LANG_JAPANESE} "C:\Program Files (x86)\OpenHRIVoice\3rdparty\MMDAgent_Example-1.0\Voice\mei_normal\COPYRIGHT.txt"
+LicenseLangString MUILicense_Festival ${LANG_ENGLISH} "C:\Program Files (x86)\OpenHRIVoice\3rdparty\festival-1.96.03-win\festival\COPYING"
+LicenseLangString MUILicense_Festival ${LANG_JAPANESE} "C:\Program Files (x86)\OpenHRIVoice\3rdparty\festival-1.96.03-win\festival\COPYING"
 
 ;--------------------------------
 ;Reserve Files
@@ -150,6 +165,11 @@ Section $(TEXT_SecBase) SecBase
   IfFileExists "$INSTDIR\downloads" +2
     CreateDirectory "$INSTDIR\downloads"
 
+  ; sox sound exchange
+  IfFileExists "$INSTDIR\downloads\sox-14.3.2-win32.zip" +2
+    NSISdl::download "http://downloads.sourceforge.net/project/sox/sox/14.3.2/sox-14.3.2-win32.zip?use_mirror=iij" "$INSTDIR\downloads\sox-14.3.2-win32.zip"
+  ZipDLL::extractall "$INSTDIR\downloads\sox-14.3.2-win32.zip" "$INSTDIR\3rdparty"
+
   ; julius for windows and acoustic model for japansese
   IfFileExists "$INSTDIR\downloads\julius-dictation-kit-v4.0-win.zip" +2
     NSISdl::download "http://sourceforge.jp/frs/redir.php?m=iij&f=%2Fjulius%2F44943%2Fdictation-kit-v4.0-win.zip" "$INSTDIR\downloads\julius-dictation-kit-v4.0-win.zip"
@@ -161,14 +181,19 @@ Section $(TEXT_SecBase) SecBase
   ZipDLL::extractall "$INSTDIR\downloads\julius-voxforge-build726.zip" "$INSTDIR\3rdparty\julius-voxforge-build726"
 
   ; Open JTalk dictionary
-  IfFileExists "$INSTDIR\downloads\open_jtalk_dic_utf_8-1.00.tar.gz" +2
-    NSISdl::download "http://downloads.sourceforge.net/project/open-jtalk/Dictionary/open_jtalk_dic-1.00/open_jtalk_dic_utf_8-1.00.tar.gz?use_mirror=iij"  "$INSTDIR\downloads\open_jtalk_dic_utf_8-1.00.tar.gz"
-  untgz::extract -d "$INSTDIR\3rdparty" "$INSTDIR\downloads\open_jtalk_dic_utf_8-1.00.tar.gz"
+  IfFileExists "$INSTDIR\downloads\open_jtalk_dic_utf_8-1.04.tar.gz" +2
+    NSISdl::download "http://downloads.sourceforge.net/project/open-jtalk/Dictionary/open_jtalk_dic-1.04/open_jtalk_dic_utf_8-1.04.tar.gz?use_mirror=iij"  "$INSTDIR\downloads\open_jtalk_dic_utf_8-1.04.tar.gz"
+  untgz::extract -d "$INSTDIR\3rdparty" "$INSTDIR\downloads\open_jtalk_dic_utf_8-1.04.tar.gz"
 
   ; Open JTalk acoustic model
-  IfFileExists "$INSTDIR\downloads\hts_voice_nitech_jp_atr503_m001-1.01.tar.gz" +2
-    NSISdl::download "http://downloads.sourceforge.net/project/open-jtalk/HTS%20voice/hts_voice_nitech_jp_atr503_m001-1.01/hts_voice_nitech_jp_atr503_m001-1.01.tar.gz?use_mirror=iij"  "$INSTDIR\downloads\hts_voice_nitech_jp_atr503_m001-1.01.tar.gz"
-  untgz::extract -d "$INSTDIR\3rdparty" "$INSTDIR\downloads\hts_voice_nitech_jp_atr503_m001-1.01.tar.gz"
+  IfFileExists "$INSTDIR\downloads\hts_voice_nitech_jp_atr503_m001-1.04.tar.gz" +2
+    NSISdl::download "http://downloads.sourceforge.net/project/open-jtalk/HTS%20voice/hts_voice_nitech_jp_atr503_m001-1.04/hts_voice_nitech_jp_atr503_m001-1.04.tar.gz?use_mirror=iij"  "$INSTDIR\downloads\hts_voice_nitech_jp_atr503_m001-1.04.tar.gz"
+  untgz::extract -d "$INSTDIR\3rdparty" "$INSTDIR\downloads\hts_voice_nitech_jp_atr503_m001-1.04.tar.gz"
+
+  ; MMDAgent model file
+  IfFileExists "$INSTDIR\downloads\MMDAgent_Example-1.0.zip" +2
+    NSISdl::download "http://downloads.sourceforge.net/project/mmdagent/MMDAgent_Example/MMDAgent_Example-1.0/MMDAgent_Example-1.0.zip?use_mirror=iij"  "$INSTDIR\downloads\MMDAgent_Example-1.0.zip"
+  ZipDLL::extractall "$INSTDIR\downloads\MMDAgent_Example-1.0.zip" "$INSTDIR\3rdparty"
 
   ; Festival
   IfFileExists "$INSTDIR\downloads\festival-1.96.03-win.zip" +2
