@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-03-22 14:42+0900\n"
+"POT-Creation-Date: 2011-07-27 11:18+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,72 +16,76 @@ msgstr ""
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../openhrivoice/FestivalRTC.py:39
+#: ../openhrivoice/FestivalRTC.py:40
 msgid "English speech synthesis component."
 msgstr ""
 
-#: ../openhrivoice/FestivalRTC.py:96 ../openhrivoice/OpenJTalkRTC.py:233
+#: ../openhrivoice/FestivalRTC.py:102 ../openhrivoice/OpenJTalkRTC.py:234
 msgid "Format of output audio (fixed to 16bit)."
 msgstr ""
 
-#: ../openhrivoice/FestivalRTC.py:100 ../openhrivoice/OpenJTalkRTC.py:237
+#: ../openhrivoice/FestivalRTC.py:106 ../openhrivoice/OpenJTalkRTC.py:238
 msgid "Sampling frequency of output audio (fixed to 16kHz)."
 msgstr ""
 
-#: ../openhrivoice/FestivalRTC.py:104 ../openhrivoice/OpenJTalkRTC.py:241
+#: ../openhrivoice/FestivalRTC.py:110
 msgid "Character of the voice (fixed to male)."
 msgstr ""
 
-#: ../openhrivoice/JuliusRTC.py:33
+#: ../openhrivoice/JuliusRTC.py:34
 msgid "Julius (English and Japanese) speech recognition component."
 msgstr ""
 
-#: ../openhrivoice/JuliusRTC.py:238
+#: ../openhrivoice/JuliusRTC.py:221
 msgid "Specify target language."
 msgstr ""
 
-#: ../openhrivoice/JuliusRTC.py:242
+#: ../openhrivoice/JuliusRTC.py:225
 msgid "Specify acoustic model (fixed to male)"
 msgstr ""
 
-#: ../openhrivoice/JuliusRTC.py:246
+#: ../openhrivoice/JuliusRTC.py:229
 msgid "Specify voice activity detection trigger (fixed to internal)."
 msgstr ""
 
-#: ../openhrivoice/JuliusRTC.py:277
+#: ../openhrivoice/JuliusRTC.py:274
 msgid "Audio data (in packets) to be recognized."
 msgstr ""
 
-#: ../openhrivoice/JuliusRTC.py:284
+#: ../openhrivoice/JuliusRTC.py:281
 msgid "Grammar ID to be activated."
 msgstr ""
 
-#: ../openhrivoice/JuliusRTC.py:292
+#: ../openhrivoice/JuliusRTC.py:289
 msgid ""
 "Status of the recognizer (one of \"LISTEN [accepting speech]\", \"STARTREC "
 "[start recognition process]\", \"ENDREC [end recognition process]\", "
 "\"REJECTED [rejected speech input]\")"
 msgstr ""
 
-#: ../openhrivoice/JuliusRTC.py:297
+#: ../openhrivoice/JuliusRTC.py:294
 msgid "Recognition result in XML format."
 msgstr ""
 
-#: ../openhrivoice/JuliusRTC.py:302
+#: ../openhrivoice/JuliusRTC.py:299
 msgid "Log of audio data."
 msgstr ""
 
-#: ../openhrivoice/JuliusRTC.py:418 ../openhrivoice/XSLTRTC.py:107
-#: ../openhrivoice/srgstopls.py:65 ../openhrivoice/validatesrgs.py:62
+#: ../openhrivoice/JuliusRTC.py:424 ../openhrivoice/XSLTRTC.py:107
+#: ../openhrivoice/srgstopls.py:68 ../openhrivoice/validatesrgs.py:62
 msgid "show file open dialog in GUI"
 msgstr ""
 
 #: ../openhrivoice/MARYRTC.py:37
-msgid "English and German speech synthesis component."
+msgid "German speech synthesis component using MARY."
 msgstr ""
 
-#: ../openhrivoice/OpenJTalkRTC.py:41
+#: ../openhrivoice/OpenJTalkRTC.py:42
 msgid "Japanese speech synthesis component."
+msgstr ""
+
+#: ../openhrivoice/OpenJTalkRTC.py:242
+msgid "Character of the voice."
 msgstr ""
 
 #: ../openhrivoice/XSLTRTC.py:35
@@ -102,7 +106,7 @@ msgstr ""
 
 #: ../openhrivoice/bundlexinclude.py:41 ../openhrivoice/juliustographviz.py:51
 #: ../openhrivoice/plstosinglewordgrammar.py:51
-#: ../openhrivoice/srgstojulius.py:50 ../openhrivoice/srgstopls.py:59
+#: ../openhrivoice/srgstojulius.py:50 ../openhrivoice/srgstopls.py:62
 #: ../openhrivoice/validatesrgs.py:59
 msgid "output verbose information"
 msgstr ""
@@ -127,11 +131,11 @@ msgstr ""
 msgid "Generate Julius grammar from the W3C-SRGS grammar."
 msgstr ""
 
-#: ../openhrivoice/srgstojulius.py:53 ../openhrivoice/srgstopls.py:62
+#: ../openhrivoice/srgstojulius.py:53 ../openhrivoice/srgstopls.py:65
 msgid "specify target rule id"
 msgstr ""
 
-#: ../openhrivoice/srgstopls.py:36 ../openhrivoice/srgstopls.py:41
+#: ../openhrivoice/srgstopls.py:38 ../openhrivoice/srgstopls.py:43
 msgid "Generate W3C-PLS lexcon from the W3C-SRGS grammar."
 msgstr ""
 
