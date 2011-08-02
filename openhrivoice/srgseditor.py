@@ -28,6 +28,8 @@ from openhrivoice.parsesrgs import *
 from openhrivoice.juliustographviz import juliustographviz
 from openhrivoice.__init__ import __version__
 
+__title__ = 'OpenHRI W3C-SRGS Editor'
+
 if hasattr(sys, "frozen"):
     basedir = os.path.dirname(unicode(sys.executable, sys.getfilesystemencoding()))
 else:
@@ -37,7 +39,7 @@ class AboutDialog(gtk.AboutDialog):
 
     def __init__(self, parent):
         Gtk.AboutDialog.__init__(self)
-        self.set_name('OpenHRI W3C-SRGS Editor version ' + __version__)
+        self.set_name(__title__ + ' version ' + __version__)
         self.set_copyright('Copyright (c) 2011 Yosuke Matsusaka')
         self.set_website_label('http://openhri.net/')
         self.set_authors(['Yosuke Matsusaka',])
@@ -74,9 +76,8 @@ class ValidationThread(threading.Thread):
         self._parent_window = win
 
     def set_data(self, text):
-        if self._data != text:
-            self._updated = True
-            self._data = text
+        self._updated = True
+        self._data = text
 
     def validatesrgs(self, xmlstr):
         self._parent_window.set_info("validating")
@@ -109,13 +110,16 @@ class MainWindow(gtk.Window):
         # initialize main window
         gtk.Window.__init__(self, *args, **kwargs)
         self._xdot = xdot.DotWindow()
+        self._filename = None
+
         self.add_accel_group(gtk.AccelGroup())
         self.connect('delete_event', self.quit)
 
         # intialize XML code view
         self._sourcebuf = gtksourceview2.Buffer(language=gtksourceview2.language_manager_get_default().get_language('xml'))
         self._sourceview = gtksourceview2.View(self._sourcebuf)
-        self._sourceview.connect('key-release-event', self.keypressevent)
+        self._sourceview.connect('key-press-event', self.keypressevent)
+        self._sourceview.connect('key-release-event', self.keyreleaseevent)
         self._sourceview.set_show_line_numbers(True)
         self._sourceview.set_show_line_marks(True)
         self._sourceview.set_auto_indent(True)
@@ -136,11 +140,22 @@ class MainWindow(gtk.Window):
         self.add(self._vbox)
         self.set_size_request(400, 400)
         self.resize(600, 520)
-        self.props.title = 'OpenHRI W3C-SRGS Editor'
 
         self._validationthread = ValidationThread()
         self._validationthread.set_parent_window(self)
         self._validationthread.start()
+
+        self.update_title()
+
+    def update_title(self):
+        titlestr = 'OpenHRI W3C-SRGS Editor - '
+        if self._sourcebuf.get_modified() == True:
+            titlestr += '*'
+        if self._filename is None:
+            titlestr += '[new]'
+        else:
+            titlestr += self._filename
+        self.props.title = titlestr
 
     def quit(self, widget, event):
         print "quiting"
@@ -148,20 +163,84 @@ class MainWindow(gtk.Window):
         gtk.main_quit()
 
     def keypressevent (self, widget, event):
-        self.set_data(self._sourcebuf.props.text)
+        if event.state & gtk.gdk.CONTROL_MASK:
+            if event.keyval == gtk.keysyms.o:
+                self.open_file()
+                return True
+            elif event.keyval == gtk.keysyms.s:
+                self.save_file()
+                return True
+            elif event.keyval == gtk.keysyms.w:
+                self.save_file_as()
+                return True
+        return False
+
+    def keyreleaseevent (self, widget, event):
+        if self._sourcebuf.get_modified():
+            self._data = self._sourcebuf.props.text
+            self.validate()
+        self.update_title()
         return False
 
     def set_data(self, data, undoable = True):
-        if undoable == False:
-            self._sourcebuf.begin_not_undoable_action()
         if self._sourcebuf.props.text != data:
+            if undoable == False:
+                self._sourcebuf.begin_not_undoable_action()
             self._sourcebuf.props.text = data
-        if undoable == False:
-            self._sourcebuf.end_not_undoable_action()
-        self._validationthread.set_data(data)
+            self._data = data
+            if undoable == False:
+                self._sourcebuf.end_not_undoable_action()
+                self._sourcebuf.set_modified(False)
+            self.validate()
+        self.update_title()
+
+    def validate(self):
+        self._validationthread.set_data(self._data)
 
     def set_info(self, infostr):
         self._infolabel.set_text(infostr)
+
+    def open_file(self):
+        chooser = gtk.FileChooserDialog(
+            __title__, self, gtk.FILE_CHOOSER_ACTION_OPEN,
+            buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
+                     gtk.STOCK_OPEN, gtk.RESPONSE_OK))
+        chooser.set_default_response(gtk.RESPONSE_OK)
+        res = chooser.run()
+        if res == gtk.RESPONSE_OK:
+            self._filename = chooser.get_filename()
+            try:
+                self.set_data(open(self._filename, 'r').read(), False)
+                self.update_title()
+            except:
+                self.set_info('Unable to open ' + self._filename)
+                self._filename = None
+        chooser.destroy()
+        
+    def save_file(self):
+        if self._filename is not None:
+            f = open (self._filename, 'w')
+            f.write(self._sourcebuf.props.text)
+            f.close()
+            self._sourcebuf.set_modified(False)
+            self.update_title()
+        else:
+            self.save_file_as()
+            
+    def save_file_as (self):
+        chooser = gtk.FileChooserDialog(
+            __title__, self, gtk.FILE_CHOOSER_ACTION_SAVE,
+            buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
+                     gtk.STOCK_SAVE, gtk.RESPONSE_OK))
+        chooser.set_default_response(gtk.RESPONSE_OK)
+        if self._filename is not None:
+            chooser.set_filename(self._filename)
+        res = chooser.run()
+        if res == gtk.RESPONSE_OK:
+            self._filename = chooser.get_filename()
+            self.save_file()
+        chooser.destroy()
+
 
 initialdata = '''<?xml version="1.0" encoding="UTF-8" ?>
 <grammar xmlns="http://www.w3.org/2001/06/grammar"
@@ -191,6 +270,7 @@ def main():
     win.show_all()
     if len(sys.argv) >= 2:
         win.set_data(open(sys.argv[1], 'r').read(), False)
+        win._filename = sys.argv[1]
     else:
         win.set_data(initialdata, False)
     gtk.main()
