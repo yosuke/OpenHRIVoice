@@ -22,6 +22,7 @@ import pango
 import gtk
 import gtksourceview2
 from pprint import pprint
+from StringIO import StringIO
 import tempfile
 import xdot
 from openhrivoice.parsesrgs import *
@@ -96,13 +97,8 @@ class ValidationThread(threading.Thread):
         return True
 
     def drawdot(self, xmlstr):
-        fn = tempfile.mkstemp()
-        f = os.fdopen(fn[0], 'w')
-        f.write(xmlstr)
-        f.close()
-        srgs = SRGS(fn[1])
+        srgs = SRGS(StringIO(xmlstr))
         dotcode = juliustographviz(srgs.toJulius().split('\n'))
-        os.remove(fn[1])
         self._parent_window._xdot.set_dotcode(dotcode)
 
 class MainWindow(gtk.Window):
@@ -125,6 +121,7 @@ class MainWindow(gtk.Window):
         self._sourceview.set_auto_indent(True)
         self._sourceview.set_indent_on_tab(True)
         self._sourceview.set_insert_spaces_instead_of_tabs(True)
+        self._sourceview.set_tab_width(2)
         
         self._sw = gtk.ScrolledWindow()
         self._sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
@@ -173,6 +170,9 @@ class MainWindow(gtk.Window):
             elif event.keyval == gtk.keysyms.w:
                 self.save_file_as()
                 return True
+            elif event.keyval == gtk.keysyms.f:
+                self.format_data()
+                return True
         return False
 
     def keyreleaseevent (self, widget, event):
@@ -199,6 +199,16 @@ class MainWindow(gtk.Window):
 
     def set_info(self, infostr):
         self._infolabel.set_text(infostr)
+
+    def format_data(self):
+        doc = None
+        try:
+            parser = etree.XMLParser(recover = True)
+            doc = etree.parse(StringIO(self._sourcebuf.props.text), parser)
+        except:
+            pass
+        if doc is not None:
+            self.set_data(etree.tounicode(doc, pretty_print = True))
 
     def open_file(self):
         chooser = gtk.FileChooserDialog(
@@ -249,18 +259,12 @@ initialdata = '''<?xml version="1.0" encoding="UTF-8" ?>
                              http://www.w3.org/TR/speech-grammar/grammar.xsd"
          xml:lang="en"
          version="1.0" mode="voice" root="command">
- <rule id="command">
-  <one-of>
-   <item><ruleref uri="#greeting"/></item>
-   <item><ruleref uri="#control"/></item>
-  </one-of>
- </rule>
- <rule id="command">
-  <one-of>
-   <item>hi</item>
-   <item>bye</item>
-  </one-of>
- </rule>
+  <rule id="command">
+    <one-of>
+      <item>hi</item>
+      <item>bye</item>
+    </one-of>
+  </rule>
 </grammar>
 '''
 
