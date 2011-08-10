@@ -43,7 +43,7 @@ class MARYTalkWrap(VoiceSynthBase):
         self._voice_type = {}
         voiceinfo = urllib.urlopen(self._baseurl + 'voices').readlines()
         for v in voiceinfo:
-            (id, lang, gender, type) = v.strip().split()
+            (id, lang, gender, type) = v.strip().split(' ', 3)
             if lang == 'de':
                 self._voice_type[gender] = id
             
