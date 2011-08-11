@@ -28,7 +28,9 @@ class ConsoleIn(OpenRTM_aist.DataFlowComponentBase):
         return RTC.RTC_OK
  
     def onExecute(self, ec_id):
-        self._data.data = "Guten tag"
+        #self._data.data = "Guten tag"
+        #self._data.data = "Einen schönen Tag."
+        self._data.data = "Ich habe Zwillinge, Danke, Danke."
         OpenRTM_aist.setTimestamp(self._data)
         self._outport.write()
         time.sleep(5)

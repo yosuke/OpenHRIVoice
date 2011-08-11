@@ -54,7 +54,7 @@ class MARYTalkWrap(VoiceSynthBase):
                  ('AUDIO', 'WAVE'),
                  ('LOCALE', 'de'),
                  ('VOICE', self._voice_type[character]),
-                 ('INPUT_TEXT', data),
+                 ('INPUT_TEXT', data.encode('utf-8')),
                  ]
         maryurl = self._baseurl + 'process?' + urllib.urlencode(query)
         wavfile = self.gettempname()
@@ -68,7 +68,7 @@ class MARYTalkWrap(VoiceSynthBase):
                  ('AUDIO', 'WAVE'),
                  ('LOCALE', 'de'),
                  ('VOICE', self._voice_type[character]),
-                 ('INPUT_TEXT', data),
+                 ('INPUT_TEXT', data.encode('utf-8')),
                  ]
         maryurl = self._baseurl + 'process?' + urllib.urlencode(query)
         f = urllib.urlopen(maryurl)
