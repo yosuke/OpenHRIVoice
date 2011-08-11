@@ -135,14 +135,26 @@ class VoiceSynthComponentBase(OpenRTM_aist.DataFlowComponentBase):
         self._durport = OpenRTM_aist.OutPort("duration", self._durdata)
         self._durport.appendProperty('description', _('Time aliment information of each phonemes (to be used to lip-sync).').encode('UTF-8'))
         self.registerOutPort(self._durport._name, self._durport)
+        self._is_active = False
+        return RTC.RTC_OK
+
+    def onActivated(self, ec_id):
+        OpenRTM_aist.DataFlowComponentBase.onActivated(self, ec_id)
+        self._is_active = True
+        return RTC.RTC_OK
+
+    def onDeactivate(self, ec_id):
+        OpenRTM_aist.DataFlowComponentBase.onDeactivate(self, ec_id)
+        self._is_active = False
         return RTC.RTC_OK
 
     def onData(self, name, data):
         try:
-            udata = data.data.decode("utf-8")
-            self._logger.RTC_INFO(udata + " " + str(self._samplerate[0]) + " " + self._character[0])
-            if self._wrap is not None:
-                self._wrap.synth(udata, self._samplerate[0], self._character[0])
+            if self._is_active == True:
+                udata = data.data.decode("utf-8")
+                self._logger.RTC_INFO(udata + " " + str(self._samplerate[0]) + " " + self._character[0])
+                if self._wrap is not None:
+                    self._wrap.synth(udata, self._samplerate[0], self._character[0])
         except:
             self._logger.RTC_ERROR(traceback.format_exc())
 
@@ -150,7 +162,10 @@ class VoiceSynthComponentBase(OpenRTM_aist.DataFlowComponentBase):
         OpenRTM_aist.DataFlowComponentBase.onExecute(self, ec_id)
         try:
             # send stream
-            now = time.clock()
+            if platform.system() == 'Windows':
+                now = time.clock()
+            else:
+                now = time.time()
             chunk = int(self._samplerate[0] * (now - self._prevtime))
             data = None
             if chunk > 0:
@@ -166,8 +181,8 @@ class VoiceSynthComponentBase(OpenRTM_aist.DataFlowComponentBase):
                         data2 = self._wrap.readdata(int(self._samplerate[0] * 1.0))
                         if data2 is not None:
                             data += data2
-                        self._outdata.data = data
-                        self._outport.write(self._outdata)
+                    self._outdata.data = data
+                    self._outport.write(self._outdata)
                 else:
                     if self._statusdata.data != "finished":
                         self._logger.RTC_INFO("stream finished")
