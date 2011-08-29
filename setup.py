@@ -89,6 +89,8 @@ setup(name='openhrivoice',
       xsltrtc = openhrivoice.XSLTRTC:main
       waveplayerrtc = openhrivoice.WavePlayerRTC:main
       specgramrtc = openhrivoice.SpecgramRTC:main
+      openhrivoicemanager = openhrivoice.OpenHRIVoiceManager:main
+      srgseditor = openhrivoice.srgseditor:main
       """,
       **extra
       )

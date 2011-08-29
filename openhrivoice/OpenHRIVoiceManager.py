@@ -34,6 +34,51 @@ except:
 
 __doc__ = _('Manager for OpenHRIVoice components.')
 
+
+import gtk
+
+class MainWindow(gtk.Window):
+    def __init__(self, *args, **kwargs):
+        self._manager = None
+
+        # initialize main window
+        gtk.Window.__init__(self, *args, **kwargs)
+        self.props.title = 'OpenHRIVoice Manager'
+
+        # layout main window
+        self._vbox = gtk.VBox()
+        self.add(self._vbox)
+
+    def setManager(self, manager):
+        self._manager = manager
+
+    def setComponents(self, components):
+        for c in components:
+            button = gtk.Button(c)
+            button
+            self._vbox.packstart(button)
+
+    def quit(self, widget, event):
+        print "quiting"
+        self._validationthread.exit()
+        gtk.main_quit()
+
+    def bottonpressevent (self, widget, event):
+        if event.state & gtk.gdk.CONTROL_MASK:
+            if event.keyval == gtk.keysyms.o:
+                self.open_file()
+                return True
+            elif event.keyval == gtk.keysyms.s:
+                self.save_file()
+                return True
+            elif event.keyval == gtk.keysyms.w:
+                self.save_file_as()
+                return True
+            elif event.keyval == gtk.keysyms.f:
+                self.format_data()
+                return True
+        return False
+
 def main():
     encoding = locale.getpreferredencoding()
     sys.stdout = codecs.getwriter(encoding)(sys.stdout, errors = "replace")

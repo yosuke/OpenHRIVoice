@@ -18,6 +18,7 @@ import sys
 import time
 import threading
 from lxml import etree
+from lxml.html import soupparser
 import pango
 import gtk
 import gtksourceview2
@@ -209,6 +210,12 @@ class MainWindow(gtk.Window):
             pass
         if doc is not None:
             self.set_data(etree.tounicode(doc, pretty_print = True))
+
+    def format_data2(self):
+        doc = soupparser.fromstring(self._sourcebuf.props.text)
+        self.set_data(etree.tounicode(doc, pretty_print = True))
+        #doc = BeautifulSoup(self._sourcebuf.props.text)
+        #self.set_data(doc.prettify())
 
     def open_file(self):
         chooser = gtk.FileChooserDialog(
