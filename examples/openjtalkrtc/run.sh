@@ -32,9 +32,10 @@ echo "synthesising for 15 seconds..."
 sleep 15
 
 echo "deactivating components..."
+rtdeact /localhost/`hostname`.host_cxt/ConsoleIn0.rtc
+sleep 2
 rtdeact /localhost/`hostname`.host_cxt/PulseAudioOutput0.rtc
 rtdeact /localhost/`hostname`.host_cxt/OpenJTalkRTC0.rtc
-rtdeact /localhost/`hostname`.host_cxt/ConsoleIn0.rtc
 
 sleep 1
 
@@ -54,9 +55,10 @@ echo "synthesising for 15 seconds..."
 sleep 15
 
 echo "deactivating components..."
+rtdeact /localhost/`hostname`.host_cxt/ConsoleIn0.rtc
+sleep 2
 rtdeact /localhost/`hostname`.host_cxt/PulseAudioOutput0.rtc
 rtdeact /localhost/`hostname`.host_cxt/OpenJTalkRTC0.rtc
-rtdeact /localhost/`hostname`.host_cxt/ConsoleIn0.rtc
 
 sleep 1
 

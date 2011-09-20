@@ -296,7 +296,10 @@ class SRGS:
                     if lex is not None:
                         p = lex._dict.get(v[1])
                     if p is None:
-                        p = lexdb.substringlookup(v[1])
+                        if self._lang in ('jp', 'ja'):
+                            p = lexdb.substringlookup(v[1])
+                        else:
+                            p = lexdb.lookup(v[1])
                     if len(p) == 0:
                         print "[error] undefined lexicon: %s" % (v[1],)
                         return ""

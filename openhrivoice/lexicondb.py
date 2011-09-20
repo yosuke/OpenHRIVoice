@@ -14,6 +14,7 @@ http://www.opensource.org/licenses/eclipse-1.0.txt
 '''
 
 import sqlite3
+from openhrivoice.__init__ import __version__
 from openhrivoice.config import config
 from openhrivoice.parsejuliusdict import *
 from openhrivoice.parsevoxforgedict import *
@@ -110,8 +111,9 @@ if __name__ == '__main__':
     encoding = locale.getpreferredencoding()
     sys.stdout = codecs.getwriter(encoding)(sys.stdout, errors = "replace")
     sys.stderr = codecs.getwriter(encoding)(sys.stderr, errors = "replace")
-    db = LexiconDB('test.db')
+    db = LexiconDB('test.db', __version__)
     print ','.join(db.lookup('look'))
+    print ','.join(db.lookup('pizza'))
     print ','.join(db.lookup(u'見'))
     print ','.join(db.substringlookup(u'隣の客はよく柿食う客だ'))
     

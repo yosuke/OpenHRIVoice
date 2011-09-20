@@ -86,7 +86,7 @@ def main():
     outfile = codecs.getwriter('utf-8')(outfile)
 
     srgs = SRGS(args[0])
-    dic = LexiconDB(conf._lexicondb)
+    dic = LexiconDB(conf._lexicondb, __version__)
     if srgs._lang in ("jp", "ja"):
         alphabet = "x-KANA"
     else:
@@ -101,7 +101,11 @@ def main():
     for w in set(srgs.wordlist()):
         print >> outfile, '  <lexeme>'
         print >> outfile, '    <grapheme>'+w+'</grapheme>'
-        for r in dic.substringlookup(w):
+        if srgs._lang in ('jp', 'ja'):
+            p = dic.substringlookup(w)
+        else:
+            p = dic.lookup(w)
+        for r in p:
             print >> outfile, '    <phoneme>{{' + alphabet + '|' + r + '}}</phoneme>'
         print >> outfile, '  </lexeme>'
     print >> outfile, '</lexicon>'

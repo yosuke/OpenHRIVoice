@@ -318,6 +318,8 @@ Copyright (c) 2005-2009 Free Software Foundation
             time.sleep(0.1)
         for r in self._srgs._rules.keys():
             gram = self._srgs.toJulius(r)
+            if gram == "":
+                return RTC.RTC_ERROR
             self._logger.RTC_INFO("register grammar: %s" % (r,))
             self._j.addgrammar(gram, r)
         self._j.switchgrammar(self._srgs._rootrule)
