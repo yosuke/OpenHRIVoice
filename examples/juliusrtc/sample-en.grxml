@@ -32,6 +32,7 @@
     <one-of>
       <item>apple</item>
       <item>coockie</item>
+      <item>pizza</item>
       <item>remote</item>
     </one-of>
     <item repeat="0-1">please</item>

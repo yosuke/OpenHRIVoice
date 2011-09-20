@@ -289,6 +289,7 @@ class SRGS:
             #dict['<sp>'] = ('sp',)
             conv = nulltransform()
 
+        unknownlexicon = False
         for v in revdfa:
             if v[1] != -1:
                 if dict.has_key(v[1]) == False:
@@ -302,8 +303,10 @@ class SRGS:
                             p = lexdb.lookup(v[1])
                     if len(p) == 0:
                         print "[error] undefined lexicon: %s" % (v[1],)
-                        return ""
+                        unknownlexicon = True
                     dict[v[1]] = p
+        if unknownlexicon == True:
+            return ""
         dict2id = {}
         for k in dict.keys():
             dict2id[k] = len(dict2id)
