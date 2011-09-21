@@ -58,11 +58,11 @@ class ValidationThread(threading.Thread):
 
     def run(self):
         # load xml schema definition for validating SRGS format
-        #schemafile = os.path.join(basedir, 'grammar.xsd')
-        #self._parent_window.set_info("reading schema definition: " + schemafile)
-        #xmlschema_doc = etree.parse(schemafile)
-        #self._xmlschema = etree.XMLSchema(xmlschema_doc)
-        #self._parent_window.set_info("end reading schema")
+        schemafile = os.path.join(basedir, 'grammar.xsd')
+        self._parent_window.set_info("reading schema definition: " + schemafile)
+        xmlschema_doc = etree.parse(schemafile)
+        self._xmlschema = etree.XMLSchema(xmlschema_doc)
+        self._parent_window.set_info("finish reading schema")
         while self._loop == True:
             time.sleep(0.1)
             if self._updated == True:
@@ -87,7 +87,7 @@ class ValidationThread(threading.Thread):
             doc = etree.fromstring(xmlstr)
             if hasattr(doc, "xinclude"):
                 doc.xinclude()
-            #self._xmlschema.assert_(doc)
+            self._xmlschema.assert_(doc)
             self._parent_window.set_info("valid")
         except etree.XMLSyntaxError, e:
             self._parent_window.set_info("[error] " + str(e))
@@ -130,6 +130,7 @@ class MainWindow(gtk.Window):
 
         # initialize information view
         self._infolabel = gtk.Label()
+        self._infolabel.set_line_wrap(True)
 
         # layout main window
         self._vbox = gtk.VBox()
