@@ -103,15 +103,15 @@ def main():
         for l in srgs._lex:
             print "Validating PLS file %s..." % (l,)
             doc4 = etree.parse(l)
+            try:
+                xmlschema2.assert_(doc4)
+                print "PLS file is valid."
+            except AssertionError, b:
+                print "[error] Invalid PLS file."
+                print b
+                myexit()
     except IOError:
         print "[error] Cannot open PLS file: %s" % (",".join(srgs._lex),)
-        myexit()
-    try:
-        xmlschema2.assert_(doc4)
-        print "PLS file is valid."
-    except AssertionError, b:
-        print "[error] Invalid PLS file."
-        print b
         myexit()
     myexit()
 
