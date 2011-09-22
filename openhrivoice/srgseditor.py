@@ -116,11 +116,14 @@ class MainWindow(gtk.Window):
     def __init__(self, *args, **kwargs):
         # initialize main window
         gtk.Window.__init__(self, *args, **kwargs)
-        self._xdot = xdot.DotWindow()
         self._filename = None
 
         self.add_accel_group(gtk.AccelGroup())
         self.connect('delete_event', self.quit)
+        self.connect('destroy', self.quit)
+
+        self._xdot = xdot.DotWindow()
+        self._xdot.connect('delete_event', self.quit)
 
         # intialize XML code view
         self._sourcebuf = gtksourceview2.Buffer(language=gtksourceview2.language_manager_get_default().get_language('xml'))
@@ -133,6 +136,7 @@ class MainWindow(gtk.Window):
         self._sourceview.set_indent_on_tab(True)
         self._sourceview.set_insert_spaces_instead_of_tabs(True)
         self._sourceview.set_tab_width(2)
+        self._sourceview.modify_font(pango.FontDescription('Monospace 10'))
         
         self._sw = gtk.ScrolledWindow()
         self._sw.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
@@ -295,6 +299,7 @@ def main():
         win._filename = sys.argv[1]
     else:
         win.set_data(initialdata, False)
+    win.update_title()
     gtk.main()
 
 if __name__ == '__main__':
