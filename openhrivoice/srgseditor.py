@@ -59,10 +59,12 @@ class ValidationThread(threading.Thread):
     def run(self):
         # load xml schema definition for validating SRGS format
         schemafile = os.path.join(basedir, 'grammar.xsd')
-        self._parent_window.set_info("reading schema definition: " + schemafile)
+        with gtk.gdk.lock:
+            self._parent_window.set_info("reading schema definition: " + schemafile)
         xmlschema_doc = etree.parse(schemafile)
         self._xmlschema = etree.XMLSchema(xmlschema_doc)
-        self._parent_window.set_info("finish reading schema")
+        with gtk.gdk.lock:
+            self._parent_window.set_info("finish reading schema")
         while self._loop == True:
             time.sleep(0.1)
             if self._updated == True:
@@ -82,25 +84,33 @@ class ValidationThread(threading.Thread):
         self._data = text
 
     def validatesrgs(self, xmlstr):
-        self._parent_window.set_info("validating")
+        with gtk.gdk.lock:
+            self._parent_window.set_info("validating")
         try:
             doc = etree.fromstring(xmlstr)
             if hasattr(doc, "xinclude"):
                 doc.xinclude()
             self._xmlschema.assert_(doc)
-            self._parent_window.set_info("valid")
+            with gtk.gdk.lock:
+                self._parent_window.set_info("valid")
         except etree.XMLSyntaxError, e:
-            self._parent_window.set_info("[error] " + str(e))
+            with gtk.gdk.lock:
+                self._parent_window.set_info("[error] " + str(e))
             return False
         except AssertionError, e:
-            self._parent_window.set_info("[error] " + str(e))
+            with gtk.gdk.lock:
+                self._parent_window.set_info("[error] " + str(e))
             return False
         return True
 
     def drawdot(self, xmlstr):
-        srgs = SRGS(StringIO(xmlstr))
-        dotcode = juliustographviz(srgs.toJulius().split('\n'))
-        self._parent_window._xdot.set_dotcode(dotcode)
+        try:
+            srgs = SRGS(StringIO(xmlstr))
+            dotcode = juliustographviz(srgs.toJulius().split('\n'))
+            with gtk.gdk.lock:
+                self._parent_window._xdot.set_dotcode(dotcode)
+        except:
+            pass
 
 class MainWindow(gtk.Window):
     def __init__(self, *args, **kwargs):

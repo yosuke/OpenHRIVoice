@@ -15,6 +15,7 @@ http://www.opensource.org/licenses/eclipse-1.0.txt
 
 import sys, os, re, codecs
 from lxml import etree
+from StringIO import StringIO
 from openhrivoice.__init__ import __version__
 from openhrivoice.config import config
 from openhrivoice.lexicondb import *
@@ -151,7 +152,8 @@ class SRGS:
         self._lang = node.get("{http://www.w3.org/XML/1998/namespace}lang")
         lexnode = node.findall("{%s}lexicon" % (node.nsmap[None],))
         if lexnode is not None:
-            self._lex = [os.path.join(os.path.dirname(self._filename), l.get('uri')) for l in lexnode]
+            if not isinstance(self._filename, StringIO):
+                self._lex = [os.path.join(os.path.dirname(self._filename), l.get('uri')) for l in lexnode]
         for r in node.findall("{%s}rule" % (node.nsmap[None],)):
             rr = SRGSRule().parse(r)
             self._rules[rr._id] = rr
