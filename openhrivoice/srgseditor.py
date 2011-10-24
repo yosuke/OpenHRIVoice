@@ -29,6 +29,7 @@ import xdot
 from openhrivoice.parsesrgs import *
 from openhrivoice.juliustographviz import juliustographviz
 from openhrivoice.__init__ import __version__
+from openhrivoice.config import config
 
 __title__ = 'OpenHRI W3C-SRGS Editor'
 
@@ -114,6 +115,7 @@ class ValidationThread(threading.Thread):
 
 class MainWindow(gtk.Window):
     def __init__(self, *args, **kwargs):
+        self._config = config()
         # initialize main window
         gtk.Window.__init__(self, *args, **kwargs)
         self._filename = None
@@ -126,7 +128,15 @@ class MainWindow(gtk.Window):
         self._xdot.connect('delete_event', self.quit)
 
         # intialize XML code view
-        self._sourcebuf = gtksourceview2.Buffer(language=gtksourceview2.language_manager_get_default().get_language('xml'))
+        self._sourcelm = gtksourceview2.language_manager_get_default()
+        #sp = self._sourcelm.get_search_path()
+        #sp.append(os.path.join(self._config._basedir, 'language-specs'))
+        #self._sourcelm.set_search_path(sp)
+        self._sourcesm = gtksourceview2.style_scheme_manager_get_default()
+        self._sourcesm.append_search_path(os.path.join(self._config._basedir, 'styles'))
+        self._sourcebuf = gtksourceview2.Buffer(language=self._sourcelm.get_language('xml'))
+        self._sourcebuf.set_highlight_syntax(True)
+        self._sourcebuf.set_highlight_matching_brackets(True)
         self._sourceview = gtksourceview2.View(self._sourcebuf)
         self._sourceview.connect('key-press-event', self.keypressevent)
         self._sourceview.connect('key-release-event', self.keyreleaseevent)

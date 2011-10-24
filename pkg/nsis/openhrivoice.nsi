@@ -108,12 +108,14 @@ Section $(TEXT_SecBase) SecBase
   File "/oname=xsltrtc.exe" "${TOP_BUILDDIR}\dist\XSLTRTC.exe"
   File "${TOP_BUILDDIR}\dist\srgstopls.exe"
   File "${TOP_BUILDDIR}\dist\validatesrgs.exe"
+  File "${TOP_BUILDDIR}\dist\srgseditor.exe"
   File "${TOP_BUILDDIR}\dist\w9xpopen.exe"
   File "rtc.conf"
   File "${TOP_SRCDIR}\openhrivoice\dummy.dfa"
   File "${TOP_SRCDIR}\openhrivoice\dummy.dict"
   File "${TOP_SRCDIR}\openhrivoice\dummy-en.dfa"
   File "${TOP_SRCDIR}\openhrivoice\dummy-en.dict"
+  File "${TOP_SRCDIR}\openhrivoice\xml.xsd"
   File "${TOP_SRCDIR}\openhrivoice\grammar.xsd"
   File "${TOP_SRCDIR}\openhrivoice\grammar-core.xsd"
   File "${TOP_SRCDIR}\openhrivoice\pls.xsd"
@@ -173,7 +175,7 @@ Section $(TEXT_SecBase) SecBase
 
   ; julius for windows and acoustic model for japansese
   IfFileExists "$INSTDIR\downloads\julius-dictation-kit-v4.0-win.zip" +2
-    NSISdl::download "http://sourceforge.jp/frs/redir.php?m=iij&f=%2Fjulius%2F44943%2Fdictation-kit-v4.0-win.zip" "$INSTDIR\downloads\julius-dictation-kit-v4.0-win.zip"
+    NSISdl::download "http://prdownloads.sourceforge.jp/julius/44943/dictation-kit-v4.0-win.zip" "$INSTDIR\downloads\julius-dictation-kit-v4.0-win.zip"
   ZipDLL::extractall "$INSTDIR\downloads\julius-dictation-kit-v4.0-win.zip" "$INSTDIR\3rdparty"
 
   ; julius acoustic model for english
@@ -253,6 +255,7 @@ Section "Uninstall"
   Delete "${SCDIR}\festivalrtc.lnk"
   Delete "${SCDIR}\combineresultsrtc.lnk"
   Delete "${SCDIR}\xsltrtc.lnk"
+  Delete "${SCDIR}\srgseditor.lnk"
   RMDir "${SCDIR}"
 
   DeleteRegKey /ifempty ${INSTDIR_REG_ROOT} "${INSTDIR_REG_KEY}"
