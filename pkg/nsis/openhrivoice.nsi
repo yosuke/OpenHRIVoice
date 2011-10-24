@@ -160,6 +160,7 @@ Section $(TEXT_SecBase) SecBase
   CreateShortCut "${SCDIR}\festivalrtc.lnk" "$INSTDIR\festivalrtc.exe"
   CreateShortCut "${SCDIR}\combineresultsrtc.lnk" "$INSTDIR\combineresultsrtc.exe"
   CreateShortCut "${SCDIR}\xsltrtc.lnk" "$INSTDIR\xsltrtc.exe" "--gui"
+  CreateShortCut "${SCDIR}\srgseditor.lnk" "$INSTDIR\srgseditor.exe"
 
   ; download external data
   IfFileExists "$INSTDIR\downloads" +2
@@ -167,7 +168,7 @@ Section $(TEXT_SecBase) SecBase
 
   ; sox sound exchange
   IfFileExists "$INSTDIR\downloads\sox-14.3.2-win32.zip" +2
-    NSISdl::download "http://downloads.sourceforge.net/project/sox/sox/14.3.2/sox-14.3.2-win32.zip?use_mirror=iij" "$INSTDIR\downloads\sox-14.3.2-win32.zip"
+    NSISdl::download "http://prdownloads.sourceforge.net/sox/sox-14.3.2-win32.zip" "$INSTDIR\downloads\sox-14.3.2-win32.zip"
   ZipDLL::extractall "$INSTDIR\downloads\sox-14.3.2-win32.zip" "$INSTDIR\3rdparty"
 
   ; julius for windows and acoustic model for japansese
@@ -182,22 +183,22 @@ Section $(TEXT_SecBase) SecBase
 
   ; Open JTalk dictionary
   IfFileExists "$INSTDIR\downloads\open_jtalk_dic_utf_8-1.04.tar.gz" +2
-    NSISdl::download "http://downloads.sourceforge.net/project/open-jtalk/Dictionary/open_jtalk_dic-1.04/open_jtalk_dic_utf_8-1.04.tar.gz?use_mirror=iij"  "$INSTDIR\downloads\open_jtalk_dic_utf_8-1.04.tar.gz"
+    NSISdl::download "http://prdownloads.sourceforge.net/open-jtalk/open_jtalk_dic_utf_8-1.04.tar.gz"  "$INSTDIR\downloads\open_jtalk_dic_utf_8-1.04.tar.gz"
   untgz::extract -d "$INSTDIR\3rdparty" "$INSTDIR\downloads\open_jtalk_dic_utf_8-1.04.tar.gz"
 
   ; Open JTalk acoustic model
   IfFileExists "$INSTDIR\downloads\hts_voice_nitech_jp_atr503_m001-1.04.tar.gz" +2
-    NSISdl::download "http://downloads.sourceforge.net/project/open-jtalk/HTS%20voice/hts_voice_nitech_jp_atr503_m001-1.04/hts_voice_nitech_jp_atr503_m001-1.04.tar.gz?use_mirror=iij"  "$INSTDIR\downloads\hts_voice_nitech_jp_atr503_m001-1.04.tar.gz"
+    NSISdl::download "http://prdownloads.sourceforge.net/open-jtalk/hts_voice_nitech_jp_atr503_m001-1.04.tar.gz"  "$INSTDIR\downloads\hts_voice_nitech_jp_atr503_m001-1.04.tar.gz"
   untgz::extract -d "$INSTDIR\3rdparty" "$INSTDIR\downloads\hts_voice_nitech_jp_atr503_m001-1.04.tar.gz"
 
   ; MMDAgent model file
   IfFileExists "$INSTDIR\downloads\MMDAgent_Example-1.0.zip" +2
-    NSISdl::download "http://downloads.sourceforge.net/project/mmdagent/MMDAgent_Example/MMDAgent_Example-1.0/MMDAgent_Example-1.0.zip?use_mirror=iij"  "$INSTDIR\downloads\MMDAgent_Example-1.0.zip"
+    NSISdl::download "http://prdownloads.sourceforge.net/mmdagent/MMDAgent_Example-1.0.zip"  "$INSTDIR\downloads\MMDAgent_Example-1.0.zip"
   ZipDLL::extractall "$INSTDIR\downloads\MMDAgent_Example-1.0.zip" "$INSTDIR\3rdparty"
 
   ; Festival
   IfFileExists "$INSTDIR\downloads\festival-1.96.03-win.zip" +2
-    NSISdl::download "http://downloads.sourceforge.net/project/e-guidedog/related%20third%20party%20software/0.3/festival-1.96.03-win.zip?use_mirror=iij"  "$INSTDIR\downloads\festival-1.96.03-win.zip"
+    NSISdl::download "http://prdownloads.sourceforge.net/e-guidedog/festival-1.96.03-win.zip"  "$INSTDIR\downloads\festival-1.96.03-win.zip"
   ZipDLL::extractall "$INSTDIR\downloads\festival-1.96.03-win.zip" "$INSTDIR\3rdparty\festival-1.96.03-win"
 
 SectionEnd

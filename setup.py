@@ -40,12 +40,14 @@ if sys.platform == "win32":
                     "openhrivoice/XSLTRTC.py",
                     "openhrivoice/WavePlayerRTC.py",
                     "openhrivoice/SpecgramRTC.py",
+                    "openhrivoice/srgseditor.py",
                     ],
         "options": {
             "py2exe": {
                 "includes": ["xml.etree.ElementTree", "lxml._elementpath", "OpenRTM_aist", "RTC",
                              "matplotlib.backends",  "matplotlib.backends.backend_tkagg",
-                             "matplotlib.figure","pylab", "numpy", "matplotlib.numerix.fft"],
+                             "matplotlib.figure","pylab", "numpy", "matplotlib.numerix.fft", "cairo", "pango", "pangocairo",
+                             "atk", "gobject", "gio", "glib", "gtk", "gtksourceview2"],
                 "excludes": ["_gtkagg", "_wxagg"],
                 "dll_excludes": ["ierutil.dll", "powrprof.dll", "msimg32.dll", "mpr.dll", "urlmon.dll", "dnsapi.dll"],
             }
