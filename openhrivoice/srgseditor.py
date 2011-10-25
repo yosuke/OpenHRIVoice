@@ -38,6 +38,52 @@ if hasattr(sys, "frozen"):
 else:
     basedir = os.path.dirname(__file__)
 
+class MyDotWindow(xdot.DotWindow):
+
+    ui = '''
+    <ui>
+        <toolbar name="ToolBar">
+            <toolitem action="Reload"/>
+            <separator/>
+            <toolitem action="ZoomIn"/>
+            <toolitem action="ZoomOut"/>
+            <toolitem action="ZoomFit"/>
+            <toolitem action="Zoom100"/>
+        </toolbar>
+    </ui>
+    '''
+
+    def __init__(self):
+        gtk.Window.__init__(self)
+        self.set_title('Dot Viewer')
+        self.set_default_size(512, 512)
+        vbox = gtk.VBox()
+        self.add(vbox)
+
+        self.graph = xdot.Graph()
+        self.widget = xdot.DotWidget()
+        self.uimanager = gtk.UIManager()
+
+        accelgroup = self.uimanager.get_accel_group()
+        self.add_accel_group(accelgroup)
+
+        actiongroup = gtk.ActionGroup('Actions')
+        actiongroup.add_actions((
+            ('Reload', gtk.STOCK_REFRESH, None, None, None, self.on_reload),
+            ('ZoomIn', gtk.STOCK_ZOOM_IN, None, None, None, self.widget.on_zoom_in),
+            ('ZoomOut', gtk.STOCK_ZOOM_OUT, None, None, None, self.widget.on_zoom_out),
+            ('ZoomFit', gtk.STOCK_ZOOM_FIT, None, None, None, self.widget.on_zoom_fit),
+            ('Zoom100', gtk.STOCK_ZOOM_100, None, None, None, self.widget.on_zoom_100),
+        ))
+        self.uimanager.insert_action_group(actiongroup, 0)
+
+        self.uimanager.add_ui_from_string(self.ui)
+        toolbar = self.uimanager.get_widget('/ToolBar')
+        vbox.pack_start(toolbar, False)
+        vbox.pack_start(self.widget)
+        self.set_focus(self.widget)
+        self.show_all()
+
 class AboutDialog(gtk.AboutDialog):
 
     def __init__(self, parent):
@@ -114,17 +160,44 @@ class ValidationThread(threading.Thread):
             pass
 
 class MainWindow(gtk.Window):
+    ui = '''
+    <ui>
+        <toolbar name="ToolBar">
+            <toolitem action="Open"/>
+            <toolitem action="Save"/>
+            <toolitem action="SaveAs"/>
+            <separator/>
+            <toolitem action="Format"/>
+        </toolbar>
+    </ui>
+    '''
+
     def __init__(self, *args, **kwargs):
         self._config = config()
         # initialize main window
         gtk.Window.__init__(self, *args, **kwargs)
         self._filename = None
 
-        self.add_accel_group(gtk.AccelGroup())
+        self._uimanager = gtk.UIManager()
+
+        actiongroup = gtk.ActionGroup('Actions')
+        actiongroup.add_actions((
+            ('Open', gtk.STOCK_OPEN, None, None, None, self.open_file),
+            ('Save', gtk.STOCK_SAVE, None, None, None, self.save_file),
+            ('SaveAs', gtk.STOCK_SAVE_AS, None, None, None, self.save_file_as),
+            ('Format', gtk.STOCK_INDENT, None, None, None, self.format_data),
+        ))
+        self._uimanager.insert_action_group(actiongroup, 0)
+
+        self._uimanager.add_ui_from_string(self.ui)
+        self._toolbar = self._uimanager.get_widget('/ToolBar')
+
+        accelgroup = self._uimanager.get_accel_group()
+        self.add_accel_group(accelgroup)
         self.connect('delete_event', self.quit)
         self.connect('destroy', self.quit)
 
-        self._xdot = xdot.DotWindow()
+        self._xdot = MyDotWindow()
         self._xdot.connect('delete_event', self.quit)
 
         # intialize XML code view
@@ -158,6 +231,7 @@ class MainWindow(gtk.Window):
 
         # layout main window
         self._vbox = gtk.VBox()
+        self._vbox.pack_start(self._toolbar, False)
         self._vbox.pack_start(self._sw)
         self._vbox.pack_start(self._infolabel, False, False)
         self.add(self._vbox)
@@ -180,7 +254,7 @@ class MainWindow(gtk.Window):
             titlestr += self._filename
         self.props.title = titlestr
 
-    def quit(self, widget, event):
+    def quit(self, *args):
         print "quiting"
         self._validationthread.exit()
         gtk.main_quit()
@@ -226,7 +300,7 @@ class MainWindow(gtk.Window):
     def set_info(self, infostr):
         self._infolabel.set_text(infostr)
 
-    def format_data(self):
+    def format_data(self, *args):
         doc = None
         try:
             parser = etree.XMLParser(recover = True)
@@ -242,7 +316,7 @@ class MainWindow(gtk.Window):
         #doc = BeautifulSoup(self._sourcebuf.props.text)
         #self.set_data(doc.prettify())
 
-    def open_file(self):
+    def open_file(self, *args):
         chooser = gtk.FileChooserDialog(
             __title__, self, gtk.FILE_CHOOSER_ACTION_OPEN,
             buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
@@ -259,7 +333,7 @@ class MainWindow(gtk.Window):
                 self._filename = None
         chooser.destroy()
         
-    def save_file(self):
+    def save_file(self, *args):
         if self._filename is not None:
             f = open (self._filename, 'w')
             f.write(self._sourcebuf.props.text)
@@ -269,7 +343,7 @@ class MainWindow(gtk.Window):
         else:
             self.save_file_as()
             
-    def save_file_as (self):
+    def save_file_as (self, *args):
         chooser = gtk.FileChooserDialog(
             __title__, self, gtk.FILE_CHOOSER_ACTION_SAVE,
             buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
