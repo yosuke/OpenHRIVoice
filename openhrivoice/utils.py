@@ -62,59 +62,90 @@ class MyParser(optparse.OptionParser):
 
 def askopenfilename(title=''):
     #if platform.system() == 'Windows':
-    if 0:
-        import win32ui
-        import win32con 
-        openFlags = win32con.OFN_FILEMUSTEXIST|win32con.OFN_EXPLORER
-        fspec = "*.*||"
-        dlg = win32ui.CreateFileDialog(1, None, None, openFlags, fspec) 
-        if dlg.DoModal() == win32con.IDOK: 
-            return dlg.GetPathName()
-    else:
-        import Tkinter
-        import tkFileDialog
-        rt = Tkinter.Tk()
-        rt.withdraw()
-        return tkFileDialog.askopenfilename(title=title)
-    return None
+    #if 0:
+    #    import win32ui
+    #    import win32con 
+    #    openFlags = win32con.OFN_FILEMUSTEXIST|win32con.OFN_EXPLORER
+    #    fspec = "*.*||"
+    #    dlg = win32ui.CreateFileDialog(1, None, None, openFlags, fspec) 
+    #    if dlg.DoModal() == win32con.IDOK: 
+    #        return dlg.GetPathName()
+    #else:
+    #    import Tkinter
+    #    import tkFileDialog
+    #    rt = Tkinter.Tk()
+    #    rt.withdraw()
+    #    return tkFileDialog.askopenfilename(title=title)
+    import gtk
+    ret = None
+    dialog = gtk.FileChooserDialog(action=gtk.FILE_CHOOSER_ACTION_OPEN,
+                                   buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
+                                            gtk.STOCK_OPEN, gtk.RESPONSE_OK))
+    dialog.set_default_response(gtk.RESPONSE_OK)
+    response = dialog.run()
+    if response == gtk.RESPONSE_OK:
+        ret = dialog.get_filename()
+    dialog.destroy()
+    return ret
 
 def askopenfilenames(title=''):
     #if platform.system() == 'Windows':
-    if 0:
-        import win32ui
-        import win32con 
-        openFlags = win32con.OFN_FILEMUSTEXIST|win32con.OFN_EXPLORER|win32con.OFN_ALLOWMULTISELECT
-        fspec = "all|*.*||"
-        dlg = win32ui.CreateFileDialog(1, None, None, openFlags, fspec) 
-        if dlg.DoModal() == win32con.IDOK: 
-            return dlg.GetPathNames()
-    else:
-        import Tkinter
-        import tkFileDialog
-        rt = Tkinter.Tk()
-        rt.withdraw()
-        sel = tkFileDialog.askopenfilenames(title=title)
-        if isinstance(sel, unicode):
-            sel = [unicode(s, 'utf-8') for s in rt.tk.splitlist(sel)]
-        return sel
-    return None
+    #if 0:
+    #    import win32ui
+    #    import win32con 
+    #    openFlags = win32con.OFN_FILEMUSTEXIST|win32con.OFN_EXPLORER|win32con.OFN_ALLOWMULTISELECT
+    #    fspec = "all|*.*||"
+    #    dlg = win32ui.CreateFileDialog(1, None, None, openFlags, fspec) 
+    #    if dlg.DoModal() == win32con.IDOK:
+    #        return dlg.GetPathNames()
+    #else:
+    #    import Tkinter
+    #    import tkFileDialog
+    #    rt = Tkinter.Tk()
+    #    rt.withdraw()
+    #    sel = tkFileDialog.askopenfilenames(title=title)
+    #    if isinstance(sel, unicode):
+    #        sel = [unicode(s, 'utf-8') for s in rt.tk.splitlist(sel)]
+    #    return sel
+    import gtk
+    ret = None
+    dialog = gtk.FileChooserDialog(action=gtk.FILE_CHOOSER_ACTION_OPEN,
+                                   buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
+                                            gtk.STOCK_OPEN, gtk.RESPONSE_OK))
+    dialog.set_default_response(gtk.RESPONSE_OK)
+    dialog.set_select_multiple(True)
+    response = dialog.run()
+    if response == gtk.RESPONSE_OK:
+        ret = dialog.get_filenames()
+    dialog.destroy()
+    return ret
 
 def asksaveasfile():
-    if platform.system() == 'Windows':
-        import win32ui
-        import win32con 
-        openFlags = win32con.OFN_OVERWRITEPROMPT|win32con.OFN_EXPLORER
-        fspec = "*.*||"
-        dlg = win32ui.CreateFileDialog(0, None, None, openFlags, fspec) 
-        if dlg.DoModal() == win32con.IDOK: 
-            return dlg.GetPathName()
-    else:
-        import Tkinter
-        import tkFileDialog
-        rt = Tkinter.Tk()
-        rt.withdraw()
-        return tkFileDialog.asksaveasfile()
-    return None
+    #if platform.system() == 'Windows':
+    #    import win32ui
+    #    import win32con 
+    #    openFlags = win32con.OFN_OVERWRITEPROMPT|win32con.OFN_EXPLORER
+    #    fspec = "*.*||"
+    #    dlg = win32ui.CreateFileDialog(0, None, None, openFlags, fspec) 
+    #    if dlg.DoModal() == win32con.IDOK: 
+    #        return dlg.GetPathName()
+    #else:
+    #    import Tkinter
+    #    import tkFileDialog
+    #    rt = Tkinter.Tk()
+    #    rt.withdraw()
+    #    return tkFileDialog.asksaveasfile()
+    import gtk
+    ret = None
+    dialog = gtk.FileChooserDialog(action=gtk.FILE_CHOOSER_ACTION_SAVE,
+                                   buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
+                                            gtk.STOCK_OPEN, gtk.RESPONSE_OK))
+    dialog.set_default_response(gtk.RESPONSE_OK)
+    response = dialog.run()
+    if response == gtk.RESPONSE_OK:
+        ret = dialog.get_filename()
+    dialog.destroy()
+    return ret
 
 def addmanageropts(parser):
     parser.add_option('-a', '--manager-service', dest='managerservice', action='store_true',
