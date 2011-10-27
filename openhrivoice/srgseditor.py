@@ -17,6 +17,7 @@ import os
 import sys
 import time
 import threading
+import locale
 from lxml import etree
 from lxml.html import soupparser
 import pango
@@ -318,6 +319,22 @@ initialdata = '''<?xml version="1.0" encoding="UTF-8" ?>
 </grammar>
 '''
 
+initialdata_ja = '''<?xml version="1.0" encoding="UTF-8" ?>
+<grammar xmlns="http://www.w3.org/2001/06/grammar"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://www.w3.org/2001/06/grammar
+                             http://www.w3.org/TR/speech-grammar/grammar.xsd"
+         xml:lang="ja"
+         version="1.0" mode="voice" root="command">
+  <rule id="command">
+    <one-of>
+      <item>こんにちは</item>
+      <item>さようなら</item>
+    </one-of>
+  </rule>
+</grammar>
+'''
+
 def main():
     gtk.gdk.threads_init()
     gtk.gdk.threads_enter()
@@ -327,7 +344,10 @@ def main():
         win.set_data(open(sys.argv[1], 'r').read(), False)
         win._filename = sys.argv[1]
     else:
-        win.set_data(initialdata, False)
+        if locale.getdefaultlocale()[0] == 'ja_JP':
+            win.set_data(initialdata_ja, False)
+        else:
+            win.set_data(initialdata, False)
     win.update_title()
     gtk.main()
 
