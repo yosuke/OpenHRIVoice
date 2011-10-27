@@ -95,70 +95,6 @@ class AboutDialog(gtk.AboutDialog):
         self.set_transient_for(parent)
         self.connect("response", lambda d, r: d.destroy())
 
-class ValidationThread(threading.Thread):
-    def __init__(self):
-        threading.Thread.__init__(self)
-        self._loop = True
-        self._parent_window = None
-        self._updated = False
-        self._data = ''
-
-    def run(self):
-        # load xml schema definition for validating SRGS format
-        schemafile = os.path.join(basedir, 'grammar.xsd')
-        with gtk.gdk.lock:
-            self._parent_window.set_info("reading schema definition: " + schemafile)
-        xmlschema_doc = etree.parse(schemafile)
-        self._xmlschema = etree.XMLSchema(xmlschema_doc)
-        with gtk.gdk.lock:
-            self._parent_window.set_info("finish reading schema")
-        while self._loop == True:
-            time.sleep(0.1)
-            if self._updated == True:
-                text = self._data
-                self._updated = False
-                if self.validatesrgs(text) == True:
-                    self.drawdot(text)
-
-    def exit(self):
-        self._loop = False
-
-    def set_parent_window(self, win):
-        self._parent_window = win
-
-    def set_data(self, text):
-        self._updated = True
-        self._data = text
-
-    def validatesrgs(self, xmlstr):
-        with gtk.gdk.lock:
-            self._parent_window.set_info("validating")
-        try:
-            doc = etree.fromstring(xmlstr)
-            if hasattr(doc, "xinclude"):
-                doc.xinclude()
-            self._xmlschema.assert_(doc)
-            with gtk.gdk.lock:
-                self._parent_window.set_info("valid")
-        except etree.XMLSyntaxError, e:
-            with gtk.gdk.lock:
-                self._parent_window.set_info("[error] " + str(e))
-            return False
-        except AssertionError, e:
-            with gtk.gdk.lock:
-                self._parent_window.set_info("[error] " + str(e))
-            return False
-        return True
-
-    def drawdot(self, xmlstr):
-        try:
-            srgs = SRGS(StringIO(xmlstr))
-            dotcode = juliustographviz(srgs.toJulius().split('\n'))
-            with gtk.gdk.lock:
-                self._parent_window._xdot.set_dotcode(dotcode)
-        except:
-            pass
-
 class MainWindow(gtk.Window):
     ui = '''
     <ui>
@@ -177,6 +113,7 @@ class MainWindow(gtk.Window):
         # initialize main window
         gtk.Window.__init__(self, *args, **kwargs)
         self._filename = None
+        self._data = None
 
         self._uimanager = gtk.UIManager()
 
@@ -201,15 +138,7 @@ class MainWindow(gtk.Window):
         self._xdot.connect('delete_event', self.quit)
 
         # intialize XML code view
-        self._sourcelm = gtksourceview2.language_manager_get_default()
-        #sp = self._sourcelm.get_search_path()
-        #sp.append(os.path.join(self._config._basedir, 'language-specs'))
-        #self._sourcelm.set_search_path(sp)
-        self._sourcesm = gtksourceview2.style_scheme_manager_get_default()
-        self._sourcesm.append_search_path(os.path.join(self._config._basedir, 'styles'))
-        self._sourcebuf = gtksourceview2.Buffer(language=self._sourcelm.get_language('xml'))
-        self._sourcebuf.set_highlight_syntax(True)
-        self._sourcebuf.set_highlight_matching_brackets(True)
+        self._sourcebuf = gtksourceview2.Buffer(language=gtksourceview2.language_manager_get_default().get_language('xml'))
         self._sourceview = gtksourceview2.View(self._sourcebuf)
         self._sourceview.connect('key-press-event', self.keypressevent)
         self._sourceview.connect('key-release-event', self.keyreleaseevent)
@@ -238,9 +167,9 @@ class MainWindow(gtk.Window):
         self.set_size_request(400, 400)
         self.resize(600, 520)
 
-        self._validationthread = ValidationThread()
-        self._validationthread.set_parent_window(self)
-        self._validationthread.start()
+        schemafile = os.path.join(basedir, 'grammar.xsd')
+        xmlschema_doc = etree.parse(schemafile)
+        self._xmlschema = etree.XMLSchema(xmlschema_doc)
 
         self.update_title()
 
@@ -256,7 +185,6 @@ class MainWindow(gtk.Window):
 
     def quit(self, *args):
         print "quiting"
-        self._validationthread.exit()
         gtk.main_quit()
 
     def keypressevent (self, widget, event):
@@ -276,7 +204,7 @@ class MainWindow(gtk.Window):
         return False
 
     def keyreleaseevent (self, widget, event):
-        if self._sourcebuf.get_modified():
+        if self._data != self._sourcebuf.props.text:
             self._data = self._sourcebuf.props.text
             self.validate()
         self.update_title()
@@ -294,11 +222,27 @@ class MainWindow(gtk.Window):
             self.validate()
         self.update_title()
 
-    def validate(self):
-        self._validationthread.set_data(self._data)
+    def validate(self, *args):
+        self.set_info("validating")
+        try:
+            doc = etree.fromstring(self._data)
+            if hasattr(doc, "xinclude"):
+                doc.xinclude()
+            self._xmlschema.assert_(doc)
+            self.set_info("valid")
+            srgs = SRGS(StringIO(self._data))
+            dotcode = juliustographviz(srgs.toJulius().split('\n'))
+            self._xdot.set_dotcode(dotcode)
+        except etree.XMLSyntaxError, e:
+            self.set_info("[error] " + str(e))
+        except AssertionError, e:
+            self.set_info("[error] " + str(e))
+        except KeyError, e:
+            self.set_info("[error] " + str(e))
 
     def set_info(self, infostr):
         self._infolabel.set_text(infostr)
+        print infostr
 
     def format_data(self, *args):
         doc = None
@@ -367,7 +311,7 @@ initialdata = '''<?xml version="1.0" encoding="UTF-8" ?>
          version="1.0" mode="voice" root="command">
   <rule id="command">
     <one-of>
-      <item>hi</item>
+      <item>hello</item>
       <item>bye</item>
     </one-of>
   </rule>
@@ -376,6 +320,7 @@ initialdata = '''<?xml version="1.0" encoding="UTF-8" ?>
 
 def main():
     gtk.gdk.threads_init()
+    gtk.gdk.threads_enter()
     win = MainWindow()
     win.show_all()
     if len(sys.argv) >= 2:

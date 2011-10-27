@@ -1,8 +1,13 @@
 rmdir /S /Q dist
 rmdir /S /Q build
 \Python26\python.exe setup.py py2exe
+copy openhrivoice\*.xsd dist
+copy "\Program Files (x86)\Graphviz 2.28\bin\*.dll" dist
+del dist\Qt*.dll
+copy "\Program Files (x86)\Graphviz 2.28\bin\dot.exe" dist
 copy \Python26\Lib\site-packages\gtk-2.0\runtime\bin\*.dll dist
-mkdir dist\language-specs
-copy \Python26\Lib\site-packages\gtk-2.0\runtime\share\gtksourceview-2.0\language-specs dist\language-specs
-mkdir dist\styles
-copy \Python26\Lib\site-packages\gtk-2.0\runtime\share\gtksourceview-2.0\styles dist\styles
+robocopy /S \Python26\Lib\site-packages\gtk-2.0\runtime\share dist\share
+robocopy /S \Python26\Lib\site-packages\gtk-2.0\runtime\etc dist\etc
+cd dist
+dot -c
+cd ..
