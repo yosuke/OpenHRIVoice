@@ -124,6 +124,8 @@ Section $(TEXT_SecBase) SecBase
   File "${TOP_BUILDDIR}\dist\validatesrgs.exe"
   File "${TOP_BUILDDIR}\dist\srgseditor.exe"
   File "${TOP_BUILDDIR}\dist\w9xpopen.exe"
+  File "${TOP_BUILDDIR}\dist\dot.exe"
+  File "${TOP_BUILDDIR}\dist\config6"
   File "rtc.conf"
   File "${TOP_SRCDIR}\openhrivoice\dummy.dfa"
   File "${TOP_SRCDIR}\openhrivoice\dummy.dict"
