@@ -280,11 +280,19 @@ class MainWindow(gtk.Window):
         
     def save_file(self, *args):
         if self._filename is not None:
-            f = open (self._filename, 'w')
-            f.write(self._sourcebuf.props.text)
-            f.close()
-            self._sourcebuf.set_modified(False)
-            self.update_title()
+            try:
+                f = open (self._filename, 'w')
+                f.write(self._sourcebuf.props.text)
+                f.close()
+                self._sourcebuf.set_modified(False)
+                self.update_title()
+            except IOError, e:
+                self.set_info(str(e))
+                md = gtk.MessageDialog(self, 
+                                       gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_ERROR,
+                                       gtk.BUTTONS_CLOSE, str(e))
+                md.run()
+                md.destroy()
         else:
             self.save_file_as()
             
