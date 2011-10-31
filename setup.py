@@ -25,7 +25,6 @@ data_files = []
 
 if sys.platform == "win32":
     # py2exe options
-    data_files = matplotlib.get_py2exe_datafiles()
     extra = {
         "console": [
                     "openhrivoice/JuliusRTC.py",
@@ -39,16 +38,13 @@ if sys.platform == "win32":
                     "openhrivoice/CombineResultsRTC.py",
                     "openhrivoice/XSLTRTC.py",
                     "openhrivoice/WavePlayerRTC.py",
-                    "openhrivoice/SpecgramRTC.py",
                     "openhrivoice/srgseditor.py",
                     ],
         "options": {
             "py2exe": {
                 "includes": ["xml.etree.ElementTree", "lxml._elementpath", "OpenRTM_aist", "RTC",
-                             "matplotlib.backends",  "matplotlib.backends.backend_tkagg",
-                             "matplotlib.figure","pylab", "numpy", "matplotlib.numerix.fft", "cairo", "pango", "pangocairo",
+                             "cairo", "pango", "pangocairo",
                              "atk", "gobject", "gio", "glib", "gtk", "gtksourceview2"],
-                "excludes": ["_gtkagg", "_wxagg"],
                 "dll_excludes": ["ierutil.dll", "powrprof.dll", "msimg32.dll", "mpr.dll", "urlmon.dll", "dnsapi.dll"],
             }
         }
@@ -90,7 +86,6 @@ setup(name='openhrivoice',
       combineresultsrtc = openhrivoice.CombineResultsRTC:main
       xsltrtc = openhrivoice.XSLTRTC:main
       waveplayerrtc = openhrivoice.WavePlayerRTC:main
-      specgramrtc = openhrivoice.SpecgramRTC:main
       openhrivoicemanager = openhrivoice.OpenHRIVoiceManager:main
       srgseditor = openhrivoice.srgseditor:main
       """,

@@ -13,7 +13,7 @@
 ;General
 
 !define PACKAGE_NAME "OpenHRIVoice"
-!define PACKAGE_VERSION "1.07"
+!define PACKAGE_VERSION "2.00"
 !define OUTFILE "${PACKAGE_NAME}-${PACKAGE_VERSION}-installer.exe"
 !define TOP_SRCDIR "..\.."
 !define TOP_BUILDDIR "..\.."
@@ -90,6 +90,20 @@ LicenseLangString MUILicense_Festival ${LANG_JAPANESE} "C:\Program Files (x86)\O
 
 !insertmacro MUI_RESERVEFILE_LANGDLL
 
+!macro Download URL NAME
+  IfFileExists "$INSTDIR\downloads\${NAME}" ${NAME}_found ${NAME}_notfound
+    ${NAME}_found:
+      Goto ${NAME}_end
+    ${NAME}_notfound:
+      IfFileExists "$EXEDIR\3rdparty\${NAME}" ${NAME}_local ${NAME}_remote
+      ${NAME}_local:
+        CopyFiles "$EXEDIR\3rdparty\${NAME}" "$INSTDIR\downloads"
+        Goto ${NAME}_end
+      ${NAME}_remote:
+        NSISdl::download "${URL}" "$INSTDIR\downloads\${NAME}"
+        Goto ${NAME}_end
+  ${NAME}_end:
+!macroend
 
 ;--------------------------------
 ;Installer Sections
@@ -126,6 +140,8 @@ Section $(TEXT_SecBase) SecBase
   File /r "${TOP_BUILDDIR}\dist\*.pyd"
   File /r "${TOP_BUILDDIR}\dist\*.dll"
   File "${TOP_BUILDDIR}\dist\library.zip"
+  File /r "${TOP_BUILDDIR}\dist\share"
+  File /r "${TOP_BUILDDIR}\dist\etc"
 
   ; Information/documentation files
 ;  File "/oname=ChangeLog.txt" "${TOP_SRCDIR}\ChangeLog"
@@ -135,7 +151,7 @@ Section $(TEXT_SecBase) SecBase
   !insertmacro UNINSTALL.LOG_CLOSE_INSTALL
 
   ; tcl files
-  File /r "${TOP_BUILDDIR}\dist\tcl"
+  ;File /r "${TOP_BUILDDIR}\dist\tcl"
 
   ;Store installation folder
   WriteRegStr HKLM "Software\${PACKAGE_NAME}" "" $INSTDIR
@@ -169,38 +185,31 @@ Section $(TEXT_SecBase) SecBase
     CreateDirectory "$INSTDIR\downloads"
 
   ; sox sound exchange
-  IfFileExists "$INSTDIR\downloads\sox-14.3.2-win32.zip" +2
-    NSISdl::download "http://prdownloads.sourceforge.net/sox/sox-14.3.2-win32.zip" "$INSTDIR\downloads\sox-14.3.2-win32.zip"
+  !insertmacro Download "http://prdownloads.sourceforge.net/sox/sox-14.3.2-win32.zip" "sox-14.3.2-win32.zip"
   ZipDLL::extractall "$INSTDIR\downloads\sox-14.3.2-win32.zip" "$INSTDIR\3rdparty"
 
   ; julius for windows and acoustic model for japansese
-  IfFileExists "$INSTDIR\downloads\julius-dictation-kit-v4.0-win.zip" +2
-    NSISdl::download "http://prdownloads.sourceforge.jp/julius/44943/dictation-kit-v4.0-win.zip" "$INSTDIR\downloads\julius-dictation-kit-v4.0-win.zip"
+  !insertmacro Download "http://prdownloads.sourceforge.jp/julius/44943/dictation-kit-v4.0-win.zip" "julius-dictation-kit-v4.0-win.zip"
   ZipDLL::extractall "$INSTDIR\downloads\julius-dictation-kit-v4.0-win.zip" "$INSTDIR\3rdparty"
 
   ; julius acoustic model for english
-  IfFileExists "$INSTDIR\downloads\julius-voxforge-build726.zip" +2
-    NSISdl::download "http://www.repository.voxforge1.org/downloads/Main/Tags/Releases/0_1_1-build726/Julius_AcousticModels_16kHz-16bit_MFCC_O_D_(0_1_1-build726).zip" "$INSTDIR\downloads\julius-voxforge-build726.zip"
+  !insertmacro Download "http://www.repository.voxforge1.org/downloads/Main/Tags/Releases/0_1_1-build726/Julius_AcousticModels_16kHz-16bit_MFCC_O_D_(0_1_1-build726).zip" "julius-voxforge-build726.zip"
   ZipDLL::extractall "$INSTDIR\downloads\julius-voxforge-build726.zip" "$INSTDIR\3rdparty\julius-voxforge-build726"
 
   ; Open JTalk dictionary
-  IfFileExists "$INSTDIR\downloads\open_jtalk_dic_utf_8-1.04.tar.gz" +2
-    NSISdl::download "http://prdownloads.sourceforge.net/open-jtalk/open_jtalk_dic_utf_8-1.04.tar.gz"  "$INSTDIR\downloads\open_jtalk_dic_utf_8-1.04.tar.gz"
+  !insertmacro Download "http://prdownloads.sourceforge.net/open-jtalk/open_jtalk_dic_utf_8-1.04.tar.gz"  "open_jtalk_dic_utf_8-1.04.tar.gz"
   untgz::extract -d "$INSTDIR\3rdparty" "$INSTDIR\downloads\open_jtalk_dic_utf_8-1.04.tar.gz"
 
   ; Open JTalk acoustic model
-  IfFileExists "$INSTDIR\downloads\hts_voice_nitech_jp_atr503_m001-1.04.tar.gz" +2
-    NSISdl::download "http://prdownloads.sourceforge.net/open-jtalk/hts_voice_nitech_jp_atr503_m001-1.04.tar.gz"  "$INSTDIR\downloads\hts_voice_nitech_jp_atr503_m001-1.04.tar.gz"
+  !insertmacro Download "http://prdownloads.sourceforge.net/open-jtalk/hts_voice_nitech_jp_atr503_m001-1.04.tar.gz"  "hts_voice_nitech_jp_atr503_m001-1.04.tar.gz"
   untgz::extract -d "$INSTDIR\3rdparty" "$INSTDIR\downloads\hts_voice_nitech_jp_atr503_m001-1.04.tar.gz"
 
   ; MMDAgent model file
-  IfFileExists "$INSTDIR\downloads\MMDAgent_Example-1.0.zip" +2
-    NSISdl::download "http://prdownloads.sourceforge.net/mmdagent/MMDAgent_Example-1.0.zip"  "$INSTDIR\downloads\MMDAgent_Example-1.0.zip"
+  !insertmacro Download "http://prdownloads.sourceforge.net/mmdagent/MMDAgent_Example-1.0.zip"  "MMDAgent_Example-1.0.zip"
   ZipDLL::extractall "$INSTDIR\downloads\MMDAgent_Example-1.0.zip" "$INSTDIR\3rdparty"
 
   ; Festival
-  IfFileExists "$INSTDIR\downloads\festival-1.96.03-win.zip" +2
-    NSISdl::download "http://prdownloads.sourceforge.net/e-guidedog/festival-1.96.03-win.zip"  "$INSTDIR\downloads\festival-1.96.03-win.zip"
+  !insertmacro Download "http://prdownloads.sourceforge.net/e-guidedog/festival-1.96.03-win.zip"  "festival-1.96.03-win.zip"
   ZipDLL::extractall "$INSTDIR\downloads\festival-1.96.03-win.zip" "$INSTDIR\3rdparty\festival-1.96.03-win"
 
 SectionEnd

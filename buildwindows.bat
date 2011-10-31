@@ -11,3 +11,7 @@ robocopy /S \Python26\Lib\site-packages\gtk-2.0\runtime\etc dist\etc
 cd dist
 dot -c
 cd ..
+rmdir /S /Q dist\share\doc
+rmdir /S /Q dist\share\gtk-doc
+rmdir /S /Q dist\share\man
+
