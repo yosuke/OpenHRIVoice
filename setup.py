@@ -45,7 +45,7 @@ if sys.platform == "win32":
                 "includes": ["xml.etree.ElementTree", "lxml._elementpath", "OpenRTM_aist", "RTC",
                              "cairo", "pango", "pangocairo",
                              "atk", "gobject", "gio", "glib", "gtk", "gtksourceview2"],
-                "dll_excludes": ["ierutil.dll", "powrprof.dll", "msimg32.dll", "mpr.dll", "urlmon.dll", "dnsapi.dll"],
+                "dll_excludes": ["USP10.dll", "NSI.dll", "MSIMG32.dll", "DNSAPI.dll", "ierutil.dll", "powrprof.dll", "msimg32.dll", "mpr.dll", "urlmon.dll", "dnsapi.dll"],
             }
         }
     }
