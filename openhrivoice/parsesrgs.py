@@ -13,7 +13,7 @@ Licensed under the Eclipse Public License -v 1.0 (EPL)
 http://www.opensource.org/licenses/eclipse-1.0.txt
 '''
 
-import sys, os, re, codecs
+import sys, os, re, codecs, types
 from lxml import etree
 from StringIO import StringIO
 from openhrivoice.__init__ import __version__
@@ -105,7 +105,10 @@ class SRGSItem:
             else:
                 textnode = SRGSItem()
                 textnode._type = "#text"
-                textnode._words = [w for w in re.split(u"( |[\\\"'].*[\\\"'])", node.text) if w != '' and w != u' ']
+                if type(node.text) is types.NoneType:
+                    textnode._words = []
+                else:
+                    textnode._words = [w for w in re.split(u"( |[\\\"'].*[\\\"'])", node.text.strip(' \n')) if w != '' and w != u' ']
                 self._items = [textnode,]
         elif self._type == "one-of":
             self._items = [SRGSItem().parse(c) for c in node.getchildren() if type(c) is not etree._Comment]
@@ -183,6 +186,8 @@ class SRGS:
     def toJulius_recur(self, item, dfa, startstate, endstate):
         if item._type == "#text":
             currentstate = startstate
+            if len(item._words) == 0:
+                raise KeyError("no words in <item></item>")
             for w in item._words[:-1]:
                 newstate = dfa.newstate()
                 dfa.append((currentstate, w, newstate))
@@ -235,13 +240,11 @@ class SRGS:
                 self.toJulius_recur(i, dfa, startstate, endstate)
         elif item._type == "ruleref":
             if item._uri[0] != '#':
-                print "[error] reference to external uri: %s" % (item._uri,)
-                return
+                raise KeyError("reference to external uri: %s" % (item._uri,))
             try:
                 root = self._rules[item._uri[1:]]
             except KeyError:
-                print "[error] unknown rule: %s" % (item._uri,)
-                return
+                raise KeyError("unknown rule: %s" % (item._uri,))
             currentstate = startstate
             for i in root._items[:-1]:
                 newstate = dfa.newstate()

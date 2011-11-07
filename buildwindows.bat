@@ -6,8 +6,8 @@ copy "\Program Files (x86)\Graphviz 2.28\bin\*.dll" dist
 del dist\Qt*.dll
 copy "\Program Files (x86)\Graphviz 2.28\bin\dot.exe" dist
 copy \Python26\Lib\site-packages\gtk-2.0\runtime\bin\*.dll dist
-robocopy /S \Python26\Lib\site-packages\gtk-2.0\runtime\share dist\share
-robocopy /S \Python26\Lib\site-packages\gtk-2.0\runtime\etc dist\etc
+\Windows\System32\Robocopy /S \Python26\Lib\site-packages\gtk-2.0\runtime\share dist\share
+\Windows\System32\Robocopy /S \Python26\Lib\site-packages\gtk-2.0\runtime\etc dist\etc
 cd dist
 dot -c
 cd ..

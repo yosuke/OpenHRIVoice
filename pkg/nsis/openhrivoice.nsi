@@ -192,7 +192,8 @@ Section $(TEXT_SecBase) SecBase
   ZipDLL::extractall "$INSTDIR\downloads\sox-14.3.2-win32.zip" "$INSTDIR\3rdparty"
 
   ; julius for windows and acoustic model for japansese
-  !insertmacro Download "http://prdownloads.sourceforge.jp/julius/44943/dictation-kit-v4.0-win.zip" "julius-dictation-kit-v4.0-win.zip"
+  ;!insertmacro Download "http://prdownloads.sourceforge.jp/julius/44943/dictation-kit-v4.0-win.zip" "julius-dictation-kit-v4.0-win.zip"
+  !insertmacro Download "http://sourceforge.jp/frs/redir.php?m=iij&f=%2Fjulius%2F44943%2Fdictation-kit-v4.0-win.zip" "julius-dictation-kit-v4.0-win.zip"
   ZipDLL::extractall "$INSTDIR\downloads\julius-dictation-kit-v4.0-win.zip" "$INSTDIR\3rdparty"
 
   ; julius acoustic model for english
