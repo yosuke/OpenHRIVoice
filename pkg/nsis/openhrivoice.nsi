@@ -137,6 +137,7 @@ Section $(TEXT_SecBase) SecBase
   File "${TOP_SRCDIR}\openhrivoice\pls.xsd"
   File "${TOP_SRCDIR}\pkg\nsis\open_jtalk.exe"
   File "${TOP_SRCDIR}\pkg\nsis\License-Open_JTalk.txt"
+  File "vcredist_x86.exe"
 
   ; Required Libralies
   File /r "${TOP_BUILDDIR}\dist\*.pyd"
@@ -213,6 +214,12 @@ Section $(TEXT_SecBase) SecBase
   ; Festival
   !insertmacro Download "http://prdownloads.sourceforge.net/e-guidedog/festival-1.96.03-win.zip"  "festival-1.96.03-win.zip"
   ZipDLL::extractall "$INSTDIR\downloads\festival-1.96.03-win.zip" "$INSTDIR\3rdparty\festival-1.96.03-win"
+
+  ClearErrors
+  ReadRegDword $R0 HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{FF66E9F6-83E7-3A3E-AF14-8DE9A809A6A4}" "Version"
+  IfErrors 0 VSRedistInstalled
+    ExecWait '"$INSTDIR\vcredist_x86.exe" /q:a /c:"VCREDI~1.EXE /q:a /c:""msiexec /i vcredist.msi /qb!"" "'
+  VSRedistInstalled:
 
 SectionEnd
 

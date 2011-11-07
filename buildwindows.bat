@@ -14,4 +14,3 @@ cd ..
 rmdir /S /Q dist\share\doc
 rmdir /S /Q dist\share\gtk-doc
 rmdir /S /Q dist\share\man
-
