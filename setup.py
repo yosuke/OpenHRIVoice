@@ -4,7 +4,6 @@ from setuptools import setup, find_packages
 from setuptools.command.build_ext import build_ext
 import sys, os
 from glob import glob
-import matplotlib
 from openhrivoice.__init__ import __version__
 
 cmd_classes = {}
