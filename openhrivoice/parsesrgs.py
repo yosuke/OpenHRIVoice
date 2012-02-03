@@ -283,6 +283,8 @@ class SRGS:
             dict['</s>'] = ('silE',)
             from openhrivoice.hiragana2phoneme import hiragana2phoneme
             conv = hiragana2phoneme()
+            from openhrivoice.katakana2hiragana import katakana2hiragana
+            conv2 = katakana2hiragana()
         elif self._lang == 'de':
             dict['<s>'] = ('sil',)
             dict['</s>'] = ('sil',)
@@ -304,6 +306,8 @@ class SRGS:
                     if p is None:
                         if self._lang in ('jp', 'ja'):
                             p = lexdb.substringlookup(v[1])
+                            if len(p) == 0:
+                                p = lexdb.substringlookup(conv2.convert(v[1]))
                         else:
                             p = lexdb.lookup(v[1])
                     if len(p) == 0:
@@ -327,7 +331,7 @@ class SRGS:
         phonedict = list()
         for k in dict.keys():
             for p in dict[k]:
-                if p in ('sil', 'silE', 'silB'):
+                if p in ('sil', 'silE', 'silB', ''):
                     phonedict.append((dict2id[k], k, p))
                 else:
                     phonedict.append((dict2id[k], k, conv.convert(p)))
